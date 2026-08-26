@@ -1,128 +1,97 @@
 # DriftWatch — STATE
 
-> File hidup. Dibaca di awal tiap sesi, ditulis ulang di akhir tiap sesi.
-> Ini satu-satunya memori antar sesi agent. Jaga tetap pendek (< 100 baris).
+> Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Terakhir diperbarui:** 2026-08-27 (perencanaan; belum ada kode)
-**Status project:** ⬜ **BELUM MULAI** — 0/13 fase selesai
-**Fase aktif:** —
-**Fase berikutnya:** **P0 — Bootstrap & Environment**
-**soak_dibuka:** — (diisi di P7)
-
----
+**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 1/13 fase · **Fase aktif:** — (P0 selesai)
+**Fase berikutnya:** **P1 — Target & Etika** · **soak_dibuka:** — (diisi di P7)
 
 ## Status fase
 
 | Fase | Status | Catatan |
 |---|---|---|
-| P0 Bootstrap | ⬜ belum | uv project, struktur folder, `env-check.md`, repo git |
-| P1 Target & Etika | ⬜ belum | 4 target, gerbang etika `seo`, fixture `driftlab` :8100 |
+| P0 Bootstrap | ✅ selesai | `env-check.md`, 10 tool, `uv sync` 0 error, remote personal OK |
+| P1 Target & Etika | ⬜ belum | 4 target, gerbang etika `seo` (🔓 D16), fixture `driftlab` :8100 |
 | P2 Recon | ⬜ belum | 4 `recon/*.json`, keputusan engine per target |
 | P3 Kontrak Data | ⬜ belum | `contracts.py` + `validate.py`, D17 dikunci |
 | P4 Mesin Scraper | ⬜ belum | 6 komponen wajib, run cicip 2 halaman |
-| P5 Validasi & Resume | ⬜ belum | 3 record manual, kill→resume, unit test |
+| P5 Validasi & Resume | ⬜ belum | 3 record manual, kill→resume, unit test (`unittest`) |
 | P6 Panen Penuh | ⬜ belum | ≥ 1.000 record, CSV+JSONL, kamus data |
 | P7 Penjadwalan | ⬜ belum | systemd timer 09:00 WIB — **dahulukan**, membuka jam soak |
 | P8 Diff & Alarm | ⬜ belum | 10 kode alarm, 11/11 drift oracle |
-| P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding, dikerjakan di latar |
+| P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding, bukan sesi kerja |
 | P10 Demo + LLM | ⬜ belum | halaman publik + insight Claude API ber-pagar |
 | P11 Laporan Klien | ⬜ belum | `daily.md` 0 jargon + `REPORT.xlsx` 5 sheet |
 | P12 Packaging | ⬜ belum | video 60 dtk, `make all`, README publik, audit |
 
 Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 
-## Fakta terverifikasi tentang mesin ini
+## Fakta mesin — DIVERIFIKASI P0 (2026-08-27), bukan warisan
 
-*(diwarisi dari project 1 `../crosscheck/`; verifikasi ulang di P0 sebelum dipercaya)*
+`uv` 0.12.1 · `python3` sistem 3.14.6 · **venv uv 3.13.13** · `node` 24.16.0 ·
+`docker` 29.6.2 · `jq` 1.8.2 · `sqlite3` 3.53.4 · `ffmpeg` n8.1.2 · `git` 2.55.0 ·
+`make` 4.4.1 — rincian penuh di `env-check.md`.
 
-- `uv`, `python3`, `node`, `docker`, `ffmpeg`, `jq` → ada; `wf-recorder` 0.6.0 di `~/.local/bin`
-- **tidak ada `just`** (→ `make`, D10) · **tidak ada `pytest`** (→ `unittest`)
-- `MAKEFLAGS` di shell user memuat `-j16` → `Makefile` wajib `.NOTPARALLEL:`
+- ✅ **`systemctl --user` TERSEDIA** (`systemd 261`) → **D9 tetap berlaku**, tidak jatuh ke cron.
+  TZ mesin `Asia/Jakarta` (cocok D3, 09:00 WIB). **Bukan blocker.**
+- ⚠️ Venv Python (3.13.13) ≠ `python3` sistem (3.14.6) → perintah produksi **wajib** `uv run`.
+- **tidak ada `just`** (→ `make`, D10; `Makefile` wajib `.NOTPARALLEL:` karena `MAKEFLAGS=-j16`)
+  · **tidak ada `pytest`** (→ `unittest` stdlib)
 - Docker tanpa sudo; `sudo` butuh password, tidak ada askpass di sesi agent
 - Playwright build Ubuntu di Arch: jangan `install-deps`/`--with-deps`; jangan hapus
   `chromium-1228` (dipakai MCP `chrome-devtools`)
-- Port terpakai user: 8000, 3000, 3100, 3170, 20080, 4000, 2379, 5540, 3306, 6379, 943, 9443, 1194
-  → `driftlab` memakai **8100**, salinan bersih **8101** (D8)
-
-## Infra device yang dipakai ulang (D21/D22) — diverifikasi 2026-08-27
-
-| Sudah ada | Ukuran | Status | Dipakai untuk |
-|---|---|---|---|
-| cache `uv` `~/.cache/uv` | 1,6 GB | — | dependency Python, tidak diunduh ulang |
-| cache Playwright | 2,0 GB | — | browser recon P2; jangan diprune |
-| image `plantuml/plantuml-server:jetty` | 1,13 GB | container mati | diagram P12 — nyalakan sendiri (D22-B) |
-| image `pandoc/core` | 305 MB | on-demand | PDF studi kasus P12 (`docker run --rm`) |
-| image `texlive/texlive` | 8,73 GB | ada | **sengaja tidak dipakai** — pandoc cukup |
+- Port terpakai user: 8000, 3000, 3100, 3170, 20080, 4000, 2379, 5540, 3306, 6379, 943, 9443,
+  1194, **20128 (9router)** → `driftlab` memakai **8100**, salinan bersih **8101** (D8)
 
 ### 🚨 `9router.service` — JANGAN PERNAH DISENTUH (D22-A)
 
-systemd **user** unit, port **20128**, `~/.config/systemd/user/9router.service`,
-9Router local AI proxy, `active` sejak 2026-08-26.
-Dilarang stop/restart/kill/disable/mask/edit, dan dilarang memakai port 20128.
-Ia proxy AI → mematikannya bisa memutus sesi agent sendiri.
-Ia **satu direktori** dengan `driftwatch.timer` (P7) → **selalu sebut nama unit eksplisit,
-jangan pernah wildcard** `systemctl --user`.
+systemd **user** unit, port **20128**, `~/.config/systemd/user/9router.service`, 9Router local
+AI proxy. Dicek P0 dengan `is-active` (baca-saja) → `active`. Dilarang
+stop/restart/kill/disable/mask/edit dan dilarang memakai port 20128 — ia proxy AI, matinya bisa
+memutus sesi agent sendiri. Ia **satu direktori** dengan `driftwatch.timer` (P7) → **selalu sebut
+nama unit eksplisit, jangan pernah wildcard** `systemctl --user`. `daemon-reload` aman.
 
-### Sisanya bebas diatur (D22-B)
+## Infra device (D21/D22-B) — dicek P0
 
-**Hidup:** `redis-db`, `tidb-pd/tikv/server`, `crosscheck-tut-*` (⚠️ target uji project 1 —
-tanya dulu sebelum disentuh).
-**Mati:** `plantuml-server`, `infra-dashboard`, `mysql-db`, `redisinsight`, ±20 container
-project lain. Boleh dinyalakan/dimatikan sesuai kebutuhan.
-⚠️ Mengedit `infra/docker-compose.yml` → tanya dulu (konfigurasi bersama).
-❌ `/home/rayin/infra/latex/` sudah dipakai pekerjaan lain (skripsi).
-
-**Tidak dipakai walau tersedia:** MySQL/Redis/TiDB (checkpoint wajib SQLite),
-MCP `excel` (laporan harus jalan unattended dari systemd), nginx `infra-dashboard`
-(fixture butuh server yang bisa diprogram).
-- ⬜ **belum diverifikasi:** `systemctl --user` tersedia atau tidak (cek di P0; D9 bergantung padanya)
+Cache `uv` 1,6 GB · cache Playwright 2,0 GB (jangan diprune) · image sudah ada:
+`plantuml/plantuml-server:jetty` (diagram P12), `pandoc/core` (PDF P12; **bukan** `texlive`).
+Hidup saat cek: `crosscheck-tut-*` (⚠️ tanya dulu), `tidb-*`, `redis-db`.
+Di P0: **0 `docker pull`, 0 start/stop service, 0 edit `infra/docker-compose.yml`.**
+Tidak dipakai walau ada: MySQL/Redis/TiDB (checkpoint wajib SQLite), MCP `excel`
+(laporan wajib `openpyxl`, jalan unattended dari systemd).
 
 ## Fakta terverifikasi tentang target
 
-*(kosong — diisi P1 & P2. Keempatnya masih ⬜: robots belum dicek, situs `seo` belum
-dipilih (🔓 D16), fixture belum dibangun.)*
+*(kosong — diisi P1 & P2: robots belum dicek, situs `seo` belum dipilih (🔓 D16),
+fixture belum dibangun.)*
 
 ## Metrik
 
 | Metrik | Target | Aktual |
 |---|---|---|
-| Record dataset (`books`) | ≥ 1.000 | — |
-| Duplikat | 0 | — |
-| Kelengkapan field `required` | ≥ 98% | — |
-| Record diverifikasi manual · bukti kill→resume | 3 · duplikat 0 | — |
-| `observed_min_gap_ms` · hari soak berturut | ≥ delay×900 · 3 | — |
+| P0: tool terverifikasi · error `uv sync` | — · 0 | **10 · 0** |
+| Record `books` · duplikat · field `required` | ≥1.000 · 0 · ≥98% | — |
+| Record manual · kill→resume · gap · hari soak | 3 · dup 0 · ≥delay×900 · 3 | — |
 | Drift oracle · kode alarm | 11/11 · 10 | — |
-| Laporan diff harian · halaman demo | tiap hari · hidup | — |
-| `make all` salinan bersih (tanpa Docker) · kebocoran rahasia | exit 0 · 0 | — |
+| `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
 | **Acceptance project** | 12/12 | **0/12** |
 
 ## Artefak yang sudah lahir
 
-**Perencanaan (2026-08-27):**
-- `AGENTS.md`, `PLAN.md`, `KICKSTART.md`, `STATE.md`, `README.md`, `.gitignore`
-- `docs/`: `DECISIONS.md` (D1–D22 terkunci, D16/D17/D18/D20 masih 🔓), `SCHEMA.md` (draf,
-  dikunci P3), `ETHICS.md`, `PIPELINE.md`, `TOOLS.md`, `CLIENT_REPORT.md`, `ACCEPTANCE.md`
-  (A1–A12), `DRIFT_ORACLES.md` (DO-01..DO-11)
-- `phases/phase-00..12` (13 file)
+**Perencanaan:** `AGENTS.md`, `PLAN.md`, `KICKSTART.md`, `README.md`, `.gitignore`,
+`docs/` (8 file), `phases/phase-00..12` (13 file).
 
-**Kode:** belum ada.
+**P0 (2026-08-27):** `pyproject.toml` (8 dependency), `uv.lock` (34 paket), `env-check.md`
+(185 baris), `.env.example` (`.env` gitignored, terbukti), struktur folder lengkap
+(`.gitkeep`), **tidak ada `docker-compose.yml`** (D8). **Kode produksi: belum ada.**
 
-**Repo (D19):** `git@rayin-personal:rayinailham/driftwatch.git` — **privat**, akun personal
-`rayinailham`. Commit pertama `66acc66` (perencanaan) sudah di-push ke `main`.
+**Repo (D19):** `git@rayin-personal:rayinailham/driftwatch.git` — privat, akun personal
+`rayinailham` (`ssh -T` menyapa benar), branch `main` → `origin/main`.
+Commit P0: `__COMMIT__`.
 
-## Catatan untuk user
+## Blocker & keputusan terbuka
 
-1. **Git sudah diizinkan & repo sudah dibuat (D19):** akun personal `rayinailham` lewat SSH
-   alias `rayin-personal`, repo `driftwatch` **privat**, commit perencanaan sudah di-push.
-   Commit + push wajib di akhir tiap fase. Repo jadi publik masih butuh izin terpisah (🔓 D20).
-2. **P7 sengaja didahulukan.** Begitu timer nyala, jam 3 hari untuk P9 berjalan sendiri
-   sementara P8, P10, P11 dikerjakan. Jangan menunggu menganggur.
-3. **Empat keputusan masih terbuka:** 🔓 D16 (situs `seo`, P1), 🔓 D17 (field final, P3),
-   🔓 D18 (cara publikasi demo, P10), 🔓 D20 (repo publik, P12 — butuh izin user).
-4. **Infra dipakai ulang, bukan dipasang ulang (D21).** Garisnya: boleh saat **membangun**
-   (PlantUML, pandoc, cache uv/Playwright, MCP), wajib **berdiri sendiri** saat berjalan
-   (SQLite, openpyxl, `http.server` stdlib) — karena pipeline ini dikirim ke klien.
-   Project ini **tidak punya `docker-compose.yml`**; `make all` harus jalan tanpa Docker.
-5. **Infra boleh diatur bebas (D22-B)** — kecuali `9router.service` yang tidak pernah
-   disentuh (D22-A), container `crosscheck-tut-*` dan edit `infra/docker-compose.yml`
-   yang harus ditanyakan dulu.
+- **Blocker: tidak ada.**
+- 🔓 **D16** situs `seo` → **P1** · 🔓 **D17** field final → **P3** · 🔓 **D18** publikasi demo
+  → **P10** · 🔓 **D20** repo publik → **P12, butuh izin eksplisit user**
+- ⚠️ `docs/DECISIONS.md` melompat D8 → D21: D9/D10/D19/D20/D22 dirujuk di banyak tempat dan
+  konsisten, tapi D9–D20 tidak punya entri sendiri. Rapikan di fase pemakainya (D9/D10 → P7).

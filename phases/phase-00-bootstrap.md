@@ -109,14 +109,106 @@ Jangan pakai akun work. Jangan menjadikan repo publik (butuh izin terpisah, 🔓
 - repo git terverifikasi terhubung ke remote personal
 
 ## Definition of Done
-- [ ] Perintah versi di langkah 1 dijalankan; hasilnya ditempel di `env-check.md`
-- [ ] `uv sync` sukses dan `import` 5 paket inti berhasil
-- [ ] Struktur folder sesuai langkah 3; **tidak ada `docker-compose.yml`** (D8)
-- [ ] Cek langkah 2b dijalankan; 0 `docker pull`, 0 service infra dinyalakan tanpa izin
-- [ ] `.env.example` ada, `.env` ada dan **tidak** ter-track (`git check-ignore` membuktikan)
-- [ ] `env-check.md` berisi hasil nyata + status `systemctl --user`
-- [ ] `ssh -T git@rayin-personal` menyapa `rayinailham`; `git remote -v` menunjuk alias itu
-- [ ] **Commit + push berhasil** (D19)
+
+*(Dicentang 2026-08-27 dengan keluaran perintah nyata; rincian penuh di `env-check.md`.)*
+
+- [x] **Perintah versi di langkah 1 dijalankan; hasilnya ditempel di `env-check.md`**
+  ```
+  uv 0.12.1 (329541a50 2026-07-31 x86_64-unknown-linux-gnu)
+  Python 3.14.6
+  v24.16.0
+  Docker version 29.6.2, build dfc4efb1e2
+  jq-1.8.2
+  3.53.4 2026-07-24 19:02:57 ... (64-bit)
+  ffmpeg version n8.1.2 Copyright (c) 2000-2026 the FFmpeg developers
+  systemd 261 (261.2-1-arch)
+  ```
+  Tambahan: `git version 2.55.0`, `GNU Make 4.4.1`. **10 tool terverifikasi.**
+  Tidak ada: `just` (→ `make`, D10), `pytest` (→ `unittest`).
+  `systemctl --user is-active 9router.service` → `active` (baca-saja, tidak disentuh, D22-A).
+
+- [x] **`uv sync` sukses dan `import` 5 paket inti berhasil**
+  ```
+  $ uv sync
+  Resolved 34 packages in 0.86ms
+  Checked 31 packages in 0.17ms          (exit 0)
+
+  $ uv run --no-sync python -c "import httpx, selectolax, tenacity, typer, pydantic; print('deps ok')"
+  deps ok
+  ```
+  Versi terpasang: httpx 0.28.1 · selectolax 0.4.11 · tenacity 9.1.4 · typer 0.27.1 ·
+  pydantic 2.13.4 · openpyxl 3.1.5 · python-dateutil 2.9.0.post0 · anthropic 1.1.0.
+  Venv Python 3.13.13 (≠ `python3` sistem 3.14.6 — dicatat sebagai anomali di `env-check.md`).
+  Playwright **tidak** dipasang, sesuai jebakan fase ini.
+
+- [x] **Struktur folder sesuai langkah 3; tidak ada `docker-compose.yml` (D8)**
+  ```
+  $ ls -d src scripts recon fixtures deploy web assets data reports docs phases
+  assets  data  deploy  docs  fixtures  phases  recon  reports  scripts  src  web
+
+  $ ls docker-compose.yml compose.yaml docker-compose.yaml
+  ls: cannot access 'docker-compose.yml': No such file or directory
+  ls: cannot access 'compose.yaml': No such file or directory
+  ls: cannot access 'docker-compose.yaml': No such file or directory
+  ```
+  Direktori kosong dipertahankan di repo lewat `.gitkeep`
+  (`src/ scripts/ recon/ fixtures/ deploy/ web/ assets/`); `data/` dan `reports/` gitignored.
+
+- [x] **Cek langkah 2b dijalankan; 0 `docker pull`, 0 service infra dinyalakan tanpa izin**
+  ```
+  $ du -sh ~/.cache/uv              → 1.6G
+  $ du -sh ~/.cache/ms-playwright   → 2.0G
+  ```
+  Image relevan sudah ada: `plantuml/plantuml-server:jetty`, `pandoc/core:latest`.
+  Container hidup saat cek: `crosscheck-tut-wordpress-1`, `crosscheck-tut-db-1` (tidak disentuh),
+  `tidb-server`, `tidb-tikv`, `tidb-pd`, `redis-db`.
+  Sesi ini: **0 `docker pull`, 0 `start`/`stop` service infra, 0 edit `docker-compose.yml`,
+  0 prune cache Playwright.**
+
+- [x] **`.env.example` ada, `.env` ada dan tidak ter-track**
+  ```
+  $ git check-ignore -v .env data reports progress.db
+  .gitignore:2:.env         .env
+  .gitignore:7:data/        data
+  .gitignore:8:reports/     reports
+  .gitignore:10:progress.db progress.db
+
+  $ git check-ignore -v auth/ fixtures/site/ logs/ x.db .venv/ __pycache__/ .playwright-mcp/
+  .gitignore:3:auth/             auth/
+  .gitignore:24:fixtures/site/   fixtures/site/
+  .gitignore:11:logs/            logs/
+  .gitignore:9:*.db              x.db
+  .gitignore:14:.venv/           .venv/
+  .gitignore:15:__pycache__/     __pycache__/
+  .gitignore:21:.playwright-mcp/ .playwright-mcp/
+
+  $ git check-ignore -v .env.example pyproject.toml uv.lock recon/.gitkeep
+  (exit 1 — tidak ada yang cocok; benar, keempatnya memang masuk repo)
+  ```
+  Kunci `.env` dan `.env.example` identik: `ANTHROPIC_API_KEY`, `DRIFTWATCH_UA`,
+  `LAB_PORT`, `TZ`.
+
+- [x] **`env-check.md` berisi hasil nyata + status `systemctl --user`**
+  `env-check.md` (185 baris) berisi 7 bagian: tool dasar, keputusan `systemctl --user`,
+  runtime Python, infra dipakai-ulang, struktur & rahasia, repo, ringkasan.
+  **Keputusan: `systemctl --user` TERSEDIA (`systemd 261`) → D9 tetap berlaku, tidak jatuh
+  ke cron.** Timezone mesin `Asia/Jakarta` (cocok D3, jadwal 09:00 WIB).
+
+- [x] **`ssh -T git@rayin-personal` menyapa `rayinailham`; `git remote -v` menunjuk alias itu**
+  ```
+  $ git remote -v
+  origin  git@rayin-personal:rayinailham/driftwatch.git (fetch)
+  origin  git@rayin-personal:rayinailham/driftwatch.git (push)
+
+  $ ssh -T git@rayin-personal
+  Hi rayinailham! You've successfully authenticated, but GitHub does not provide shell access.
+
+  $ git branch --show-current            → main
+  $ git rev-parse --abbrev-ref '@{upstream}'  → origin/main
+  ```
+  Akun work `rayin-kantor` tidak dipakai. Repo tetap privat (🔓 D20).
+
+- [x] **Commit + push berhasil (D19)** — lihat blok "Bukti gerbang commit" di bawah.
 
 ## Metrik selesai
 `N tool terverifikasi · 0 error uv sync · remote personal tersambung`

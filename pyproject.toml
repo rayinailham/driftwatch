@@ -1,0 +1,15 @@
+[project]
+name = "driftwatch"
+version = "0.1.0"
+description = "Pipeline data: recon, scraping, dataset, and daily drift monitoring"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic==1.1.0",
+    "httpx==0.28.1",
+    "openpyxl==3.1.5",
+    "pydantic==2.13.4",
+    "python-dateutil==2.9.0.post0",
+    "selectolax==0.4.11",
+    "tenacity==9.1.4",
+    "typer==0.27.1",
+]
