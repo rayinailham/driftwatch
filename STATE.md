@@ -11,7 +11,7 @@
 |---|---|---|
 | P0 Bootstrap | ✅ selesai | `env-check.md`, 10 tool, `uv sync` 0 error · `02469f0` |
 | P1 Target & Etika | ✅ selesai | 4 target; HTTPX 7/7; fixture 200; oracle 2/11 · `0f69f5f` |
-| P2 Recon | ✅ selesai | 4 recon sah 4/4; quotes → `httpx+json` (8→1 request) |
+| P2 Recon | ✅ selesai | 4 recon sah 4/4; quotes → `httpx+json` (8→1 request) · `2d1f585` |
 | P3 Kontrak Data | ⬜ belum | `contracts.py` + `validate.py`, D17 dikunci |
 | P4 Mesin Scraper | ⬜ belum | 6 komponen wajib, run cicip 2 halaman |
 | P5 Validasi & Resume | ⬜ belum | 3 record manual, kill→resume, unit test (`unittest`) |
