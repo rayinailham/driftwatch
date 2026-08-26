@@ -1,0 +1,201 @@
+{
+  "target": "seo",
+  "base_url": "https://www.python-httpx.org",
+  "recon_at": "2026-08-27",
+  "user_agent": "DriftWatch/1.0 (+mailto:rayinailham9@gmail.com)",
+  "robots": {
+    "allowed": true,
+    "crawl_delay": null,
+    "disallow": [],
+    "checked_url": "https://www.python-httpx.org/robots.txt",
+    "http_status": 404,
+    "notes": "Tidak ada robots.txt (HTTP 404) -> tidak ada Disallow. Default D3 1,0 dtk dipakai (D16)."
+  },
+  "sitemap": {
+    "url": "https://www.python-httpx.org/sitemap.xml",
+    "http_status": 200,
+    "available": true,
+    "url_count": 23,
+    "urls": [
+      "https://www.python-httpx.org/",
+      "https://www.python-httpx.org/api/",
+      "https://www.python-httpx.org/async/",
+      "https://www.python-httpx.org/code_of_conduct/",
+      "https://www.python-httpx.org/compatibility/",
+      "https://www.python-httpx.org/contributing/",
+      "https://www.python-httpx.org/environment_variables/",
+      "https://www.python-httpx.org/exceptions/",
+      "https://www.python-httpx.org/http2/",
+      "https://www.python-httpx.org/logging/",
+      "https://www.python-httpx.org/quickstart/",
+      "https://www.python-httpx.org/third_party_packages/",
+      "https://www.python-httpx.org/troubleshooting/",
+      "https://www.python-httpx.org/advanced/authentication/",
+      "https://www.python-httpx.org/advanced/clients/",
+      "https://www.python-httpx.org/advanced/event-hooks/",
+      "https://www.python-httpx.org/advanced/extensions/",
+      "https://www.python-httpx.org/advanced/proxies/",
+      "https://www.python-httpx.org/advanced/resource-limits/",
+      "https://www.python-httpx.org/advanced/ssl/",
+      "https://www.python-httpx.org/advanced/text-encodings/",
+      "https://www.python-httpx.org/advanced/timeouts/",
+      "https://www.python-httpx.org/advanced/transports/"
+    ],
+    "notes": "Sitemap valid berisi 23 URL. Crawl DIBATASI tepat pada daftar ini - tidak ada penelusuran link keluar."
+  },
+  "render_mode": "server_html",
+  "render_evidence": "3 halaman diambil (/, /api/, /async/): 0 penanda __NEXT_DATA__/__NUXT__/window.__INITIAL/ld+json. <meta name=\"generator\" content=\"mkdocs-1.6.1, mkdocs-material-9.5.47\"> -> situs statis hasil build.",
+  "api": {
+    "endpoint": null,
+    "works_without_browser": true,
+    "notes": "Tidak ada API. Situs statis di GitHub Pages (header server: GitHub.com)."
+  },
+  "selectors": {
+    "title": "head > title",
+    "h1": "article h1",
+    "meta_description": "meta[name=\"description\"]",
+    "canonical": "link[rel=\"canonical\"]",
+    "og_title": "meta[property=\"og:title\"]",
+    "main_content": "article",
+    "h2": "article h2",
+    "links": "article a[href]"
+  },
+  "selector_verification": {
+    "pages_checked": [
+      "https://www.python-httpx.org/",
+      "https://www.python-httpx.org/api/",
+      "https://www.python-httpx.org/async/"
+    ],
+    "result": "7/8 field terisi di ketiga halaman. Yang selalu kosong: og_title (0/3) -> opsional + missing_reason (D6). title, h1, meta_description, canonical, h2_count, word_count, link_count: 3/3."
+  },
+  "pagination": {
+    "type": "sitemap_list",
+    "param": null,
+    "start": null,
+    "stop_when": "daftar 23 URL sitemap habis",
+    "notes": "Bukan pagination. Daftar URL diambil sekali dari sitemap.xml lalu setiap URL diambil satu kali."
+  },
+  "auth": {
+    "required": false
+  },
+  "protection": {
+    "cloudflare": false,
+    "captcha": false,
+    "waf": false,
+    "rate_limit_observed": null,
+    "notes": "GitHub Pages; header respons tanpa penanda challenge. Tidak ada HTTP 429 selama recon."
+  },
+  "schema": [
+    {
+      "field": "url",
+      "type": "string",
+      "required": true,
+      "key_field": true
+    },
+    {
+      "field": "title",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "h1",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "meta_description",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "canonical",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "h2_count",
+      "type": "int",
+      "required": true
+    },
+    {
+      "field": "word_count",
+      "type": "int",
+      "required": true
+    },
+    {
+      "field": "link_count",
+      "type": "int",
+      "required": true
+    },
+    {
+      "field": "og_title",
+      "type": "string",
+      "required": false,
+      "notes": "0/3 halaman punya tag ini. Kosong wajib beralasan (D6)."
+    }
+  ],
+  "sample": [
+    {
+      "url": "https://www.python-httpx.org/",
+      "title": "HTTPX",
+      "h1": "HTTPX",
+      "meta_description": "A next-generation HTTP client for Python.",
+      "canonical": "https://www.python-httpx.org/",
+      "og_title": null,
+      "h2_count": 4,
+      "word_count": 447,
+      "link_count": 12,
+      "missing_fields": [
+        "og_title"
+      ],
+      "missing_reason": "tag <meta property=\"og:title\"> tidak ada di halaman (mkdocs-material tanpa plugin social)"
+    },
+    {
+      "url": "https://www.python-httpx.org/api/",
+      "title": "Developer Interface - HTTPX",
+      "h1": "Developer Interface",
+      "meta_description": "A next-generation HTTP client for Python.",
+      "canonical": "https://www.python-httpx.org/api/",
+      "og_title": null,
+      "h2_count": 9,
+      "word_count": 2537,
+      "link_count": 13,
+      "missing_fields": [
+        "og_title"
+      ],
+      "missing_reason": "tag <meta property=\"og:title\"> tidak ada di halaman (mkdocs-material tanpa plugin social)"
+    },
+    {
+      "url": "https://www.python-httpx.org/async/",
+      "title": "Async Support - HTTPX",
+      "h1": "Async Support",
+      "meta_description": "A next-generation HTTP client for Python.",
+      "canonical": "https://www.python-httpx.org/async/",
+      "og_title": null,
+      "h2_count": 4,
+      "word_count": 811,
+      "link_count": 11,
+      "missing_fields": [
+        "og_title"
+      ],
+      "missing_reason": "tag <meta property=\"og:title\"> tidak ada di halaman (mkdocs-material tanpa plugin social)"
+    }
+  ],
+  "recommended_engine": "httpx+selectolax",
+  "engine_rationale": "Browser TIDAK dipakai sama sekali. Situs statis mkdocs di GitHub Pages: semua metadata SEO yang dibutuhkan (title, h1, meta description, canonical, jumlah h2/kata/link) sudah ada di HTML mentah, terbukti di 3 halaman lewat curl. Tidak ada JS yang perlu dijalankan dan tidak ada endpoint JSON, jadi lapis 3 adalah lapis terendah yang cukup.",
+  "ethics_gate": {
+    "passed": true,
+    "checked_at": "2026-08-27",
+    "notes": "Tujuh kotak ETHICS 2 lolos di P1 dan dikunci sebagai D16. Hanya metadata teknis yang disimpan (ETHICS 1.5) - isi halaman tidak pernah ditulis ke dataset, hanya jumlah kata dan jumlah link. Crawl dibatasi 23 URL sitemap, 1,0 dtk/request."
+  },
+  "expected_volume": 23,
+  "request_budget": {
+    "sitemap": 1,
+    "pages": 23,
+    "total": 24,
+    "delay_sec": 1.0,
+    "max_concurrency": 3,
+    "notes": "24 request x 1,0 dtk >= 24 detik per run. Beban paling kecil di antara kandidat lolos (D16)."
+  },
+  "notes": "Temuan SEO nyata: meta_description identik di ketiga halaman ('A next-generation HTTP client for Python.') karena mkdocs memakai site_description global. Ini kandidat insight laporan klien di P11, bukan cacat scraper."
+}

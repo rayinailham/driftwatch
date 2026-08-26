@@ -76,10 +76,14 @@ salin script itu ke `scripts/` di P4 — jangan panggil lintas-project di kode p
 
 ```bash
 bash scripts/lab_up.sh                 # http.server stdlib di 127.0.0.1:8100 (BUKAN container)
-uv run --no-sync python scripts/drift_lab.py --verify    # wajib 11/11 skenario siap
+uv run --no-sync python scripts/drift_lab.py --verify    # sebelum P8: 2/11 · sejak P8: wajib 11/11
 ```
-Fixture **tidak** auto-start. Kalau verifikasi < 11/11, berhenti dan laporkan:
-oracle alarm tidak sah kalau fixture-nya bergeser.
+Fixture **tidak** auto-start. Ambang PASS bergantung fase: DO-04..DO-11 baru dibangun di P8,
+jadi sebelum P8 hasil sah adalah **2/11** (DO-01, DO-03) dan sejak P8 **wajib 11/11**.
+
+Yang **selalu** wajib di fase mana pun adalah `reproducible_sha256` tetap
+`b09a1d162a6608374fb26ad7c95cfa33f5e055217cb4c7b8be733bb8e22ce5d3` dengan `items=200`.
+Kalau hash itu bergeser, berhenti dan laporkan: oracle alarm tidak sah kalau fixture-nya bergeser.
 
 **Project ini tidak punya `docker-compose.yml`** (D8). Fixture dilayani `http.server`
 stdlib dengan handler kustom, karena DO-06 (503) dan DO-08 (jeda) butuh server yang bisa

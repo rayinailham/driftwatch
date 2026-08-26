@@ -1,0 +1,146 @@
+{
+  "target": "driftlab",
+  "base_url": "http://127.0.0.1:8100",
+  "recon_at": "2026-08-27",
+  "user_agent": "DriftWatch/1.0 (+mailto:rayinailham9@gmail.com)",
+  "robots": {
+    "allowed": true,
+    "crawl_delay": null,
+    "disallow": [],
+    "checked_url": "http://127.0.0.1:8100/robots.txt",
+    "http_status": 200,
+    "raw": "User-agent: *\nAllow: /",
+    "notes": "Fixture lokal milik sendiri. Robots eksplisit Allow: / . Delay bebas karena bukan host publik (D3)."
+  },
+  "sitemap": {
+    "url": "http://127.0.0.1:8100/sitemap.xml",
+    "http_status": 404,
+    "available": false,
+    "notes": "Tidak perlu: batas crawl diketahui pasti (page-1..page-10)."
+  },
+  "render_mode": "server_html",
+  "render_evidence": "Server: SimpleHTTP/0.6 Python/3.13.13 (http.server stdlib, D8). 0 JS di seluruh fixture. page-1.html berisi 20 <article class=\"item-card\"> lengkap dengan data-item-id, harga, kategori.",
+  "api": {
+    "endpoint": "http://127.0.0.1:8100/items.json",
+    "method": "GET",
+    "works_without_browser": true,
+    "used": false,
+    "notes": "Endpoint JSON ADA (array 200 item, 1 request) tapi SENGAJA TIDAK DIPAKAI - lihat engine_rationale."
+  },
+  "selectors": {
+    "list_item": "article.item-card",
+    "list_item_id": "article.item-card[data-item-id]",
+    "list_name": "h2.item-name",
+    "list_detail_href": "h2.item-name a[href]",
+    "list_price": "span.price",
+    "list_category": "span.category",
+    "detail_item": "article.item-detail",
+    "detail_name": "h1.item-name",
+    "detail_price": "span.price",
+    "detail_category": "span.category",
+    "detail_note": "p.note"
+  },
+  "selector_verification": {
+    "list_pages_checked": [
+      "page-1.html",
+      "page-5.html",
+      "page-10.html"
+    ],
+    "list_result": "20/20 kartu lengkap (data-item-id + h2.item-name + span.price + span.category) di ketiga halaman",
+    "detail_pages_checked": [
+      "items/DW-0001.html",
+      "items/DW-0100.html",
+      "items/DW-0200.html"
+    ],
+    "detail_result": "5/5 field terisi di ketiga halaman",
+    "fixture_integrity": "drift_lab.py --verify -> baseline items=200 reproducible_sha256=b09a1d162a6608374fb26ad7c95cfa33f5e055217cb4c7b8be733bb8e22ce5d3; 2/11 PASS (DO-01, DO-03 - sembilan skenario sisanya memang baru dibangun di P8)"
+  },
+  "pagination": {
+    "type": "page_param",
+    "url_template": "http://127.0.0.1:8100/page-{n}.html",
+    "param": "n",
+    "start": 1,
+    "per_page": 20,
+    "max_page_observed": 10,
+    "stop_when": "page-{n}.html -> HTTP 404 (10 halaman x 20 = 200 item)"
+  },
+  "auth": {
+    "required": false
+  },
+  "protection": {
+    "cloudflare": false,
+    "captcha": false,
+    "waf": false,
+    "rate_limit_observed": null,
+    "notes": "HTTP 503 (DO-06) dan jeda 4 detik (DO-08) BUKAN proteksi situs - keduanya kait skenario yang sengaja dipasang di lab_serve.py. Mesin diff tidak boleh tahu skenario mana yang aktif (D2)."
+  },
+  "schema": [
+    {
+      "field": "item_id",
+      "type": "string",
+      "required": true,
+      "key_field": true
+    },
+    {
+      "field": "name",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "price",
+      "type": "float",
+      "required": true
+    },
+    {
+      "field": "category",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "note",
+      "type": "string",
+      "required": false,
+      "notes": "Hanya ada di halaman detail, tidak di kartu daftar."
+    }
+  ],
+  "sample": [
+    {
+      "item_id": "DW-0001",
+      "name": "Fine Lamp 001",
+      "price": 114.04,
+      "category": "office",
+      "note": "Fixture note 6895"
+    },
+    {
+      "item_id": "DW-0100",
+      "name": "Harbor Planter 100",
+      "price": 148.67,
+      "category": "garden",
+      "note": "Fixture note 9541"
+    },
+    {
+      "item_id": "DW-0200",
+      "name": "Harbor Lamp 200",
+      "price": 155.81,
+      "category": "books",
+      "note": "Fixture note 1115"
+    }
+  ],
+  "recommended_engine": "httpx+selectolax",
+  "engine_rationale": "Browser TIDAK dipakai (fixture lokal tanpa JS). Yang penting: /items.json ADA dan sebenarnya lebih murah (1 request untuk 200 item), tapi SENGAJA DITOLAK. Alasannya mengikat: tiga oracle memutasi HTML SAJA - DO-04 mengganti class .item-card -> .c-9f2a1, DO-05 menghapus <h2 class=\"item-name\"> di 30% halaman, DO-07 menambah atribut data-promo. Kalau driftlab dipanen lewat items.json, ketiga mutasi itu tidak akan terlihat sama sekali dan recall maksimum jatuh ke 8/11, sementara P8 mewajibkan 11/11. Dua oracle lain juga menuntut banyak request: DO-06 (15% balasan HTTP 503) dan DO-08 (jeda 4 dtk di 10% halaman) tidak terukur pada satu request tunggal. Jadi di sini lapis termurah BUKAN lapis yang benar - fixture harus dipanen lewat jalur HTML yang sama dengan target produksi.",
+  "ethics_gate": {
+    "passed": true,
+    "checked_at": "2026-08-27",
+    "notes": "Fixture lokal milik sendiri di 127.0.0.1:8100. Satu-satunya target yang boleh dimutasi. Tidak ada skenario drift yang pernah dijalankan terhadap host publik."
+  },
+  "expected_volume": 200,
+  "request_budget": {
+    "list_pages": 10,
+    "detail_pages": 200,
+    "total": 210,
+    "delay_sec": 0.0,
+    "max_concurrency": "bebas (lokal)",
+    "notes": "Host lokal -> batas D3 tidak berlaku. DO-11 sengaja menabrak crawl_delay 1,0 dtk buatan untuk memicu RATE_LIMIT_VIOLATION."
+  },
+  "notes": "Ini oracle (D2), bukan dataset klien. Nilainya bukan datanya melainkan kemampuannya berubah sesuai perintah."
+}

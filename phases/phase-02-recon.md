@@ -75,14 +75,107 @@ disusun tanpa sampel nyata selalu meleset.
 - catatan di `STATE.md`: apakah ada target `js_required` (menentukan Playwright dipasang atau tidak)
 
 ## Definition of Done
-- [ ] 4 `recon/*.json` ada, lolos validasi bentuk `docs/SCHEMA.md` §1
-- [ ] Tiap file punya `sample` berisi **3 record nyata**, bukan placeholder
-- [ ] Tiap file punya `engine_rationale`, `ethics_gate.passed == true`, `expected_volume`
-- [ ] Selector tiap target diverifikasi di **3 halaman berbeda** (buktinya ditempel)
-- [ ] `recon/quotes.json` `recommended_engine` = `httpx+json`, dengan endpoint yang terbukti
+- [x] 4 `recon/*.json` ada, lolos validasi bentuk `docs/SCHEMA.md` §1
+- [x] Tiap file punya `sample` berisi **3 record nyata**, bukan placeholder
+- [x] Tiap file punya `engine_rationale`, `ethics_gate.passed == true`, `expected_volume`
+- [x] Selector tiap target diverifikasi di **3 halaman berbeda** (buktinya ditempel)
+- [x] `recon/quotes.json` `recommended_engine` = `httpx+json`, dengan endpoint yang terbukti
       jalan lewat `curl` tanpa browser (A10)
-- [ ] Keputusan Playwright: dipasang / tidak, beserta alasannya, tercatat di `STATE.md`
-- [ ] **Commit + push berhasil** (D19)
+- [x] Keputusan Playwright: dipasang / tidak, beserta alasannya, tercatat di `STATE.md`
+- [x] **Commit + push berhasil** (D19)
+
+### Bukti — validasi bentuk (`scripts/validate_recon.py`, exit 0)
+
+```
+$ uv run --no-sync python scripts/validate_recon.py
+target    render_mode    engine                volume  field  req  key_field     sample
+books     server_html    httpx+selectolax        1000     11   10  upc           3
+quotes    json_api       httpx+json               100      6    5  quote_id      3
+seo       server_html    httpx+selectolax          23      9    8  url           3
+driftlab  server_html    httpx+selectolax         200      5    4  item_id       3
+
+VALIDASI LOLOS: 4/4 recon sah terhadap docs/SCHEMA.md 1
+```
+
+### Bukti — selector diverifikasi di 3 halaman berbeda per target
+
+```
+--- books LIST: article.product_pod ---
+books_p1.html      pods= 20 lengkap= 20 next=ada
+books_p25.html     pods= 20 lengkap= 20 next=ada
+books_p50.html     pods= 20 lengkap= 20 next=TIDAK
+--- books DETAIL (13 field) ---
+a-light-in-the-attic_1000.html       fields_terisi=13/13
+soumission_998.html                  fields_terisi=13/13
+tipping-the-velvet_999.html          fields_terisi=13/13
+
+--- quotes API (engine terpilih) ---
+page=1 HTTP 200 {"has_next":true,"n":10}
+page=5 HTTP 200 {"has_next":true,"n":10}
+page=10 HTTP 200 {"has_next":false,"n":10}
+page=11 HTTP 200 {"has_next":false,"n":0}
+inti_lengkap 10/10 di page 1, 5, 10  →  30/30
+tags kosong 1 record (Marilyn Monroe, page=5)  →  tags OPSIONAL (D6)
+--- quotes HTML fallback: div.quote ---
+qh_p1.html   quotes= 10 lengkap= 10 next=ada
+qh_p5.html   quotes= 10 lengkap=  9 next=ada     ← record bertag kosong yang sama
+qh_p10.html  quotes= 10 lengkap= 10 next=TIDAK
+
+--- seo: python-httpx.org ---
+h_.html                terisi=7/8  h1='HTTPX'                wc=447  links=12 h2=4
+h_api_.html            terisi=7/8  h1='Developer Interface'  wc=2537 links=13 h2=9
+h_async_.html          terisi=7/8  h1='Async Support'        wc=811  links=11 h2=4
+og_title = null di 3/3 halaman  →  opsional + missing_reason (D6)
+
+--- driftlab LIST: article.item-card ---
+dlp1.html    cards= 20 lengkap_4_field=20
+dlp5.html    cards= 20 lengkap_4_field=20
+dlp10.html   cards= 20 lengkap_4_field=20
+--- driftlab DETAIL: article.item-detail ---
+dli_DW-0001.html       terisi=5/5
+dli_DW-0100.html       terisi=5/5
+dli_DW-0200.html       terisi=5/5
+```
+
+### Bukti — A10, turun lapis di `quotes`
+
+MCP `chrome-devtools` → `list_network_requests` pada `https://quotes.toscrape.com/scroll`:
+
+```
+Showing 1-8 of 8
+reqid=1 GET https://quotes.toscrape.com/scroll                 [200]
+reqid=2 GET https://quotes.toscrape.com/static/bootstrap.min.css [200]
+reqid=3 GET https://quotes.toscrape.com/static/main.css        [200]
+reqid=4 GET https://quotes.toscrape.com/static/jquery.js       [200]
+reqid=5 GET https://fonts.googleapis.com/css?family=Raleway    [200]
+reqid=6 GET https://fonts.gstatic.com/s/raleway/…woff2         [200]
+reqid=7 GET https://quotes.toscrape.com/api/quotes?page=1      [200]   ← XHR JSON
+reqid=8 GET https://quotes.toscrape.com/favicon.ico            [404]
+```
+
+Diuji ulang **tanpa browser**, browser lalu ditutup:
+
+```
+$ curl -sS -A 'DriftWatch/1.0 (+mailto:rayinailham9@gmail.com)' \
+    'https://quotes.toscrape.com/api/quotes?page=1' -H 'Accept: application/json'
+HTTP 200 bytes=2860
+keys: has_next, page, quotes, tag, top_ten_tags
+```
+
+**8 request browser → 1 request httpx** untuk data yang sama. Panen penuh 100 kutipan:
+10 request httpx, 0 proses browser, tanpa cookie / Authorization / CSRF / Referer.
+
+### Bukti — gerbang etika selama recon
+
+```
+books    robots HTTP 404 · sitemap HTTP 404 · jeda ≥1,0 dtk antar request
+quotes   robots HTTP 404 · sitemap HTTP 404 · jeda ≥1,0 dtk antar request
+seo      robots HTTP 404 · sitemap HTTP 200 · 23 URL · jeda ≥1,0 dtk antar request
+driftlab robots HTTP 200 "User-agent: *  Allow: /" · lokal, jeda bebas
+UA seragam: DriftWatch/1.0 (+mailto:rayinailham9@gmail.com)
+0 HTTP 429 · 0 login · 0 proteksi ditembus · 0 mutasi ke host publik
+fixture: baseline items=200 reproducible_sha256=b09a1d16…e5d3 · 2/11 PASS (sesuai fase; 11/11 milik P8)
+```
 
 ## Metrik selesai
 `4 recon selesai · N target butuh browser · endpoint JSON ditemukan di quotes (X request → Y request)`

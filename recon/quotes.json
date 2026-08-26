@@ -1,0 +1,174 @@
+{
+  "target": "quotes",
+  "base_url": "https://quotes.toscrape.com",
+  "recon_at": "2026-08-27",
+  "user_agent": "DriftWatch/1.0 (+mailto:rayinailham9@gmail.com)",
+  "robots": {
+    "allowed": true,
+    "crawl_delay": null,
+    "disallow": [],
+    "checked_url": "https://quotes.toscrape.com/robots.txt",
+    "http_status": 404,
+    "notes": "Tidak ada berkas robots.txt (HTTP 404). Default D3 1,0 dtk tetap berlaku."
+  },
+  "sitemap": {
+    "url": "https://quotes.toscrape.com/sitemap.xml",
+    "http_status": 404,
+    "available": false,
+    "notes": "Tidak ada sitemap; batas crawl diambil dari has_next endpoint API."
+  },
+  "render_mode": "json_api",
+  "render_evidence": "Halaman /page/1/ server-rendered (0 penanda framework). Varian /scroll memuat data lewat XHR. MCP chrome-devtools list_network_requests pada /scroll mencatat 8 request, 1 di antaranya XHR: GET https://quotes.toscrape.com/api/quotes?page=1 [200].",
+  "api": {
+    "endpoint": "https://quotes.toscrape.com/api/quotes",
+    "method": "GET",
+    "params": {
+      "page": "int (mulai 1)",
+      "tag": "string (opsional, null kalau tidak difilter)"
+    },
+    "headers_required": {
+      "Accept": "application/json"
+    },
+    "auth_headers": null,
+    "works_without_browser": true,
+    "verified_by": "curl -sS -A '<UA>' 'https://quotes.toscrape.com/api/quotes?page=1' -H 'Accept: application/json' -> HTTP 200, 2.860 byte",
+    "response_keys": [
+      "has_next",
+      "page",
+      "quotes",
+      "tag",
+      "top_ten_tags"
+    ],
+    "record_path": "quotes[]",
+    "browser_requests_for_same_data": 8,
+    "httpx_requests_for_same_data": 1
+  },
+  "selectors": {
+    "_catatan": "Tidak dipakai oleh engine terpilih (json_api). Disimpan sebagai jalur cadangan kalau endpoint API dihapus.",
+    "list_item": "div.quote",
+    "text": "span.text",
+    "author": "small.author",
+    "author_link": "span a[href^='/author/']",
+    "tags": "div.tags a.tag",
+    "pager_next": "li.next a"
+  },
+  "selector_verification": {
+    "api_pages_checked": [
+      "?page=1",
+      "?page=5",
+      "?page=10"
+    ],
+    "api_result": "30/30 record punya text + author.name + author.slug + author.goodreads_link; 1 record di page=5 (Marilyn Monroe) punya tags kosong -> tags OPSIONAL (D6)",
+    "html_pages_checked": [
+      "/page/1/",
+      "/page/5/",
+      "/page/10/"
+    ],
+    "html_result": "div.quote: 10/10, 9/10, 10/10 lengkap - yang kurang persis record bertag kosong yang sama"
+  },
+  "pagination": {
+    "type": "page_param",
+    "param": "page",
+    "start": 1,
+    "per_page": 10,
+    "max_page_observed": 10,
+    "stop_when": "response.has_next == false (terbukti false di page=10; page=11 -> HTTP 200 dengan quotes[] kosong)"
+  },
+  "auth": {
+    "required": false,
+    "notes": "/login ada tapi tidak dibutuhkan dan tidak disentuh (ETHICS 1.7)."
+  },
+  "protection": {
+    "cloudflare": false,
+    "captcha": false,
+    "waf": false,
+    "rate_limit_observed": null
+  },
+  "schema": [
+    {
+      "field": "quote_id",
+      "type": "string",
+      "required": true,
+      "key_field": true,
+      "notes": "Situs tidak menyediakan id. Diturunkan: sha256(text)[:16] - dikunci di P3 (D17)."
+    },
+    {
+      "field": "text",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "author_name",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "author_slug",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "author_goodreads_link",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "tags",
+      "type": "list[string]",
+      "required": false,
+      "notes": "Terbukti bisa kosong (1/100). Wajib punya missing_reason kalau kosong (D6)."
+    }
+  ],
+  "sample": [
+    {
+      "text": "“The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.”",
+      "author_name": "Albert Einstein",
+      "author_slug": "Albert-Einstein",
+      "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+      "tags": [
+        "change",
+        "deep-thoughts",
+        "thinking",
+        "world"
+      ]
+    },
+    {
+      "text": "“It is our choices, Harry, that show what we truly are, far more than our abilities.”",
+      "author_name": "J.K. Rowling",
+      "author_slug": "J-K-Rowling",
+      "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+      "tags": [
+        "abilities",
+        "choices"
+      ]
+    },
+    {
+      "text": "“There are only two ways to live your life. One is as though nothing is a miracle. The other is as though everything is a miracle.”",
+      "author_name": "Albert Einstein",
+      "author_slug": "Albert-Einstein",
+      "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+      "tags": [
+        "inspirational",
+        "life",
+        "live",
+        "miracle",
+        "miracles"
+      ]
+    }
+  ],
+  "recommended_engine": "httpx+json",
+  "engine_rationale": "Browser DIPAKAI SEKALI untuk recon, lalu DIBUANG. Varian /scroll membutuhkan JS, jadi MCP chrome-devtools dipakai untuk membaca network dan menemukan XHR GET /api/quotes?page=N. Endpoint itu langsung diuji ulang di luar browser dengan curl: HTTP 200, JSON penuh, tanpa cookie, tanpa header Authorization/CSRF, tanpa Referer. Karena berhasil, browser tidak dipakai lagi. Untuk data yang sama (10 kutipan halaman 1): browser 8 request (HTML+CSS+jQuery+2 font+XHR+favicon) melawan httpx 1 request -> hemat 8x. Panen penuh 100 kutipan: 10 request httpx, 0 proses browser, 0 dependensi Playwright.",
+  "ethics_gate": {
+    "passed": true,
+    "checked_at": "2026-08-27",
+    "notes": "Sandbox latihan scraping resmi (toscrape.com). Endpoint /api/quotes adalah endpoint publik situs itu sendiri, dipanggil apa adanya tanpa menembus proteksi apa pun. Tidak login."
+  },
+  "expected_volume": 100,
+  "request_budget": {
+    "api_pages": 10,
+    "total": 10,
+    "delay_sec": 1.0,
+    "max_concurrency": 3
+  },
+  "notes": "Ini bukti 'turun lapis' (A10): lapis 1 (MCP browser) dipakai hanya untuk menemukan jalan, hasil akhirnya lapis 4 (httpx+json). Isi kutipan disimpan karena ia identitas record; keputusan final soal menyimpan teks vs hash dikunci di P3 bersama D17."
+}

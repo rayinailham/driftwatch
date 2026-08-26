@@ -1,0 +1,192 @@
+{
+  "target": "books",
+  "base_url": "https://books.toscrape.com",
+  "recon_at": "2026-08-27",
+  "user_agent": "DriftWatch/1.0 (+mailto:rayinailham9@gmail.com)",
+  "robots": {
+    "allowed": true,
+    "crawl_delay": null,
+    "disallow": [],
+    "checked_url": "https://books.toscrape.com/robots.txt",
+    "http_status": 404,
+    "notes": "Berkas robots.txt tidak ada (HTTP 404). Tidak ada aturan Disallow, jadi tidak ada path yang dilarang. HTTP 404 bukan izin mempercepat: default D3 1,0 dtk tetap dipakai."
+  },
+  "sitemap": {
+    "url": "https://books.toscrape.com/sitemap.xml",
+    "http_status": 404,
+    "available": false,
+    "notes": "Tidak ada sitemap. Crawl dibatasi manual lewat pager catalogue/page-N.html (N=1..50, terbukti 51 -> HTTP 404)."
+  },
+  "render_mode": "server_html",
+  "render_evidence": "grep __NEXT_DATA__|__NUXT__|ld+json|window.__INITIAL pada catalogue/page-1.html -> 0 kecocokan; 20 <article class=\"product_pod\"> berisi judul, harga, dan rating langsung di HTML (50.469 byte).",
+  "api": {
+    "endpoint": null,
+    "works_without_browser": true,
+    "notes": "Tidak ada endpoint JSON. Seluruh data sudah ada di HTML server-rendered."
+  },
+  "selectors": {
+    "list_item": "article.product_pod",
+    "list_title": "h3 a[title]",
+    "list_detail_href": "h3 a[href]",
+    "list_price": "p.price_color",
+    "list_rating": "p.star-rating",
+    "pager_next": "li.next a",
+    "pager_position": "li.current",
+    "detail_title": "div.product_main h1",
+    "detail_price": "div.product_main p.price_color",
+    "detail_availability": "div.product_main p.availability",
+    "detail_rating": "div.product_main p.star-rating",
+    "detail_category": "ul.breadcrumb li:nth-of-type(3) a",
+    "detail_description": "#product_description ~ p",
+    "detail_table_row": "table.table-striped tr"
+  },
+  "selector_verification": {
+    "list_pages_checked": [
+      "catalogue/page-1.html",
+      "catalogue/page-25.html",
+      "catalogue/page-50.html"
+    ],
+    "list_result": "20/20 product_pod lengkap (judul+href+harga+rating) di ketiga halaman",
+    "detail_pages_checked": [
+      "a-light-in-the-attic_1000",
+      "tipping-the-velvet_999",
+      "soumission_998"
+    ],
+    "detail_result": "13/13 field terisi di ketiga halaman"
+  },
+  "pagination": {
+    "type": "page_param",
+    "url_template": "https://books.toscrape.com/catalogue/page-{n}.html",
+    "param": "n",
+    "start": 1,
+    "max_page_observed": 50,
+    "per_page": 20,
+    "stop_when": "selector li.next a hilang (terbukti hilang di page-50); cadangan: page-51 -> HTTP 404"
+  },
+  "auth": {
+    "required": false
+  },
+  "protection": {
+    "cloudflare": false,
+    "captcha": false,
+    "waf": false,
+    "rate_limit_observed": null,
+    "notes": "Header respons hanya nginx + HSTS; tidak ada header CDN challenge. Tidak ada HTTP 429 selama recon."
+  },
+  "schema": [
+    {
+      "field": "upc",
+      "type": "string",
+      "required": true,
+      "key_field": true
+    },
+    {
+      "field": "title",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "price_incl_tax_gbp",
+      "type": "float",
+      "required": true
+    },
+    {
+      "field": "price_excl_tax_gbp",
+      "type": "float",
+      "required": true
+    },
+    {
+      "field": "tax_gbp",
+      "type": "float",
+      "required": true
+    },
+    {
+      "field": "availability_count",
+      "type": "int",
+      "required": true
+    },
+    {
+      "field": "in_stock",
+      "type": "bool",
+      "required": true
+    },
+    {
+      "field": "rating",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "category",
+      "type": "string",
+      "required": true
+    },
+    {
+      "field": "num_reviews",
+      "type": "int",
+      "required": true
+    },
+    {
+      "field": "description_words",
+      "type": "int",
+      "required": false
+    }
+  ],
+  "sample": [
+    {
+      "upc": "a897fe39b1053632",
+      "title": "A Light in the Attic",
+      "price_incl_tax_gbp": 51.77,
+      "price_excl_tax_gbp": 51.77,
+      "tax_gbp": 0.0,
+      "availability_count": 22,
+      "in_stock": true,
+      "rating": "Three",
+      "category": "Poetry",
+      "num_reviews": 0,
+      "description_words": 177
+    },
+    {
+      "upc": "6957f44c3847a760",
+      "title": "Soumission",
+      "price_incl_tax_gbp": 50.1,
+      "price_excl_tax_gbp": 50.1,
+      "tax_gbp": 0.0,
+      "availability_count": 20,
+      "in_stock": true,
+      "rating": "One",
+      "category": "Fiction",
+      "num_reviews": 0,
+      "description_words": 173
+    },
+    {
+      "upc": "90fa61229261140a",
+      "title": "Tipping the Velvet",
+      "price_incl_tax_gbp": 53.74,
+      "price_excl_tax_gbp": 53.74,
+      "tax_gbp": 0.0,
+      "availability_count": 20,
+      "in_stock": true,
+      "rating": "One",
+      "category": "Historical Fiction",
+      "num_reviews": 0,
+      "description_words": 171
+    }
+  ],
+  "recommended_engine": "httpx+selectolax",
+  "engine_rationale": "Browser TIDAK dipakai. curl satu halaman sudah mengembalikan seluruh data: 0 penanda framework JS, 20 kartu produk terbaca langsung dari HTML, dan detail lengkap ada di table.table-striped halaman produk. Tidak ada XHR JSON yang bisa memangkas request lebih jauh, jadi lapis 3 (httpx+selectolax) adalah lapis terendah yang cukup. Membuka browser di sini hanya menambah ~7 request aset per halaman tanpa satu pun field tambahan.",
+  "ethics_gate": {
+    "passed": true,
+    "checked_at": "2026-08-27",
+    "notes": "Sandbox latihan scraping resmi (toscrape.com). Tidak ada robots yang melarang, tidak ada login/captcha. Deskripsi produk TIDAK disimpan sebagai teks (ETHICS 1.5: metadata, bukan isi karya) - hanya description_words."
+  },
+  "expected_volume": 1000,
+  "request_budget": {
+    "list_pages": 50,
+    "detail_pages": 1000,
+    "total": 1050,
+    "delay_sec": 1.0,
+    "max_concurrency": 3,
+    "notes": "1050 request x 1,0 dtk >= ~18 menit per run penuh (D3)."
+  },
+  "notes": "Konten statis sejak last-modified 2023-02-08, jadi diff harian di sini diharapkan 0/0/0. Itulah sebabnya D2 mewajibkan fixture driftlab sebagai oracle alarm."
+}
