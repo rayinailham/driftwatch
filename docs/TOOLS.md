@@ -14,11 +14,12 @@ Dua aturan pemilihan tool, berurutan:
 |---|---|---|---|
 | cache `uv` `~/.cache/uv` | 1,6 GB | semua dependency Python | venv per project, **cache paket global** — `httpx`/`openpyxl` dst tidak pernah diunduh dua kali |
 | cache Playwright `~/.cache/ms-playwright` | 2,0 GB | chromium/firefox/webkit | jangan hapus revisi lama (MCP `chrome-devtools` mem-pin `chromium-1228`) |
-| service infra `plantuml` `:20080` | image 1,13 GB | diagram arsitektur (P12) | **sedang mati** → minta izin user untuk menyalakan (D22) |
+| service infra `plantuml` `:20080` | image 1,13 GB | diagram arsitektur (P12) | sedang mati → **nyalakan sendiri** (D22-B) |
 | image `pandoc/core` | 305 MB | studi kasus PDF (P12) | `docker run --rm`; **jangan** `texlive/texlive` (8,73 GB) — pandoc cukup untuk 1 halaman A4 |
 | MCP `playwright` + `chrome-devtools` | — | recon (P2 saja) | sudah terdaftar device-wide |
 | MCP `serena` | — | telusur simbol saat kode sudah besar | opsional |
 | `jq`, `sqlite3`, `ffmpeg`, `wf-recorder` | — | agregasi, checkpoint, video | sudah ada di PATH |
+| `9router.service` `:20128` | — | **jangan disentuh sama sekali** (D22-A) | proxy AI lokal; mematikannya bisa memutus sesi agent |
 
 ## Yang sengaja TIDAK dipakai walaupun tersedia di device
 
@@ -251,14 +252,15 @@ sudah ada (1,13 GB). Saat plan ini ditulis ia **sedang mati**.
 
 ```bash
 docker ps --format '{{.Names}}' | grep -q plantuml-server && echo hidup || echo mati
-# kalau mati → MINTA IZIN USER dulu (D22), baru:
-#   docker compose --project-directory /home/rayin/infra up -d plantuml
+# kalau mati, nyalakan sendiri (D22-B):
+docker compose --project-directory /home/rayin/infra up -d plantuml
 curl -sS -X POST --data-binary @assets/architecture.puml \
   http://localhost:20080/svg -o assets/architecture.svg
 ```
 
-Jangan pasang PlantUML sendiri, jangan `docker run` image kedua. Jangan pernah `stop`
-atau `restart` service infra yang sedang hidup.
+Jangan pasang PlantUML sendiri, jangan `docker run` image kedua.
+Boleh `stop` lagi setelah selesai kalau mau (D22-B) — kecuali `9router` yang tidak pernah
+disentuh, dan container `crosscheck-tut-*` yang harus ditanyakan dulu.
 
 ## 13b. `pandoc/core` — studi kasus PDF satu halaman
 

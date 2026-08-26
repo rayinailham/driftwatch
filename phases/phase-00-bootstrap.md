@@ -17,6 +17,9 @@ uv --version && python3 --version && node --version && docker --version \
   && jq --version && sqlite3 --version && ffmpeg -version | head -1 \
   && systemctl --user --version | head -1
 ```
+```bash
+systemctl --user is-active 9router.service    # WAJIB `active` — jangan pernah diubah (D22-A)
+```
 Catat yang tidak ada. `systemctl --user` wajib ada — kalau tidak, D9 gugur dan
 penjadwalan jatuh ke cron; catat itu sebagai blocker di `STATE.md`.
 
@@ -48,7 +51,8 @@ docker images --format '{{.Repository}}' | sort -u | head -40
 docker ps --format '{{.Names}}'                          # apa yang SEDANG hidup
 ```
 Image yang sudah ada dan relevan: `plantuml/plantuml-server:jetty`, `pandoc/core`.
-Jangan `docker pull` apa pun di fase ini. Jangan menyalakan service infra tanpa izin (D22).
+Jangan `docker pull` apa pun di fase ini. Service infra yang mati boleh dinyalakan
+sesuai kebutuhan (D22-B) — **kecuali** `9router.service` yang tidak pernah disentuh (D22-A).
 
 ### 3. Struktur folder
 ```

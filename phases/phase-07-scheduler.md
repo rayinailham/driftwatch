@@ -73,12 +73,20 @@ hari adalah pola yang mudah dikenali sebagai bot dan mudah diblokir.
 `Persistent=true` adalah alasan klaim "tahan mati listrik" boleh diucapkan.
 
 ### 3. Pasang & uji
+
+> 🚨 **`~/.config/systemd/user/` juga rumah `9router.service`** (9Router local AI proxy,
+> port 20128). Sepanjang fase ini: sebut nama unit secara **eksplisit**, jangan pernah
+> wildcard. `systemctl --user stop '*'`, `reset-failed` massal, atau membersihkan isi
+> direktori itu akan ikut membunuhnya — dan karena ia proxy AI, sesi agent bisa mati
+> bersamanya dengan gejala yang tampak acak. `daemon-reload` aman.
+
 ```bash
 mkdir -p ~/.config/systemd/user
 cp deploy/driftwatch.{service,timer} ~/.config/systemd/user/
 systemctl --user daemon-reload
 systemctl --user enable --now driftwatch.timer
 systemctl --user list-timers driftwatch.timer        # ada NEXT
+systemctl --user is-active 9router.service           # WAJIB tetap `active` (D22-A)
 systemctl --user start driftwatch.service            # picu manual sekali
 systemctl --user status driftwatch.service
 journalctl --user -u driftwatch.service --no-pager | tail -30
@@ -112,6 +120,8 @@ Catat di `STATE.md`: **`soak_dibuka: <tanggal>`**. P9 baru boleh ditutup kalau s
 - [ ] Satu target sengaja digagalkan → target lain tetap jalan, `daily_run.sh` exit ≠ 0
 - [ ] `scripts/prune.sh` ada dan dry-run-nya benar
 - [ ] `soak_dibuka: <tanggal>` tertulis di `STATE.md`
+- [ ] `systemctl --user is-active 9router.service` → **`active`** (dicek sesudah semua
+      pemasangan; buktinya ditempel) — D22-A
 - [ ] **Commit + push berhasil** (D19)
 
 ## Metrik selesai
@@ -126,6 +136,8 @@ Catat di `STATE.md`: **`soak_dibuka: <tanggal>`**. P9 baru boleh ditutup kalau s
   alarm tanpa arti.
 - Jangan menyetel `OnCalendar` ke tengah malam. Kalau ada masalah, kamu ingin bangun dan
   melihat alarmnya, bukan menemukannya tiga hari kemudian.
+- **Jangan pernah pakai wildcard `systemctl --user`.** `9router.service` ada di direktori
+  yang sama dan mematikannya bisa memutus sesi agent sendiri (D22-A).
 - **Jangan sentuh timer lagi setelah fase ini.** Menyentuhnya membatalkan klaim
   "3 hari tanpa disentuh" dan hitungan P9 mulai dari nol.
 

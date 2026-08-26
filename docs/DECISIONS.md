@@ -137,88 +137,55 @@ alat pembuatnya bebas.
 - **Browser Playwright** dari `~/.cache/ms-playwright` (2,0 GB) yang sudah ada.
   Jangan sekali-kali menghapus revisi lama.
 
-## D22 — Aturan menyentuh `/home/rayin/infra/`
+## D22 — Mengatur infra device: boleh, kecuali `9router`
 
-Menggantikan larangan mutlak yang ditulis sebelumnya, karena D21 memang menyuruh memakainya.
+Diperbarui user 2026-08-27: *"kalau ada infra device yang mati atau hidup gak kepakai kamu
+boleh kok atur-atur sesuai kebutuhan, dan yang penting 9router jangan pernah dimatikan."*
 
-| Tindakan | Boleh? |
+### 🚨 D22-A — `9router.service` TIDAK PERNAH DISENTUH
+
+```
+unit    : 9router.service          (systemd USER unit, bukan container)
+berkas  : ~/.config/systemd/user/9router.service
+port    : 20128
+kerja di: /home/rayin/infra/apps/9router   ·   data: /home/rayin/infra/data/9router
+peran   : 9Router — local AI proxy
+```
+
+**Dilarang mutlak:** `stop`, `restart`, `kill`, `disable`, `mask`, mengedit atau menghapus
+berkas unit-nya, menyentuh `apps/9router/` atau `data/9router/`, dan memakai port `20128`.
+
+Dua alasan kenapa ini lebih berbahaya dari kelihatannya:
+
+1. **Ia proxy AI lokal.** Mematikannya bisa memutus koneksi sesi agent itu sendiri.
+   Gejalanya akan tampak seperti sesi mati acak, bukan seperti "salah matikan service" —
+   jadi penyebabnya sulit ditemukan justru oleh yang menyebabkannya.
+2. **Ia tinggal satu direktori dengan unit DriftWatch.** P7 memasang
+   `driftwatch.timer` ke `~/.config/systemd/user/` — direktori yang sama.
+   Perintah sapu-bersih (`systemctl --user stop '*'`, `reset-failed` massal, membersihkan
+   isi direktori itu) akan ikut membunuhnya. **Selalu sebut nama unit secara eksplisit:**
+   `systemctl --user restart driftwatch.timer`, tidak pernah wildcard.
+
+`systemctl --user daemon-reload` aman — ia hanya memuat ulang definisi, tidak menghentikan
+apa pun.
+
+### D22-B — Sisanya bebas diatur
+
+| Tindakan | |
 |---|---|
-| Memakai service yang **sudah hidup** (kirim request ke portnya) | ✅ tanpa tanya |
-| Membaca `docker-compose.yml` di sana | ✅ |
-| **Menyalakan** service yang sudah terdefinisi tapi mati | ⚠️ **minta izin user dulu** |
-| `docker run --rm` image yang sudah ada, tanpa compose | ✅ |
-| Mengedit `docker-compose.yml` | ❌ tidak pernah |
-| Menulis berkas ke `infra/latex/`, `infra/dashboard/`, `infra/data/` | ❌ — `infra/latex/` sudah dipakai pekerjaan lain (skripsi); jangan menimpa |
-| `stop` / `restart` / `down` service yang sedang hidup | ❌ tidak pernah — mesin ini dipakai user untuk kerja paralel |
+| `up` / `start` service infra yang mati (`plantuml`, `mysql`, `redisinsight`, dst) | ✅ tanpa tanya |
+| `stop` / `restart` service infra yang hidup tapi tidak dipakai | ✅ tanpa tanya |
+| `docker run --rm` image yang sudah ada | ✅ |
+| Membaca `/home/rayin/infra/docker-compose.yml` | ✅ |
+| Menyentuh container `crosscheck-tut-*` (project 1, masih hidup) | ⚠️ tanya dulu — itu target uji project lain |
+| Mengedit `docker-compose.yml` | ⚠️ tanya dulu — konfigurasi bersama, dipakai pekerjaan lain. DriftWatch tidak membutuhkannya (D8). |
+| Menulis ke `infra/latex/` | ❌ sudah dipakai pekerjaan lain (skripsi) |
+| Apa pun terhadap `9router` | ❌ **D22-A** |
 
-Keadaan saat plan ditulis (2026-08-27): **hidup** = `redis-db`, `tidb-*`,
-`crosscheck-tut-*`. **Mati** = `plantuml-server`, `infra-dashboard`, `mysql-db`.
-Jadi PlantUML **perlu izin nyala** sebelum dipakai di P12.
-
-## D9 — Penjadwalan: systemd user timer, bukan cron
-
-Alasan: `systemctl --user` memberi log terstruktur (`journalctl --user -u driftwatch`),
-`Persistent=true` (run yang terlewat karena laptop mati tetap dikejar — ini penting untuk
-klaim "tahan mati listrik" di pitch), dan tidak butuh sudo. Unit dipasang di
-`~/.config/systemd/user/`. Cron dipakai hanya kalau systemd user tidak tersedia; catat
-kalau terjadi.
-
-## D10 — Runner satu perintah memakai `make`
-
-Mesin ini **tidak punya `just`** (fakta terverifikasi dari project 1). `Makefile` wajib
-memuat `.NOTPARALLEL:` karena `MAKEFLAGS` di shell user memuat `-j16` dan urutan pipeline
-harus tetap benar.
-
-## D11 — Penyimpanan snapshot & retensi
-
-- Satu run = satu folder `data/<target>/<YYYY-MM-DD>/`. **Tidak pernah menimpa.**
-- Retensi: 30 hari untuk `records.jsonl`, selamanya untuk `run.json` dan `diff.json`
-  (kecil, dan merupakan bukti historis pipeline). Pembersihan lewat `make prune`, manual.
-- `data/` dan `reports/` gitignored. Contoh laporan yang masuk repo harus disanitasi
-  dan diletakkan di `assets/`.
-
-## D12 — Format dataset yang dikirim ke klien
-
-**CSV + JSONL, dua-duanya.** JSONL untuk pipeline dan field bersarang; CSV untuk klien yang
-membuka pakai Excel/Sheets. CSV memakai `utf-8-sig` (BOM) supaya Excel Windows tidak
-merusak karakter non-ASCII. Field bersarang (mis. `tags`) di CSV digabung dengan `; `.
-
-## D13 — Halaman demo tidak menampilkan konten pihak ketiga
-
-Halaman demo (P10) hanya menampilkan **metadata + tautan ke sumber**. Untuk target `seo`:
-judul, H1, meta description, tanggal, jumlah kata, jumlah link — bukan isi artikel.
-Untuk `books`/`quotes` (sandbox latihan) isi penuh boleh, karena memang dibuat untuk itu.
-
-## D14 — LLM hanya untuk ringkasan, dengan pagar biaya
-
-- Ringkasan/insight di halaman demo memakai **Claude API**, bukan OpenAI (job 25 menyebut
-  OpenAI; untuk portofolio ini pemilihan provider bebas dan Claude sudah tersedia).
-  Model & harga **wajib** dicek lewat skill `claude-api` di P10 — jangan mengarang dari ingatan.
-- Pagar: maksimum **1 panggilan per target per hari**, input dipotong ke ringkasan agregat
-  (bukan seluruh dataset), dan ada `--no-llm` untuk menjalankan pipeline tanpa biaya sama sekali.
-- Kunci API di `.env`, tidak pernah masuk repo, tidak pernah masuk halaman demo.
-
-## D15 — Yang menandai fase "selesai"
-
-DoD dicentang **hanya** dengan menempelkan output perintah nyata di file fase itu.
-Kalimat seperti "sudah dites dan berjalan baik" tanpa output = fase belum selesai.
-
-## D19 — Git: akun personal, commit + push wajib tiap fase
-
-Ditetapkan user 2026-08-27. **Ini satu-satunya izin Git yang berlaku di project ini.**
-
-- Akun: **personal** — SSH alias `rayin-personal`, GitHub user `rayinailham`.
-  Dilarang memakai akun work (`rayin-kantor`) atau sesi MCP GitHub milik akun itu.
-- Remote: `git@rayin-personal:rayinailham/driftwatch.git`
-- Visibilitas awal: **privat**. Menjadikannya publik butuh izin baru (🔓 D20).
-- **Setiap fase yang selesai wajib ditutup dengan `commit` + `push`.** Fase belum boleh
-  ditandai ✅ di `STATE.md` sebelum push-nya berhasil.
-- Format pesan commit: `PNN: <ringkas>` — mis. `P04: mesin scraper + checkpoint SQLite`.
-  Body memuat artefak yang lahir dan metrik selesainya.
-- Sebelum tiap commit: `make audit` (atau pemindaian rahasia setara). `.env`, `data/`,
-  `reports/`, dan `auth/` tidak boleh ikut ter-commit.
-- Yang **masih** butuh izin baru: repo jadi publik, `force-push`, hapus branch/repo,
-  tambah remote, ubah history.
+Keadaan saat plan ditulis (2026-08-27) — **hidup:** `9router.service` (jangan sentuh),
+`redis-db`, `tidb-pd/tikv/server`, `crosscheck-tut-*`.
+**Mati:** `plantuml-server`, `infra-dashboard`, `mysql-db`, `redisinsight`, dan ±20
+container project lain yang sudah `Exited`.
 
 ---
 

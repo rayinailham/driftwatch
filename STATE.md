@@ -38,9 +38,9 @@ Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 - `uv`, `python3`, `node`, `docker`, `ffmpeg`, `jq` → ada; `wf-recorder` 0.6.0 di `~/.local/bin`
 - **tidak ada `just`** (→ `make`, D10) · **tidak ada `pytest`** (→ `unittest`)
 - `MAKEFLAGS` di shell user memuat `-j16` → `Makefile` wajib `.NOTPARALLEL:`
-- Docker jalan tanpa sudo; `sudo` butuh password dan tidak ada askpass di sesi agent
-- Playwright: build Ubuntu di Arch; jangan `install-deps` / `--with-deps`.
-  Jangan hapus `chromium-1228` (dipakai MCP `chrome-devtools`)
+- Docker tanpa sudo; `sudo` butuh password, tidak ada askpass di sesi agent
+- Playwright build Ubuntu di Arch: jangan `install-deps`/`--with-deps`; jangan hapus
+  `chromium-1228` (dipakai MCP `chrome-devtools`)
 - Port terpakai user: 8000, 3000, 3100, 3170, 20080, 4000, 2379, 5540, 3306, 6379, 943, 9443, 1194
   → `driftlab` memakai **8100**, salinan bersih **8101** (D8)
 
@@ -50,14 +50,27 @@ Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 |---|---|---|---|
 | cache `uv` `~/.cache/uv` | 1,6 GB | — | dependency Python, tidak diunduh ulang |
 | cache Playwright | 2,0 GB | — | browser recon P2; jangan diprune |
-| image `plantuml/plantuml-server:jetty` | 1,13 GB | **container MATI** | diagram P12 — **minta izin** untuk nyalakan |
+| image `plantuml/plantuml-server:jetty` | 1,13 GB | container mati | diagram P12 — nyalakan sendiri (D22-B) |
 | image `pandoc/core` | 305 MB | on-demand | PDF studi kasus P12 (`docker run --rm`) |
 | image `texlive/texlive` | 8,73 GB | ada | **sengaja tidak dipakai** — pandoc cukup |
 
-Container yang **sedang hidup**: `redis-db`, `tidb-pd`, `tidb-tikv`, `tidb-server`,
-`crosscheck-tut-wordpress-1`, `crosscheck-tut-db-1`. Jangan `stop`/`restart` satu pun.
-Container **mati**: `plantuml-server`, `infra-dashboard`, `mysql-db`.
-`/home/rayin/infra/latex/` sudah dipakai pekerjaan lain (skripsi) — jangan menulis ke sana.
+### 🚨 `9router.service` — JANGAN PERNAH DISENTUH (D22-A)
+
+systemd **user** unit, port **20128**, `~/.config/systemd/user/9router.service`,
+9Router local AI proxy, `active` sejak 2026-08-26.
+Dilarang stop/restart/kill/disable/mask/edit, dan dilarang memakai port 20128.
+Ia proxy AI → mematikannya bisa memutus sesi agent sendiri.
+Ia **satu direktori** dengan `driftwatch.timer` (P7) → **selalu sebut nama unit eksplisit,
+jangan pernah wildcard** `systemctl --user`.
+
+### Sisanya bebas diatur (D22-B)
+
+**Hidup:** `redis-db`, `tidb-pd/tikv/server`, `crosscheck-tut-*` (⚠️ target uji project 1 —
+tanya dulu sebelum disentuh).
+**Mati:** `plantuml-server`, `infra-dashboard`, `mysql-db`, `redisinsight`, ±20 container
+project lain. Boleh dinyalakan/dimatikan sesuai kebutuhan.
+⚠️ Mengedit `infra/docker-compose.yml` → tanya dulu (konfigurasi bersama).
+❌ `/home/rayin/infra/latex/` sudah dipakai pekerjaan lain (skripsi).
 
 **Tidak dipakai walau tersedia:** MySQL/Redis/TiDB (checkpoint wajib SQLite),
 MCP `excel` (laporan harus jalan unattended dari systemd), nginx `infra-dashboard`
@@ -110,6 +123,6 @@ dipilih (🔓 D16), fixture belum dibangun.)*
    (PlantUML, pandoc, cache uv/Playwright, MCP), wajib **berdiri sendiri** saat berjalan
    (SQLite, openpyxl, `http.server` stdlib) — karena pipeline ini dikirim ke klien.
    Project ini **tidak punya `docker-compose.yml`**; `make all` harus jalan tanpa Docker.
-5. Mesin dipakai user untuk development paralel: jangan `stop`/`restart` container mana pun,
-   jangan edit apa pun di `/home/rayin/infra/`, minta izin sebelum menyalakan service
-   infra yang mati (D22).
+5. **Infra boleh diatur bebas (D22-B)** — kecuali `9router.service` yang tidak pernah
+   disentuh (D22-A), container `crosscheck-tut-*` dan edit `infra/docker-compose.yml`
+   yang harus ditanyakan dulu.

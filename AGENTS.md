@@ -5,6 +5,25 @@ dan tetap berlaku penuh — baca itu dulu, jangan diasumsikan sudah hafal.
 
 ---
 
+## 0. 🚨 `9router.service` — jangan pernah disentuh
+
+```
+unit: 9router.service   ·   port: 20128   ·   ~/.config/systemd/user/9router.service
+peran: 9Router local AI proxy
+```
+
+Dilarang `stop`/`restart`/`kill`/`disable`/`mask`, mengedit unit-nya, menyentuh
+`infra/apps/9router/` atau `infra/data/9router/`, dan memakai port `20128`.
+
+**Dua jebakannya:**
+1. Ia proxy AI lokal — mematikannya bisa memutus sesi agent itu sendiri, dan gejalanya
+   tampak seperti sesi mati acak, bukan seperti salah matikan service.
+2. Ia satu direktori dengan `driftwatch.timer` yang dipasang P7. **Selalu sebut nama unit
+   secara eksplisit** (`systemctl --user restart driftwatch.timer`), **jangan pernah wildcard**
+   (`systemctl --user stop '*'`, `reset-failed` massal, membersihkan isi direktori itu).
+
+`systemctl --user daemon-reload` aman — hanya memuat ulang definisi.
+
 ## 1. Larangan keras (tidak bisa dinegosiasi per sesi)
 
 - **Jangan scraping situs yang `robots.txt`-nya melarang path target.** Kalau ketemu larangan,
@@ -19,10 +38,10 @@ dan tetap berlaku penuh — baca itu dulu, jangan diasumsikan sudah hafal.
 - **Jangan naikkan kecepatan melebihi `crawl_delay` yang tercatat di `recon.json`.**
   Kalau tidak ada `Crawl-delay`, default 1,0 detik per request per host (D3).
 - Jangan `sudo`, `pacman`, `playwright install-deps`, atau `--with-deps`. Selalu gagal di Arch.
-- Jangan **edit** apa pun di `/home/rayin/infra/`, dan jangan `stop`/`restart`/`down`
-  service yang sedang hidup di sana (mesin dipakai user untuk kerja paralel).
-  Memakai service yang sudah hidup: bebas. Menyalakan yang mati: **minta izin dulu** (D22).
-  `infra/latex/` sudah dipakai pekerjaan lain — jangan menulis ke sana.
+- Service infra boleh diatur bebas: `up`/`start`/`stop`/`restart` sesuai kebutuhan (D22-B).
+  **Kecuali** `9router` (§0), container `crosscheck-tut-*` (target uji project 1 — tanya dulu),
+  mengedit `docker-compose.yml` (konfigurasi bersama — tanya dulu), dan menulis ke
+  `infra/latex/` (sudah dipakai pekerjaan lain).
 - Jangan hapus revision browser lama di `~/.cache/ms-playwright` (MCP `chrome-devtools`
   memakai `chromium-1228`).
 - Git **sudah diizinkan** untuk project ini (D19): repo privat

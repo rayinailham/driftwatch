@@ -61,7 +61,7 @@ Sebelum merekam: pastikan layar tidak menampilkan kredensial, email, atau jendel
 ### 4. Visual pendukung
 | Berkas | Isi |
 |---|---|
-| `assets/v2_architecture.png` | diagram alur `docs/PIPELINE.md` §1, via service PlantUML infra `:20080` — **sedang mati, minta izin user untuk menyalakan** (D22) |
+| `assets/v2_architecture.png` | diagram alur `docs/PIPELINE.md` §1, via service PlantUML infra `:20080` — sedang mati, **nyalakan sendiri** (D22-B) |
 | `assets/v3_diff_timeline.png` | grafik 3+ hari: baru/berubah/hilang per hari |
 | `assets/v4_alarm_matrix.png` | 11 oracle × alarm yang terpicu, hijau/merah |
 | `assets/v5_tier_drop.png` | "sebelum: N request browser · sesudah: M request httpx" (A10) |
@@ -128,8 +128,9 @@ paling berharga di seluruh project — ia persis yang akan dialami klien.
 - Jangan menguji salinan bersih di port yang sama (`8100`). Pakai `8101`.
 - **`make all` di salinan bersih tidak boleh butuh Docker** (D8/D21). Kalau ia butuh,
   ada runtime dependency yang bocor — itu bug, bukan hal yang ditoleransi.
-- Jangan pasang PlantUML atau texlive sendiri. Pakai yang sudah ada di device (D21),
-  dan minta izin sebelum menyalakan service infra yang mati (D22).
+- Jangan pasang PlantUML atau texlive sendiri. Pakai yang sudah ada di device (D21);
+  service infra yang mati boleh dinyalakan sendiri (D22-B).
+- Jangan pernah menyentuh `9router.service` (D22-A).
 - Jangan merekam desktop penuh. Satu monitor, dan periksa layar dulu.
 - Jangan menjadikan repo publik sendiri. 🔓 D20 butuh izin eksplisit user.
 - Jangan mencentang acceptance tanpa menempelkan output perintahnya (D15).

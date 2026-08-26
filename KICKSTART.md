@@ -14,6 +14,16 @@ Kirim isi blok di bawah ini apa adanya, berulang kali, sampai `STATE.md` berbuny
 Project: DriftWatch — pipeline data: recon → scraper → dataset → monitoring harian.
 Root: /home/rayin/Projects/Testing/driftwatch
 
+LARANGAN MUTLAK — berlaku sepanjang sesi, sebelum langkah apa pun:
+  JANGAN PERNAH menyentuh `9router.service` (systemd USER unit, port 20128,
+  9Router local AI proxy). Dilarang stop/restart/kill/disable/mask, mengedit unit-nya,
+  menyentuh infra/apps/9router atau infra/data/9router, dan memakai port 20128.
+  Ia proxy AI lokal — mematikannya bisa memutus sesi ini sendiri, dan gejalanya akan
+  tampak seperti sesi mati acak. Ia juga satu direktori dengan driftwatch.timer (P7):
+  SELALU sebut nama unit eksplisit, JANGAN PERNAH wildcard
+  (`systemctl --user stop '*'`, reset-failed massal, membersihkan isi direktori itu).
+  `systemctl --user daemon-reload` aman.
+
 LANGKAH 1 — ORIENTASI (lakukan ini dulu, sebelum apa pun):
 
 1. Baca berurutan: driftwatch/AGENTS.md, lalu ../AGENTS.md (aturan Arch — wajib),
@@ -93,8 +103,9 @@ ATURAN KERJA:
 - TAPI runtime deliverable wajib berdiri sendiri: checkpoint tetap SQLite (bukan
   MySQL/Redis/TiDB device), laporan tetap openpyxl (bukan MCP excel), fixture pakai
   http.server stdlib. Project ini TIDAK punya docker-compose.yml.
-- Jangan EDIT apa pun di /home/rayin/infra/. Jangan stop/restart container mana pun yang
-  sedang hidup. Menyalakan service infra yang mati: MINTA IZIN saya dulu (D22).
+- Service infra boleh diatur bebas (up/start/stop/restart) sesuai kebutuhan (D22-B).
+  Tanya dulu untuk: container crosscheck-tut-* (target uji project 1) dan mengedit
+  /home/rayin/infra/docker-compose.yml. Jangan menulis ke infra/latex/.
 - Jangan hapus revision browser lama di ~/.cache/ms-playwright.
 - Kalau gagal, laporkan output error persis. Jangan diperhalus, jangan diklaim sukses.
 - Kalau sebuah keputusan 🔓 di DECISIONS.md jatuh di fase ini, kunci sekarang dan tulis
