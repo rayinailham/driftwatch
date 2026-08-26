@@ -9,7 +9,7 @@ Dijalankan di atas fixture lokal `driftlab` (`127.0.0.1:8100`, D8) oleh
 `item_id`, `name`, `price`, `category`, `note`.
 
 ```bash
-bash scripts/lab_up.sh                                  # nyalakan nginx fixture
+bash scripts/lab_up.sh                                  # http.server stdlib, bukan container (D8)
 uv run python scripts/drift_lab.py --reset              # kembalikan ke keadaan dasar
 uv run python scripts/drift_lab.py --scenario DO-04     # terapkan satu mutasi
 uv run python scripts/drift_lab.py --verify             # wajib 11/11 skenario siap
@@ -27,9 +27,9 @@ make oracles                                            # jalankan semua 11, ass
 | DO-03 | data hilang | hapus 1 item | *tidak ada alarm*; `removed == 1` | — |
 | DO-04 | **struktur patah** | ganti class `.item-card` → `.c-9f2a1` di semua halaman | `ZERO_RECORDS` + `RECORD_COUNT_DROP` | critical |
 | DO-05 | field hilang sebagian | hapus `<h2 class="item-name">` di 30% halaman | `FIELD_COMPLETENESS_DROP` | critical |
-| DO-06 | situs bermasalah | 15% request dibalas HTTP 503 | `HTTP_ERROR_SPIKE` | critical |
+| DO-06 | situs bermasalah | 15% request dibalas HTTP 503 (kait handler `lab_serve.py`) | `HTTP_ERROR_SPIKE` | critical |
 | DO-07 | field asing muncul | tambah `data-promo` yang ikut terparse | `SCHEMA_UNKNOWN_FIELD` | warning |
-| DO-08 | situs melambat | sisipkan jeda 4 detik di 10% halaman | `DURATION_ANOMALY` | warning |
+| DO-08 | situs melambat | jeda 4 detik di 10% halaman (kait handler `lab_serve.py`) | `DURATION_ANOMALY` | warning |
 | DO-09 | run terlewat | hapus folder run kemarin sebelum diff H+1 | `RUN_MISSING` | critical |
 | DO-10 | restrukturisasi besar | ubah `category` di 40% item | `CHURN_SPIKE` | warning |
 | DO-11 | scraper terlalu cepat | jalankan dengan `--delay 0.1` melawan `crawl_delay 1.0` | `RATE_LIMIT_VIOLATION` | warning |
@@ -45,10 +45,13 @@ Kalau setelah implementasi ternyata tidak, tambahkan DO-12 khusus dan catat di `
 2. **Selalu `--reset` sebelum skenario berikutnya.** Kalau tidak, DO-05 akan mewarisi
    kerusakan DO-04 dan hasilnya tidak berarti.
 3. Skenario ini **tidak pernah** dijalankan terhadap situs pihak ketiga. Hanya `driftlab`.
-4. Fixture di-generate dari seed tetap (`--seed 1337`) supaya `driftlab` yang dibangun ulang
+4. DO-06 dan DO-08 diterapkan lewat berkas penanda `fixtures/.scenario` yang dibaca
+   handler `scripts/lab_serve.py` — **bukan** dengan mengubah kode scraper. Scraper tidak
+   boleh tahu ia sedang diuji.
+5. Fixture di-generate dari seed tetap (`--seed 1337`) supaya `driftlab` yang dibangun ulang
    di mesin lain menghasilkan 200 item yang identik. Tanpa itu, `make all` di salinan bersih
    tidak reproducible.
-5. **Recall wajib 11/11 di P8.** Sepuluh dari sebelas memicu alarm; DO-01..DO-03 lulus dengan
+6. **Recall wajib 11/11 di P8.** Sepuluh dari sebelas memicu alarm; DO-01..DO-03 lulus dengan
    cara sebaliknya — mereka wajib **tidak** memicu alarm apa pun. Alarm yang berbunyi saat
    data normal (false positive) sama merusaknya dengan alarm yang diam saat rusak: klien
    berhenti membaca peringatan yang terlalu sering salah.

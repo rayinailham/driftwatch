@@ -38,14 +38,27 @@ Hasilnya kunci sebagai **D16** di `docs/DECISIONS.md` (pindahkan dari daftar �
 Struktur halaman: listing berpaginasi (20 item/halaman) + halaman detail per item —
 sengaja meniru bentuk situs e-commerce supaya scraper-nya realistis.
 
-`docker-compose.yml` project ini: satu service nginx, bind `127.0.0.1:8100`,
-nama proyek compose `driftwatch-lab`, mount `fixtures/site/` read-only.
+**Server fixture: `http.server` stdlib, bukan container (D8).**
+`scripts/lab_serve.py` — `ThreadingHTTPServer` + handler kustom, bind `127.0.0.1:8100`,
+melayani `fixtures/site/`. `scripts/lab_up.sh` menjalankannya di latar + menulis PID-nya.
+
+Handler wajib punya dua kait yang dipakai P8, dibaca dari berkas penanda
+`fixtures/.scenario` (kalau tidak ada, server berperilaku normal):
+
+```python
+# DO-06: 15% request dibalas 503     → if hash(path) % 100 < 15: send_error(503)
+# DO-08: 10% halaman dijeda 4 detik  → if hash(path) % 100 < 10: time.sleep(4)
+```
+
+Inilah alasan container dibuang: nginx statis tidak bisa melakukan dua hal itu tanpa
+konfigurasi bersyarat yang dikarang, dan deliverable jadi menuntut Docker di mesin klien.
 
 ```bash
 uv run python scripts/gen_fixture.py --seed 1337
 bash scripts/lab_up.sh
 curl -sSI http://127.0.0.1:8100/ | head -1              # harus 200
 curl -sS http://127.0.0.1:8100/page-1.html | grep -c 'item-card'   # harus 20
+bash scripts/lab_down.sh                                # matikan lewat PID
 ```
 
 ### 4. Kerangka `scripts/drift_lab.py`
@@ -65,8 +78,8 @@ bukti tiap kotak**. Plus daftar kandidat yang ditolak dan alasannya.
 
 ## Output fase
 - `docs/TARGETS.md`
-- `scripts/gen_fixture.py`, `fixtures/site/` (gitignored), `scripts/lab_up.sh`
-- `docker-compose.yml`
+- `scripts/gen_fixture.py`, `fixtures/site/` (gitignored)
+- `scripts/lab_serve.py`, `scripts/lab_up.sh`, `scripts/lab_down.sh`
 - `scripts/drift_lab.py` (reset + verify + DO-01 + DO-03)
 - D16 terkunci di `docs/DECISIONS.md`
 
@@ -78,6 +91,9 @@ bukti tiap kotak**. Plus daftar kandidat yang ditolak dan alasannya.
 - [ ] `curl -sSI http://127.0.0.1:8100/` → `200`; halaman listing berisi 20 `item-card`
 - [ ] `gen_fixture.py --seed 1337` dijalankan dua kali → hash folder identik (reproducible)
 - [ ] `drift_lab.py --verify` exit 0; DO-01 dan DO-03 bisa diterapkan lalu di-`--reset`
+- [ ] Kait `.scenario` terbukti: tulis penanda 503 → `curl` beberapa kali → sebagian balas 503;
+      hapus penanda → semua balas 200
+- [ ] **Tidak ada `docker-compose.yml`** di project ini (D8); `lab_up.sh` tidak memanggil Docker
 - [ ] **Commit + push berhasil** (D19)
 
 ## Metrik selesai
@@ -87,9 +103,11 @@ bukti tiap kotak**. Plus daftar kandidat yang ditolak dan alasannya.
 - **Jangan pilih target `seo` karena datanya menarik.** Pilih karena gerbangnya lolos.
   Reputasi lebih mahal dari satu dataset.
 - Jangan bind fixture ke `0.0.0.0`. `127.0.0.1` saja (D8).
+- **Jangan bikin `docker-compose.yml`** untuk fixture ini, dan jangan menumpang nginx
+  `infra-dashboard` `:8000` — menulis ke `/home/rayin/infra/dashboard/` dilarang (D22).
 - Jangan pakai port selain 8100 tanpa mengubah D8 — port lain berisiko menabrak
   service user (8000, 3000, 3100, 3170, 20080, 4000, 2379, 5540).
-- Jangan sentuh `/home/rayin/infra/docker-compose.yml`.
+- Jangan sentuh apa pun di `/home/rayin/infra/` (D22).
 - Fixture tanpa seed tetap = `make all` di salinan bersih tidak reproducible (P12 gagal).
 
 ## Sebelum menutup sesi

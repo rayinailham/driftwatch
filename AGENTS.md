@@ -19,7 +19,10 @@ dan tetap berlaku penuh — baca itu dulu, jangan diasumsikan sudah hafal.
 - **Jangan naikkan kecepatan melebihi `crawl_delay` yang tercatat di `recon.json`.**
   Kalau tidak ada `Crawl-delay`, default 1,0 detik per request per host (D3).
 - Jangan `sudo`, `pacman`, `playwright install-deps`, atau `--with-deps`. Selalu gagal di Arch.
-- Jangan sentuh `/home/rayin/infra/` — termasuk menyalakan service di sana.
+- Jangan **edit** apa pun di `/home/rayin/infra/`, dan jangan `stop`/`restart`/`down`
+  service yang sedang hidup di sana (mesin dipakai user untuk kerja paralel).
+  Memakai service yang sudah hidup: bebas. Menyalakan yang mati: **minta izin dulu** (D22).
+  `infra/latex/` sudah dipakai pekerjaan lain — jangan menulis ke sana.
 - Jangan hapus revision browser lama di `~/.cache/ms-playwright` (MCP `chrome-devtools`
   memakai `chromium-1228`).
 - Git **sudah diizinkan** untuk project ini (D19): repo privat
@@ -53,11 +56,15 @@ salin script itu ke `scripts/` di P4 — jangan panggil lintas-project di kode p
 ## 4. Sebelum menyentuh fixture lokal (`driftlab`)
 
 ```bash
-bash scripts/lab_up.sh                 # nyalakan nginx fixture di 127.0.0.1:8100
+bash scripts/lab_up.sh                 # http.server stdlib di 127.0.0.1:8100 (BUKAN container)
 uv run --no-sync python scripts/drift_lab.py --verify    # wajib 11/11 skenario siap
 ```
-Container **tidak** auto-start. Kalau verifikasi < 11/11, berhenti dan laporkan:
+Fixture **tidak** auto-start. Kalau verifikasi < 11/11, berhenti dan laporkan:
 oracle alarm tidak sah kalau fixture-nya bergeser.
+
+**Project ini tidak punya `docker-compose.yml`** (D8). Fixture dilayani `http.server`
+stdlib dengan handler kustom, karena DO-06 (503) dan DO-08 (jeda) butuh server yang bisa
+diprogram, dan karena deliverable harus bisa jalan di mesin klien tanpa Docker.
 
 Port `8100` dipilih supaya tidak menabrak service user (`8000`, `3000`, `3100`, `3170`,
 `20080`, `4000`, `2379`, `5540`, `943`, `9443`). Jangan pindah port tanpa mengubah D8.
@@ -73,7 +80,25 @@ Port `8100` dipilih supaya tidak menabrak service user (`8000`, `3000`, `3100`, 
 Menemukan file bawah bertentangan dengan file atas → **perbaiki file bawah di sesi yang sama**,
 jangan diamkan, jangan diam-diam ikut yang salah.
 
-## 6. Aturan data
+## 6. Infra device: pakai ulang, jangan pasang ulang (D21)
+
+Garis pemisahnya: **boleh dipakai saat MEMBANGUN, wajib berdiri sendiri saat BERJALAN.**
+Pipeline ini dikirim ke klien — apa pun yang dipakai runtime ikut jadi syarat pasang di
+mesin mereka.
+
+| Sudah ada di device — pakai | Jangan pasang/pakai ulang |
+|---|---|
+| cache `uv` (`~/.cache/uv`, 1,6 GB) | jangan `pip install` global |
+| cache Playwright (`~/.cache/ms-playwright`, 2,0 GB) | jangan hapus revisi lama |
+| service `plantuml` infra `:20080` (image sudah ada) | jangan pasang PlantUML sendiri |
+| image `pandoc/core` (`docker run --rm`) untuk PDF | jangan pakai `texlive` 8,73 GB |
+| MCP `playwright` / `chrome-devtools` (recon, P2) | jangan pasang browser tambahan |
+
+**Dilarang jadi runtime dependency deliverable:** MySQL `:3306`, Redis `:6379`,
+TiDB `:4000`, MCP `excel`. Checkpoint tetap SQLite, laporan tetap `openpyxl` —
+keduanya harus jalan tanpa pengawasan pukul 09:00 dan di mesin klien.
+
+## 7. Aturan data
 
 - Data mentah tidak pernah ditimpa. Tiap run menulis ke `data/<target>/<YYYY-MM-DD>/`.
   Menimpa snapshot kemarin = menghapus baseline diff = merusak bukti utama project ini.
@@ -82,7 +107,7 @@ jangan diamkan, jangan diam-diam ikut yang salah.
 - Setiap field kosong wajib punya alasan di `missing_reason` (D6). "Kosong tanpa keterangan"
   dihitung cacat, bukan data.
 
-## 7. Gerbang commit (D19) — tidak boleh dilewat
+## 8. Gerbang commit (D19) — tidak boleh dilewat
 
 Sebuah fase **belum** ✅ sebelum tiga hal ini berhasil, berurutan:
 
@@ -99,8 +124,8 @@ git push
 - Satu fase = satu commit. Jangan menggabung dua fase dalam satu commit; riwayat commit
   adalah bagian dari bukti portofolio ("11 commit, 11 fase, tiap commit punya metrik").
 
-## 8. Alur sesi
+## 9. Alur sesi
 
 `KICKSTART.md` adalah prompt universalnya; `STATE.md` adalah satu-satunya memori antar sesi.
 Satu fase per sesi. DoD dicentang hanya dengan output perintah nyata, bukan klaim,
-lalu ditutup dengan commit + push (§7).
+lalu ditutup dengan commit + push (§8).

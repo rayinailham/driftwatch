@@ -1,8 +1,34 @@
 # DriftWatch — Tools: kenapa dipakai & perintah persisnya
 
-Aturan pemilihan tool di project ini cuma satu:
-**pakai yang paling murah yang masih menyelesaikan pekerjaan.**
-Browser mahal (token, RAM, waktu). httpx murah. Naik tingkat hanya kalau dipaksa bukti.
+Dua aturan pemilihan tool, berurutan:
+
+1. **Pakai yang paling murah yang masih menyelesaikan pekerjaan.**
+   Browser mahal (token, RAM, waktu). httpx murah. Naik tingkat hanya kalau dipaksa bukti.
+2. **Pakai yang sudah ada di device ini; jangan pasang ulang per project (D21)** —
+   tapi hanya untuk pekerjaan **waktu-bangun**. Yang dipakai saat pipeline **berjalan**
+   wajib berdiri sendiri, karena ikut jadi syarat pasang di mesin klien.
+
+## Yang sudah ada di device — dipakai ulang, nol pemasangan
+
+| Sudah terpasang | Ukuran | Dipakai untuk | Catatan |
+|---|---|---|---|
+| cache `uv` `~/.cache/uv` | 1,6 GB | semua dependency Python | venv per project, **cache paket global** — `httpx`/`openpyxl` dst tidak pernah diunduh dua kali |
+| cache Playwright `~/.cache/ms-playwright` | 2,0 GB | chromium/firefox/webkit | jangan hapus revisi lama (MCP `chrome-devtools` mem-pin `chromium-1228`) |
+| service infra `plantuml` `:20080` | image 1,13 GB | diagram arsitektur (P12) | **sedang mati** → minta izin user untuk menyalakan (D22) |
+| image `pandoc/core` | 305 MB | studi kasus PDF (P12) | `docker run --rm`; **jangan** `texlive/texlive` (8,73 GB) — pandoc cukup untuk 1 halaman A4 |
+| MCP `playwright` + `chrome-devtools` | — | recon (P2 saja) | sudah terdaftar device-wide |
+| MCP `serena` | — | telusur simbol saat kode sudah besar | opsional |
+| `jq`, `sqlite3`, `ffmpeg`, `wf-recorder` | — | agregasi, checkpoint, video | sudah ada di PATH |
+
+## Yang sengaja TIDAK dipakai walaupun tersedia di device
+
+| Tersedia | Kenapa tidak dipakai |
+|---|---|
+| MySQL `:3306`, Redis `:6379`, TiDB `:4000` | checkpoint/dedupe **wajib SQLite**. Jaminan "bisa diputus lalu lanjut" tidak boleh bergantung pada layanan jaringan yang tidak dimiliki klien (D21) |
+| MCP `excel` | `REPORT.xlsx` dibangun tanpa pengawasan pukul 09:00 oleh systemd; MCP butuh sesi agent yang hidup → tetap `openpyxl` |
+| nginx `infra-dashboard` `:8000` | fixture butuh server yang **bisa diprogram** (DO-06 503, DO-08 jeda) dan menulis ke `infra/dashboard/` dilarang (D22) → `http.server` stdlib |
+| `texlive/texlive` | 8,73 GB untuk satu halaman A4; `pandoc/core` 305 MB sudah cukup |
+| n8n MCP | penjadwalan sudah dijawab systemd timer (D9), yang lebih dekat ke mesin klien |
 
 ---
 
@@ -21,12 +47,14 @@ Browser mahal (token, RAM, waktu). httpx murah. Naik tingkat hanya kalau dipaksa
 | SQLite | — | P4 | file `.txt` berisi daftar "sudah diproses" |
 | `tenacity` | — | P4 | `try/except` + `sleep` manual |
 | `typer` | — | P4 | `sys.argv` |
+| `http.server` stdlib | — | P1, P8 | container nginx untuk fixture (D8) |
 | systemd user timer | — | P7 | cron (D9) |
 | `jq` | — | semua | membaca JSONL mentah ke context (boros token) |
 | `openpyxl` | — | P11 | mengirim CSV telanjang ke klien |
 | Claude API | — | P10 | menulis insight manual tiap hari |
 | `ffmpeg` / `wf-recorder` | — | P12 | — |
-| PlantUML (`:20080`) | — | P12 | menggambar diagram manual |
+| PlantUML infra (`:20080`) | — | P12 | menggambar diagram manual |
+| `pandoc/core` (docker run --rm) | — | P12 | memasang texlive 8,73 GB |
 
 ---
 
@@ -216,12 +244,32 @@ wf-recorder -o eDP-1 -f /tmp/raw.mp4
 ffmpeg -i /tmp/raw.mp4 -vf "scale=1920:1080" -c:v libx264 -crf 23 assets/v_resume_demo.mp4
 ```
 
-## 13. PlantUML lokal (`localhost:20080`) — diagram arsitektur
+## 13. PlantUML infra (`localhost:20080`) — diagram arsitektur
+
+Service ini **sudah terdefinisi** di `/home/rayin/infra/docker-compose.yml` dan image-nya
+sudah ada (1,13 GB). Saat plan ini ditulis ia **sedang mati**.
 
 ```bash
+docker ps --format '{{.Names}}' | grep -q plantuml-server && echo hidup || echo mati
+# kalau mati → MINTA IZIN USER dulu (D22), baru:
+#   docker compose --project-directory /home/rayin/infra up -d plantuml
 curl -sS -X POST --data-binary @assets/architecture.puml \
   http://localhost:20080/svg -o assets/architecture.svg
 ```
+
+Jangan pasang PlantUML sendiri, jangan `docker run` image kedua. Jangan pernah `stop`
+atau `restart` service infra yang sedang hidup.
+
+## 13b. `pandoc/core` — studi kasus PDF satu halaman
+
+```bash
+docker run --rm -v "$PWD/assets:/data" pandoc/core \
+  case_study.md -o v6_case_study.pdf --pdf-engine=weasyprint -V geometry:a4paper
+```
+
+Image sudah ada (305 MB). **Jangan** pakai `texlive/texlive` (8,73 GB) walaupun terpasang —
+tidak sepadan untuk satu halaman. Jangan menulis ke `/home/rayin/infra/latex/`; direktori
+itu sudah dipakai pekerjaan lain (D22).
 
 ## 14. Yang **tidak** dipakai, dan alasannya
 
@@ -234,3 +282,4 @@ curl -sS -X POST --data-binary @assets/architecture.puml \
 | captcha solver | melanggar `docs/ETHICS.md` §1.6 |
 | cron | kalah dari systemd user timer soal log & `Persistent=true` (D9) |
 | Pandas | dataset ini streaming; `csv` + `json` stdlib sudah cukup dan tidak menahan RAM |
+| Docker untuk fixture | fixture butuh server yang bisa diprogram, dan deliverable harus jalan tanpa Docker di mesin klien (D8) |

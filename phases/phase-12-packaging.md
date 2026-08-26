@@ -15,7 +15,7 @@ dan calon klien bisa yakin dalam 60 detik tanpa membaca satu baris kode pun.
 ### 1. `Makefile` (D10)
 ```
 make setup      uv sync + siapkan fixture
-make lab-up     nyalakan driftlab di :8100
+make lab-up     nyalakan driftlab di :8100 (http.server stdlib, tanpa Docker)
 make oracles    11 skenario drift → wajib 11/11
 make harvest    panen 4 target
 make diff       diff + alarm
@@ -61,11 +61,11 @@ Sebelum merekam: pastikan layar tidak menampilkan kredensial, email, atau jendel
 ### 4. Visual pendukung
 | Berkas | Isi |
 |---|---|
-| `assets/v2_architecture.png` | diagram alur `docs/PIPELINE.md` §1, via PlantUML `localhost:20080` |
+| `assets/v2_architecture.png` | diagram alur `docs/PIPELINE.md` §1, via service PlantUML infra `:20080` — **sedang mati, minta izin user untuk menyalakan** (D22) |
 | `assets/v3_diff_timeline.png` | grafik 3+ hari: baru/berubah/hilang per hari |
 | `assets/v4_alarm_matrix.png` | 11 oracle × alarm yang terpicu, hijau/merah |
 | `assets/v5_tier_drop.png` | "sebelum: N request browser · sesudah: M request httpx" (A10) |
-| `assets/v6_case_study.pdf` | satu halaman A4: masalah, pendekatan, hasil, angka |
+| `assets/v6_case_study.pdf` | satu halaman A4: masalah, pendekatan, hasil, angka — via `docker run --rm pandoc/core` (image sudah ada, 305 MB). **Jangan `texlive`** (8,73 GB) meski terpasang (D21) |
 
 ### 5. README publik
 Struktur yang dikunci:
@@ -107,6 +107,8 @@ paling berharga di seluruh project — ia persis yang akan dialami klien.
 
 ## Definition of Done
 - [ ] `make all` di salinan bersih → **exit 0**, durasi dicatat (A11)
+- [ ] `make all` di salinan bersih berjalan **tanpa Docker sama sekali** (dibuktikan:
+      tidak ada `docker` di jalur eksekusi `make all`)
 - [ ] `make audit` → **0 kebocoran** (A12); `.env`/`data`/`reports` tidak ter-track
 - [ ] `make oracles` di salinan bersih → 11/11
 - [ ] Video 60 dtk ada, 1920×1080, memuat kill→resume **dan** alarm berbunyi
@@ -124,6 +126,10 @@ paling berharga di seluruh project — ia persis yang akan dialami klien.
 - Jangan pakai `just` — tidak terpasang di mesin ini (D10).
 - Jangan lupa `.NOTPARALLEL:`. Tanpa itu `-j16` di shell user akan mengacak urutan pipeline.
 - Jangan menguji salinan bersih di port yang sama (`8100`). Pakai `8101`.
+- **`make all` di salinan bersih tidak boleh butuh Docker** (D8/D21). Kalau ia butuh,
+  ada runtime dependency yang bocor — itu bug, bukan hal yang ditoleransi.
+- Jangan pasang PlantUML atau texlive sendiri. Pakai yang sudah ada di device (D21),
+  dan minta izin sebelum menyalakan service infra yang mati (D22).
 - Jangan merekam desktop penuh. Satu monitor, dan periksa layar dulu.
 - Jangan menjadikan repo publik sendiri. 🔓 D20 butuh izin eksplisit user.
 - Jangan mencentang acceptance tanpa menempelkan output perintahnya (D15).

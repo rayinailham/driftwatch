@@ -54,8 +54,9 @@ Sembilan skenario sisanya (P1 sudah membuat DO-01 dan DO-03). Tabel lengkapnya d
 - selalu `--reset` di antara skenario
 - mesin diff/alarm **tidak boleh tahu** skenario mana yang aktif
 
-DO-06 (503) dan DO-08 (jeda 4 dtk) butuh nginx membalas berbeda — pakai konfigurasi
-nginx bersyarat atau berkas penanda yang dibaca konfigurasi, bukan mengubah kode scraper.
+DO-06 (503) dan DO-08 (jeda 4 dtk) dipicu lewat berkas penanda `fixtures/.scenario`
+yang dibaca handler `scripts/lab_serve.py` (kaitnya sudah dibuat di P1) — **bukan** dengan
+mengubah kode scraper. Scraper tidak boleh tahu ia sedang diuji.
 
 ### 4. `make oracles` — gerbang A8
 Menjalankan 11 skenario berurutan, tiap skenario: `--reset` → terapkan → panen `driftlab`

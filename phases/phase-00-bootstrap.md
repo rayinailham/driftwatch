@@ -24,6 +24,10 @@ penjadwalan jatuh ke cron; catat itu sebagai blocker di `STATE.md`.
 `pyproject.toml` dengan dependency:
 `httpx`, `selectolax`, `tenacity`, `typer`, `pydantic`, `openpyxl`, `python-dateutil`, `anthropic`
 
+Semua paket ini sudah pernah diunduh ke cache global `~/.cache/uv` (1,6 GB terisi),
+jadi `uv sync` di sini hampir tidak menyentuh jaringan — venv per project, cache paket
+bersama (D21).
+
 Playwright **tidak** dipasang di P0. Ia hanya ditambahkan kalau P2 membuktikan ada target
 `js_required` (D-lapis di `AGENTS.md` §2). Memasang browser 2 GB untuk kemungkinan yang
 belum terbukti adalah kebiasaan yang justru dihindari project ini.
@@ -34,6 +38,18 @@ uv sync
 uv run python -c "import httpx, selectolax, tenacity, typer, pydantic; print('deps ok')"
 ```
 
+### 2b. Jangan pasang ulang yang sudah ada (D21)
+
+Sebelum menambah tool apa pun, cek dulu apakah device sudah punya:
+```bash
+ls ~/.cache/uv >/dev/null && du -sh ~/.cache/uv          # cache paket Python bersama
+du -sh ~/.cache/ms-playwright                            # browser bersama, jangan diprune
+docker images --format '{{.Repository}}' | sort -u | head -40
+docker ps --format '{{.Names}}'                          # apa yang SEDANG hidup
+```
+Image yang sudah ada dan relevan: `plantuml/plantuml-server:jetty`, `pandoc/core`.
+Jangan `docker pull` apa pun di fase ini. Jangan menyalakan service infra tanpa izin (D22).
+
 ### 3. Struktur folder
 ```
 driftwatch/
@@ -42,6 +58,7 @@ driftwatch/
 ├── recon/        hasil P2 (masuk repo — ini bukti "saya memetakan dulu")
 ├── fixtures/     sumber fixture driftlab
 ├── deploy/       unit systemd
+└── (TIDAK ada docker-compose.yml — fixture pakai http.server stdlib, D8)
 ├── data/         GITIGNORED
 ├── reports/      GITIGNORED
 ├── web/          halaman demo (P10)
@@ -90,7 +107,8 @@ Jangan pakai akun work. Jangan menjadikan repo publik (butuh izin terpisah, 🔓
 ## Definition of Done
 - [ ] Perintah versi di langkah 1 dijalankan; hasilnya ditempel di `env-check.md`
 - [ ] `uv sync` sukses dan `import` 5 paket inti berhasil
-- [ ] Struktur folder sesuai langkah 3
+- [ ] Struktur folder sesuai langkah 3; **tidak ada `docker-compose.yml`** (D8)
+- [ ] Cek langkah 2b dijalankan; 0 `docker pull`, 0 service infra dinyalakan tanpa izin
 - [ ] `.env.example` ada, `.env` ada dan **tidak** ter-track (`git check-ignore` membuktikan)
 - [ ] `env-check.md` berisi hasil nyata + status `systemctl --user`
 - [ ] `ssh -T git@rayin-personal` menyapa `rayinailham`; `git remote -v` menunjuk alias itu

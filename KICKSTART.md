@@ -53,10 +53,10 @@ LANGKAH 1 — ORIENTASI (lakukan ini dulu, sebelum apa pun):
 
 LANGKAH 2 — SIAPKAN (hanya kalau fase terpilih menyentuhnya):
 
-   Fixture lokal (P1, P8, P12):
+   Fixture lokal (P1, P8, P12) — http.server stdlib, BUKAN container (D8):
      bash driftwatch/scripts/lab_up.sh
      uv run --no-sync python driftwatch/scripts/drift_lab.py --verify   # wajib 11/11 (2/11 di P1)
-     Container tidak auto-start. Kalau verify gagal, BERHENTI dan laporkan —
+     Fixture tidak auto-start. Kalau verify gagal, BERHENTI dan laporkan —
      fixture bergeser berarti angka recall alarm tidak sah.
 
    Browser (hanya P2, dan hanya kalau curl tidak cukup):
@@ -87,7 +87,14 @@ ATURAN ETIKA (tidak bisa dinegosiasi — docs/ETHICS.md menang atas kenyamanan t
 ATURAN KERJA:
 - Kerjakan lewat Bash sebisa mungkin. Verifikasi tiap langkah, jangan asumsi.
 - Patch kecil dan reversible. Jangan refactor yang tidak diminta.
-- Jangan sentuh /home/rayin/infra/. Jangan restart container di luar `driftwatch-lab`.
+- PAKAI ULANG infra device, jangan pasang ulang (D21): cache uv, cache Playwright,
+  service PlantUML :20080, image pandoc/core, MCP yang sudah terdaftar.
+  Sebelum menambah tool: cek `docker images` + `docker ps` dulu. Jangan `docker pull`.
+- TAPI runtime deliverable wajib berdiri sendiri: checkpoint tetap SQLite (bukan
+  MySQL/Redis/TiDB device), laporan tetap openpyxl (bukan MCP excel), fixture pakai
+  http.server stdlib. Project ini TIDAK punya docker-compose.yml.
+- Jangan EDIT apa pun di /home/rayin/infra/. Jangan stop/restart container mana pun yang
+  sedang hidup. Menyalakan service infra yang mati: MINTA IZIN saya dulu (D22).
 - Jangan hapus revision browser lama di ~/.cache/ms-playwright.
 - Kalau gagal, laporkan output error persis. Jangan diperhalus, jangan diklaim sukses.
 - Kalau sebuah keputusan 🔓 di DECISIONS.md jatuh di fase ini, kunci sekarang dan tulis

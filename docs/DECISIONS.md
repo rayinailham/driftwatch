@@ -83,12 +83,77 @@ Kosong tanpa keterangan = cacat data, dihitung gagal di `src/validate.py`.
 - Field yang volatil (`fetched_at`, `run_id`, `scrape_duration_ms`) **dikecualikan** dari hash.
   Kalau tidak, semua record akan tampak berubah tiap hari dan diff jadi sampah.
 
-## D8 — Infrastruktur lokal
+## D8 — Fixture `driftlab` dilayani Python stdlib, bukan container
 
-- Fixture `driftlab` dilayani nginx dari `docker-compose.yml` milik project ini,
-  di-bind ke `127.0.0.1:8100`. Jangan `0.0.0.0`, jangan pindah port tanpa mengubah D8 ini.
-- Jangan menyentuh `/home/rayin/infra/docker-compose.yml`.
-- Nama proyek compose: `driftwatch-lab`. Container di luar nama itu tidak boleh disentuh.
+Diubah 2026-08-27 (semula: nginx lewat `docker-compose.yml` milik project ini).
+
+`scripts/lab_serve.py` — `http.server` dari stdlib dengan handler kustom,
+bind `127.0.0.1:8100`. **Project ini tidak punya `docker-compose.yml` sama sekali.**
+
+Tiga alasan, berurutan dari yang paling mengikat:
+
+1. **Dua skenario oracle butuh server yang bisa diprogram.** DO-06 (15% request dibalas
+   HTTP 503) dan DO-08 (jeda 4 detik di 10% halaman) mustahil dilakukan nginx statis tanpa
+   mengarang konfigurasi bersyarat. Dengan handler Python, keduanya jadi lima baris yang
+   membaca berkas penanda skenario.
+2. **Deliverable harus berdiri sendiri.** A11 menuntut `make all` jalan di salinan bersih,
+   dan klien harus bisa menjalankannya di mesin mereka. Menuntut Docker untuk sebuah
+   *fixture uji* adalah beban yang tidak dibayar apa pun.
+3. **Nol pemasangan.** `http.server`, `sqlite3`, `csv`, `json` semuanya stdlib.
+
+Tetap: bind `127.0.0.1` (jangan `0.0.0.0`), port **8100**, salinan bersih **8101**.
+Ganti port berarti mengubah D8 ini.
+
+## D21 — Infra device dipakai untuk tooling waktu-bangun, bukan runtime deliverable
+
+Ditetapkan user 2026-08-27: "manfaatkan tools yang ada di infrastruktur device ini,
+jangan tiap project pasang ulang."
+
+**Garis pemisahnya satu:**
+
+| | Boleh pakai infra device | Wajib berdiri sendiri |
+|---|---|---|
+| Kapan | saat **membangun** portofolio (diagram, PDF, recon) | saat pipeline **berjalan** tiap hari & di mesin klien |
+| Contoh | PlantUML `:20080`, `pandoc/core`, MCP browser, cache `uv`, cache Playwright | scraper, checkpoint, diff, alarm, laporan |
+
+Alasan garis itu ada: pipeline ini **dikirim ke klien**. Apa pun yang dipakai saat runtime
+ikut jadi syarat pemasangan di mesin mereka. Diagram arsitektur tidak ikut dikirim, jadi
+alat pembuatnya bebas.
+
+**Konsekuensi yang mengikat:**
+
+- **Checkpoint & dedupe tetap SQLite.** Dilarang memakai MySQL `:3306`, Redis `:6379`,
+  atau TiDB `:4000` yang ada di device. Jaminan "bisa diputus lalu lanjut" tidak boleh
+  bergantung pada layanan jaringan yang tidak dimiliki klien.
+- **Laporan XLSX tetap `openpyxl`**, bukan MCP `excel`. Laporan dibangun tanpa pengawasan
+  pukul 09:00 oleh systemd; MCP butuh sesi agent yang hidup.
+- **Diagram pakai service `plantuml` milik infra** (image `plantuml/plantuml-server:jetty`
+  sudah ada, 1,13 GB — nol unduhan).
+- **PDF studi kasus pakai `pandoc/core`** (`docker run --rm`, image sudah ada, 305 MB),
+  **bukan** `texlive/texlive` (8,73 GB) meski dua-duanya terpasang. Pandoc cukup untuk
+  satu halaman A4.
+- **Dependency Python lewat `uv`** — venv per project, tapi cache paket global di
+  `~/.cache/uv` (1,6 GB terisi). Paket yang sama tidak pernah diunduh dua kali.
+- **Browser Playwright** dari `~/.cache/ms-playwright` (2,0 GB) yang sudah ada.
+  Jangan sekali-kali menghapus revisi lama.
+
+## D22 — Aturan menyentuh `/home/rayin/infra/`
+
+Menggantikan larangan mutlak yang ditulis sebelumnya, karena D21 memang menyuruh memakainya.
+
+| Tindakan | Boleh? |
+|---|---|
+| Memakai service yang **sudah hidup** (kirim request ke portnya) | ✅ tanpa tanya |
+| Membaca `docker-compose.yml` di sana | ✅ |
+| **Menyalakan** service yang sudah terdefinisi tapi mati | ⚠️ **minta izin user dulu** |
+| `docker run --rm` image yang sudah ada, tanpa compose | ✅ |
+| Mengedit `docker-compose.yml` | ❌ tidak pernah |
+| Menulis berkas ke `infra/latex/`, `infra/dashboard/`, `infra/data/` | ❌ — `infra/latex/` sudah dipakai pekerjaan lain (skripsi); jangan menimpa |
+| `stop` / `restart` / `down` service yang sedang hidup | ❌ tidak pernah — mesin ini dipakai user untuk kerja paralel |
+
+Keadaan saat plan ditulis (2026-08-27): **hidup** = `redis-db`, `tidb-*`,
+`crosscheck-tut-*`. **Mati** = `plantuml-server`, `infra-dashboard`, `mysql-db`.
+Jadi PlantUML **perlu izin nyala** sebelum dipakai di P12.
 
 ## D9 — Penjadwalan: systemd user timer, bukan cron
 

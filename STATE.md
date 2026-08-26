@@ -43,16 +43,31 @@ Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
   Jangan hapus `chromium-1228` (dipakai MCP `chrome-devtools`)
 - Port terpakai user: 8000, 3000, 3100, 3170, 20080, 4000, 2379, 5540, 3306, 6379, 943, 9443, 1194
   → `driftlab` memakai **8100**, salinan bersih **8101** (D8)
+
+## Infra device yang dipakai ulang (D21/D22) — diverifikasi 2026-08-27
+
+| Sudah ada | Ukuran | Status | Dipakai untuk |
+|---|---|---|---|
+| cache `uv` `~/.cache/uv` | 1,6 GB | — | dependency Python, tidak diunduh ulang |
+| cache Playwright | 2,0 GB | — | browser recon P2; jangan diprune |
+| image `plantuml/plantuml-server:jetty` | 1,13 GB | **container MATI** | diagram P12 — **minta izin** untuk nyalakan |
+| image `pandoc/core` | 305 MB | on-demand | PDF studi kasus P12 (`docker run --rm`) |
+| image `texlive/texlive` | 8,73 GB | ada | **sengaja tidak dipakai** — pandoc cukup |
+
+Container yang **sedang hidup**: `redis-db`, `tidb-pd`, `tidb-tikv`, `tidb-server`,
+`crosscheck-tut-wordpress-1`, `crosscheck-tut-db-1`. Jangan `stop`/`restart` satu pun.
+Container **mati**: `plantuml-server`, `infra-dashboard`, `mysql-db`.
+`/home/rayin/infra/latex/` sudah dipakai pekerjaan lain (skripsi) — jangan menulis ke sana.
+
+**Tidak dipakai walau tersedia:** MySQL/Redis/TiDB (checkpoint wajib SQLite),
+MCP `excel` (laporan harus jalan unattended dari systemd), nginx `infra-dashboard`
+(fixture butuh server yang bisa diprogram).
 - ⬜ **belum diverifikasi:** `systemctl --user` tersedia atau tidak (cek di P0; D9 bergantung padanya)
 
 ## Fakta terverifikasi tentang target
 
-*(kosong — diisi P1 & P2)*
-
-- `books.toscrape.com` — ⬜ robots belum dicek
-- `quotes.toscrape.com` — ⬜ robots belum dicek
-- `seo` — ⬜ situs belum dipilih (🔓 D16)
-- `driftlab` — ⬜ fixture belum dibangun
+*(kosong — diisi P1 & P2. Keempatnya masih ⬜: robots belum dicek, situs `seo` belum
+dipilih (🔓 D16), fixture belum dibangun.)*
 
 ## Metrik
 
@@ -61,23 +76,18 @@ Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 | Record dataset (`books`) | ≥ 1.000 | — |
 | Duplikat | 0 | — |
 | Kelengkapan field `required` | ≥ 98% | — |
-| Record diverifikasi manual | 3 | — |
-| Bukti kill → resume | ada, duplikat 0 | — |
-| `observed_min_gap_ms` | ≥ delay × 900 | — |
-| Hari soak berturut | 3 | — |
-| Drift oracle | 11/11 | — |
-| Kode alarm terimplementasi | 10 | — |
-| Laporan diff harian | tiap hari | — |
-| Halaman demo | hidup | — |
-| `make all` salinan bersih | exit 0 | — |
-| Kebocoran rahasia | 0 | — |
+| Record diverifikasi manual · bukti kill→resume | 3 · duplikat 0 | — |
+| `observed_min_gap_ms` · hari soak berturut | ≥ delay×900 · 3 | — |
+| Drift oracle · kode alarm | 11/11 · 10 | — |
+| Laporan diff harian · halaman demo | tiap hari · hidup | — |
+| `make all` salinan bersih (tanpa Docker) · kebocoran rahasia | exit 0 · 0 | — |
 | **Acceptance project** | 12/12 | **0/12** |
 
 ## Artefak yang sudah lahir
 
 **Perencanaan (2026-08-27):**
 - `AGENTS.md`, `PLAN.md`, `KICKSTART.md`, `STATE.md`, `README.md`, `.gitignore`
-- `docs/`: `DECISIONS.md` (D1–D19 terkunci, D16/D17/D18/D20 masih 🔓), `SCHEMA.md` (draf,
+- `docs/`: `DECISIONS.md` (D1–D22 terkunci, D16/D17/D18/D20 masih 🔓), `SCHEMA.md` (draf,
   dikunci P3), `ETHICS.md`, `PIPELINE.md`, `TOOLS.md`, `CLIENT_REPORT.md`, `ACCEPTANCE.md`
   (A1–A12), `DRIFT_ORACLES.md` (DO-01..DO-11)
 - `phases/phase-00..12` (13 file)
@@ -96,5 +106,10 @@ Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
    sementara P8, P10, P11 dikerjakan. Jangan menunggu menganggur.
 3. **Empat keputusan masih terbuka:** 🔓 D16 (situs `seo`, P1), 🔓 D17 (field final, P3),
    🔓 D18 (cara publikasi demo, P10), 🔓 D20 (repo publik, P12 — butuh izin user).
-4. Mesin dipakai user untuk development paralel: jangan restart container di luar
-   `driftwatch-lab`, jangan sentuh `/home/rayin/infra/`.
+4. **Infra dipakai ulang, bukan dipasang ulang (D21).** Garisnya: boleh saat **membangun**
+   (PlantUML, pandoc, cache uv/Playwright, MCP), wajib **berdiri sendiri** saat berjalan
+   (SQLite, openpyxl, `http.server` stdlib) — karena pipeline ini dikirim ke klien.
+   Project ini **tidak punya `docker-compose.yml`**; `make all` harus jalan tanpa Docker.
+5. Mesin dipakai user untuk development paralel: jangan `stop`/`restart` container mana pun,
+   jangan edit apa pun di `/home/rayin/infra/`, minta izin sebelum menyalakan service
+   infra yang mati (D22).
