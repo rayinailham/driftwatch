@@ -104,6 +104,16 @@ Tiga alasan, berurutan dari yang paling mengikat:
 Tetap: bind `127.0.0.1` (jangan `0.0.0.0`), port **8100**, salinan bersih **8101**.
 Ganti port berarti mengubah D8 ini.
 
+## D16 — Target `seo`: dokumentasi HTTPX
+
+Dikunci 2026-08-27 di P1: `https://www.python-httpx.org/` menjadi target `seo`.
+
+Alasan: seluruh tujuh kotak `docs/ETHICS.md` §2 lolos, sitemap valid hanya memuat 23 URL,
+dan situs adalah dokumentasi proyek open-source. Dibanding kandidat FastAPI (151 URL),
+HTTPX memberi bukti monitoring SEO nyata dengan beban host publik paling kecil. Robots
+tidak tersedia (HTTP 404), jadi default D3 tetap berlaku: 1,0 detik/request, concurrency
+maksimum 3, User-Agent jujur. Hanya metadata teknis yang disimpan.
+
 ## D21 — Infra device dipakai untuk tooling waktu-bangun, bukan runtime deliverable
 
 Ditetapkan user 2026-08-27: "manfaatkan tools yang ada di infrastruktur device ini,
@@ -193,7 +203,6 @@ container project lain yang sudah `Exited`.
 
 | Kode | Pertanyaan | Dikunci di |
 |---|---|---|
-| 🔓 D16 | Situs mana yang jadi target `seo`? | P1 |
 | 🔓 D17 | Field wajib final per target (setelah recon nyata) | P3 |
 | 🔓 D18 | Halaman demo dipublikasikan lewat Artifact claude.ai atau file statis? | P10 |
 | 🔓 D20 | Repo dijadikan publik? | P12, **butuh izin user terpisah** |

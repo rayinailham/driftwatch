@@ -84,17 +84,36 @@ bukti tiap kotak**. Plus daftar kandidat yang ditolak dan alasannya.
 - D16 terkunci di `docs/DECISIONS.md`
 
 ## Definition of Done
-- [ ] `robots.txt` keempat target diambil dan hasilnya ditulis di `docs/TARGETS.md`
-- [ ] ≥ 3 kandidat `seo` dievaluasi; yang dipilih lolos **tujuh** kotak `docs/ETHICS.md` §2 dengan bukti per kotak
-- [ ] Kandidat yang ditolak tercatat beserta alasannya
-- [ ] D16 dipindahkan dari 🔓 ke terkunci di `docs/DECISIONS.md`
-- [ ] `curl -sSI http://127.0.0.1:8100/` → `200`; halaman listing berisi 20 `item-card`
-- [ ] `gen_fixture.py --seed 1337` dijalankan dua kali → hash folder identik (reproducible)
-- [ ] `drift_lab.py --verify` exit 0; DO-01 dan DO-03 bisa diterapkan lalu di-`--reset`
-- [ ] Kait `.scenario` terbukti: tulis penanda 503 → `curl` beberapa kali → sebagian balas 503;
+- [x] `robots.txt` keempat target diambil dan hasilnya ditulis di `docs/TARGETS.md`
+- [x] ≥ 3 kandidat `seo` dievaluasi; yang dipilih lolos **tujuh** kotak `docs/ETHICS.md` §2 dengan bukti per kotak
+- [x] Kandidat yang ditolak tercatat beserta alasannya
+- [x] D16 dipindahkan dari 🔓 ke terkunci di `docs/DECISIONS.md`
+- [x] `curl -sSI http://127.0.0.1:8100/` → `200`; halaman listing berisi 20 `item-card`
+- [x] `gen_fixture.py --seed 1337` dijalankan dua kali → hash folder identik (reproducible)
+- [x] `drift_lab.py --verify` exit 0; DO-01 dan DO-03 bisa diterapkan lalu di-`--reset`
+- [x] Kait `.scenario` terbukti: tulis penanda 503 → `curl` beberapa kali → sebagian balas 503;
       hapus penanda → semua balas 200
-- [ ] **Tidak ada `docker-compose.yml`** di project ini (D8); `lab_up.sh` tidak memanggil Docker
-- [ ] **Commit + push berhasil** (D19)
+- [x] **Tidak ada `docker-compose.yml`** di project ini (D8); `lab_up.sh` tidak memanggil Docker
+- [x] **Commit + push berhasil** (D19)
+
+### Bukti nyata (2026-08-27)
+
+```text
+robots: books=404 · quotes=404 · HTTPX=404 · driftlab=200 Allow:/
+kandidat: HTTPX=23 URL PASS 7/7 · FastAPI=151 URL PASS 7/7 · Pydantic=1796 URL FAIL volume
+first=b09a1d162a6608374fb26ad7c95cfa33f5e055217cb4c7b8be733bb8e22ce5d3
+second=b09a1d162a6608374fb26ad7c95cfa33f5e055217cb4c7b8be733bb8e22ce5d3
+identical=yes
+baseline items=200 reproducible_sha256=b09a1d162a6608374fb26ad7c95cfa33f5e055217cb4c7b8be733bb8e22ce5d3
+DO-01 added=12 PASS
+DO-03 removed=1 PASS
+2/11 PASS; fixture reset to 200 items
+HTTP root: HTTP/1.0 200 OK
+item-card: 20
+DO-06: 32 200 · 8 503
+reset: 40 200
+compileall=PASS bash-n=PASS docker-compose=absent forbidden_refs=0
+```
 
 ## Metrik selesai
 `4 target ditetapkan · N kandidat seo dievaluasi, 1 lolos · fixture 200 item · 2/11 oracle siap`

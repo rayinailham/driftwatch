@@ -22,3 +22,5 @@ node_modules/
 
 # fixture yang digenerate (bisa dibangun ulang dari scripts/drift_lab.py)
 fixtures/site/
+fixtures/.lab.pid
+fixtures/.scenario

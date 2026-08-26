@@ -2,15 +2,15 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 1/13 fase · **Fase aktif:** — (P0 selesai)
-**Fase berikutnya:** **P1 — Target & Etika** · **soak_dibuka:** — (diisi di P7)
+**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 2/13 fase · **Fase aktif:** — (P1 selesai)
+**Fase berikutnya:** **P2 — Recon** · **soak_dibuka:** — (diisi di P7)
 
 ## Status fase
 
 | Fase | Status | Catatan |
 |---|---|---|
 | P0 Bootstrap | ✅ selesai | `env-check.md`, 10 tool, `uv sync` 0 error, remote personal OK |
-| P1 Target & Etika | ⬜ belum | 4 target, gerbang etika `seo` (🔓 D16), fixture `driftlab` :8100 |
+| P1 Target & Etika | ✅ selesai | 4 target; HTTPX lolos 7/7; fixture 200 item; oracle 2/11 |
 | P2 Recon | ⬜ belum | 4 `recon/*.json`, keputusan engine per target |
 | P3 Kontrak Data | ⬜ belum | `contracts.py` + `validate.py`, D17 dikunci |
 | P4 Mesin Scraper | ⬜ belum | 6 komponen wajib, run cicip 2 halaman |
@@ -61,14 +61,16 @@ Tidak dipakai walau ada: MySQL/Redis/TiDB (checkpoint wajib SQLite), MCP `excel`
 
 ## Fakta terverifikasi tentang target
 
-*(kosong — diisi P1 & P2: robots belum dicek, situs `seo` belum dipilih (🔓 D16),
-fixture belum dibangun.)*
+`books` robots 404 · `quotes` robots 404 · **`seo` = HTTPX docs** (D16, robots 404,
+sitemap 23 URL, gerbang 7/7) · `driftlab` robots `Allow: /`, 200 item deterministik,
+`127.0.0.1:8100`, stdlib. Host publik tetap default 1,0 dtk karena tanpa `Crawl-delay`.
 
 ## Metrik
 
 | Metrik | Target | Aktual |
 |---|---|---|
 | P0: tool terverifikasi · error `uv sync` | — · 0 | **10 · 0** |
+| P1: target · kandidat SEO · lolos · item · oracle | 4 · ≥3 · 1 · 200 · 2/11 | **4 · 3 · 1 · 200 · 2/11** |
 | Record `books` · duplikat · field `required` | ≥1.000 · 0 · ≥98% | — |
 | Record manual · kill→resume · gap · hari soak | 3 · dup 0 · ≥delay×900 · 3 | — |
 | Drift oracle · kode alarm | 11/11 · 10 | — |
@@ -80,18 +82,18 @@ fixture belum dibangun.)*
 **Perencanaan:** `AGENTS.md`, `PLAN.md`, `KICKSTART.md`, `README.md`, `.gitignore`,
 `docs/` (8 file), `phases/phase-00..12` (13 file).
 
-**P0 (2026-08-27):** `pyproject.toml` (8 dependency), `uv.lock` (34 paket), `env-check.md`
-(185 baris), `.env.example` (`.env` gitignored, terbukti), struktur folder lengkap
-(`.gitkeep`), **tidak ada `docker-compose.yml`** (D8). **Kode produksi: belum ada.**
+**P0 (2026-08-27):** `pyproject.toml`, `uv.lock`, `env-check.md`, `.env.example`,
+struktur folder lengkap; **tidak ada `docker-compose.yml`** (D8).
 
 **Repo (D19):** `git@rayin-personal:rayinailham/driftwatch.git` — privat, akun personal
 `rayinailham` (`ssh -T` menyapa benar), branch `main` → `origin/main`.
 Commit P0: **`02469f0`** (+1 commit susulan pencatat hash).
 
-## Blocker & keputusan terbuka
+**P1 (2026-08-27):** `docs/TARGETS.md`; D16 HTTPX; generator fixture; server stdlib +
+PID aman; CLI reset/verify/DO-01/DO-03; kait DO-06/DO-08; hash fixture reproducible.
 
+## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**
-- 🔓 **D16** situs `seo` → **P1** · 🔓 **D17** field final → **P3** · 🔓 **D18** publikasi demo
+- 🔓 **D17** field final → **P3** · 🔓 **D18** publikasi demo
   → **P10** · 🔓 **D20** repo publik → **P12, butuh izin eksplisit user**
-- ⚠️ `docs/DECISIONS.md` melompat D8 → D21: D9/D10/D19/D20/D22 dirujuk di banyak tempat dan
-  konsisten, tapi D9–D20 tidak punya entri sendiri. Rapikan di fase pemakainya (D9/D10 → P7).
+- ⚠️ D9/D10 belum punya entri sendiri; rapikan saat P7 memakai keduanya.
