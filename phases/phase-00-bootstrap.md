@@ -210,6 +210,39 @@ Jangan pakai akun work. Jangan menjadikan repo publik (butuh izin terpisah, 🔓
 
 - [x] **Commit + push berhasil (D19)** — lihat blok "Bukti gerbang commit" di bawah.
 
+## Bukti gerbang commit (D19)
+
+`make audit` belum ada sebelum P12 → pakai pemeriksaan manual:
+
+```
+$ git status --short | grep -E '(^| )\.env$|^\?\? data/|^\?\? reports/|auth/|\.db$'
+audit manual: 0 kebocoran
+
+$ git add -A && git status --short
+A  .env.example
+M  STATE.md
+A  deploy/.gitkeep
+A  env-check.md
+M  phases/phase-00-bootstrap.md
+A  pyproject.toml
+A  recon/.gitkeep
+A  uv.lock
+
+$ git commit -m "P00: bootstrap environment + struktur project"
+02469f0 P00: bootstrap environment + struktur project
+
+$ git push origin main
+To rayin-personal:rayinailham/driftwatch.git
+   dbb8320..02469f0  main -> main       (exit 0)
+
+$ git status -sb
+## main...origin/main
+```
+
+**Commit P0: `02469f0`** (badan commit memuat artefak + metrik selesai).
+Satu commit susulan `02469f0`+1 hanya mencatat hash ini ke `STATE.md` dan blok ini —
+`amend` tidak dipakai karena butuh `force-push` yang perlu izin user terpisah.
+
 ## Metrik selesai
 `N tool terverifikasi · 0 error uv sync · remote personal tersambung`
 

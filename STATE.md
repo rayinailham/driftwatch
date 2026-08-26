@@ -86,7 +86,7 @@ fixture belum dibangun.)*
 
 **Repo (D19):** `git@rayin-personal:rayinailham/driftwatch.git` — privat, akun personal
 `rayinailham` (`ssh -T` menyapa benar), branch `main` → `origin/main`.
-Commit P0: `__COMMIT__`.
+Commit P0: **`02469f0`** (+1 commit susulan pencatat hash).
 
 ## Blocker & keputusan terbuka
 
