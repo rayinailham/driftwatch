@@ -84,11 +84,14 @@ Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 
 **Kode:** belum ada.
 
+**Repo (D19):** `git@rayin-personal:rayinailham/driftwatch.git` — **privat**, akun personal
+`rayinailham`. Commit pertama `66acc66` (perencanaan) sudah di-push ke `main`.
+
 ## Catatan untuk user
 
-1. **Git sudah diizinkan (D19):** akun personal `rayinailham` lewat SSH alias `rayin-personal`,
-   repo `driftwatch` **privat**. Commit + push wajib di akhir tiap fase.
-   Repo jadi publik masih butuh izin terpisah (🔓 D20).
+1. **Git sudah diizinkan & repo sudah dibuat (D19):** akun personal `rayinailham` lewat SSH
+   alias `rayin-personal`, repo `driftwatch` **privat**, commit perencanaan sudah di-push.
+   Commit + push wajib di akhir tiap fase. Repo jadi publik masih butuh izin terpisah (🔓 D20).
 2. **P7 sengaja didahulukan.** Begitu timer nyala, jam 3 hari untuk P9 berjalan sendiri
    sementara P8, P10, P11 dikerjakan. Jangan menunggu menganggur.
 3. **Empat keputusan masih terbuka:** 🔓 D16 (situs `seo`, P1), 🔓 D17 (field final, P3),

@@ -68,15 +68,16 @@ Buktikan: `git check-ignore -v .env data reports` (setelah `git init` di langkah
 Isi: versi tiap tool (hasil nyata, bukan salinan perintah), daftar yang tidak ada,
 tanggal, catatan anomali, dan keputusan apakah `systemctl --user` tersedia.
 
-### 7. Inisialisasi repo (D19)
+### 7. Verifikasi repo (D19) — **sudah dibuat saat perencanaan**
+
+Repo sudah ada dan commit pertama sudah di-push. Fase ini hanya memverifikasinya:
 ```bash
-git init -b main
-git config user.email "rayinailham9@gmail.com"
-git remote add origin git@rayin-personal:rayinailham/driftwatch.git
+git remote -v                # origin = git@rayin-personal:rayinailham/driftwatch.git
 ssh -T git@rayin-personal    # harus menyapa "rayinailham"
+git log --oneline | head -3
+git check-ignore -v .env data reports
 ```
-Kalau repo remote belum ada, buat lewat akun **personal** (`rayinailham`), **privat**.
-Jangan pakai akun work. Jangan menjadikannya publik (butuh izin terpisah, 🔓 D20).
+Jangan pakai akun work. Jangan menjadikan repo publik (butuh izin terpisah, 🔓 D20).
 
 ---
 
@@ -84,7 +85,7 @@ Jangan pakai akun work. Jangan menjadikannya publik (butuh izin terpisah, 🔓 D
 - `pyproject.toml`, `uv.lock`
 - `env-check.md`
 - struktur folder + `.env.example`
-- repo git terhubung ke remote personal
+- repo git terverifikasi terhubung ke remote personal
 
 ## Definition of Done
 - [ ] Perintah versi di langkah 1 dijalankan; hasilnya ditempel di `env-check.md`
@@ -92,7 +93,7 @@ Jangan pakai akun work. Jangan menjadikannya publik (butuh izin terpisah, 🔓 D
 - [ ] Struktur folder sesuai langkah 3
 - [ ] `.env.example` ada, `.env` ada dan **tidak** ter-track (`git check-ignore` membuktikan)
 - [ ] `env-check.md` berisi hasil nyata + status `systemctl --user`
-- [ ] `ssh -T git@rayin-personal` menyapa `rayinailham`
+- [ ] `ssh -T git@rayin-personal` menyapa `rayinailham`; `git remote -v` menunjuk alias itu
 - [ ] **Commit + push berhasil** (D19)
 
 ## Metrik selesai
