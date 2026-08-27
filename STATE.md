@@ -2,8 +2,8 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 3/13 fase · **Fase aktif:** — (P2 selesai)
-**Fase berikutnya:** **P3 — Kontrak Data** · **soak_dibuka:** — (diisi di P7)
+**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 4/13 fase · **Fase aktif:** — (P3 selesai)
+**Fase berikutnya:** **P4 — Mesin Scraper** · **soak_dibuka:** — (diisi di P7)
 
 ## Status fase
 
@@ -12,7 +12,7 @@
 | P0 Bootstrap | ✅ selesai | `env-check.md`, 10 tool, `uv sync` 0 error · `02469f0` |
 | P1 Target & Etika | ✅ selesai | 4 target; HTTPX 7/7; fixture 200; oracle 2/11 · `0f69f5f` |
 | P2 Recon | ✅ selesai | 4 recon sah 4/4; quotes → `httpx+json` (8→1 request) · `2d1f585` |
-| P3 Kontrak Data | ⬜ belum | `contracts.py` + `validate.py`, D17 dikunci |
+| P3 Kontrak Data | ✅ selesai | 4 kontrak; 31 field (27 required); 12/12 sampel; 11/11 test |
 | P4 Mesin Scraper | ⬜ belum | 6 komponen wajib, run cicip 2 halaman |
 | P5 Validasi & Resume | ⬜ belum | 3 record manual, kill→resume, unit test (`unittest`) |
 | P6 Panen Penuh | ⬜ belum | ≥ 1.000 record, CSV+JSONL, kamus data |
@@ -73,6 +73,7 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 | P0: tool terverifikasi · error `uv sync` | — · 0 | **10 · 0** |
 | P1: target · kandidat SEO · lolos · item · oracle | 4 · ≥3 · 1 · 200 · 2/11 | **4 · 3 · 1 · 200 · 2/11** |
 | P2: recon sah · butuh browser · quotes request | 4/4 · 0 · turun | **4/4 · 0 · 8 → 1** |
+| P3: kontrak · field (required) · sampel · test | 4 · N · 12/12 · ≥6 | **4 · 31 (27) · 12/12 · 11/11** |
 | Record `books` · duplikat · field `required` | ≥1.000 · 0 · ≥98% | — |
 | Record manual · kill→resume · gap · hari soak | 3 · dup 0 · ≥delay×900 · 3 | — |
 | Drift oracle · kode alarm | 11/11 · 10 | — |
@@ -86,14 +87,10 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 **P0:** `pyproject.toml`, `uv.lock`, `env-check.md`, `.env.example`, struktur folder; **tanpa `docker-compose.yml`** (D8).
 **P1:** `docs/TARGETS.md`; generator + server fixture stdlib; CLI reset/verify/DO-01/DO-03; kait DO-06/DO-08.
 **P2:** `recon/{books,quotes,seo,driftlab}.json` (4/4 sah) + `scripts/validate_recon.py` (gerbang bentuk, exit 0).
-`AGENTS.md` §4 dikoreksi: ambang verify fixture 2/11 sebelum P8, 11/11 sejak P8; `reproducible_sha256` selalu wajib.
+**P3:** `src/{contracts,validate,test_contracts}.py`; skema + D17 terkunci; 31/31 deskripsi dan source hint terisi.
 
 ## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**
-- 🔓 **D17** field final → **P3**. Bahan lengkap dari P2; 2 hal harus diputus: (a) `quotes.quote_id`
-  = `sha256(text)[:16]` (situs tanpa id) + apakah `text` disimpan utuh atau di-hash (sandbox resmi vs
-  ETHICS §1.5); (b) `books.description_words` menggantikan teks deskripsi. Opsional terbukti:
-  `quotes.tags` (1/100 kosong), `seo.og_title` (0/3 ada).
 - 🔓 **D18** publikasi demo → **P10** · 🔓 **D20** repo publik → **P12, butuh izin eksplisit user**
 - ⚠️ D9/D10 belum punya entri sendiri; rapikan saat P7 memakai keduanya.
 - ⚠️ `docs/DECISIONS.md` mengaku mengunci D1–D15 tapi D9–D15 tidak punya entri; tulis saat dipakai.

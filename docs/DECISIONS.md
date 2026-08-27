@@ -104,6 +104,21 @@ Tiga alasan, berurutan dari yang paling mengikat:
 Tetap: bind `127.0.0.1` (jangan `0.0.0.0`), port **8100**, salinan bersih **8101**.
 Ganti port berarti mengubah D8 ini.
 
+## D17 — Kontrak field final per target
+
+Dikunci 2026-08-27 di P3 setelah dicocokkan dengan 12 sampel recon nyata. Bentuk final
+ada di `docs/SCHEMA.md` §2b dan ditegakkan oleh `src/contracts.py` + `src/validate.py`:
+
+- `books`: 11 field (10 required), kunci `upc`.
+- `quotes`: 6 field (5 required), kunci `quote_id = sha256(text)[:16]`.
+- `seo`: 9 field (8 required), kunci `url`.
+- `driftlab`: 5 field (4 required), kunci `item_id`.
+
+Khusus `quotes`, teks kutipan tidak disimpan karena batas metadata-only. Parser hanya
+memakainya sementara untuk menghitung `quote_id` dan `quote_word_count`, lalu membuangnya.
+`tags` tetap opsional karena 1/100 sampel recon kosong. `books.description_words`,
+`seo.og_title`, dan `driftlab.note` juga opsional; field lain terbukti stabil di recon.
+
 ## D16 — Target `seo`: dokumentasi HTTPX
 
 Dikunci 2026-08-27 di P1: `https://www.python-httpx.org/` menjadi target `seo`.
@@ -203,6 +218,5 @@ container project lain yang sudah `Exited`.
 
 | Kode | Pertanyaan | Dikunci di |
 |---|---|---|
-| 🔓 D17 | Field wajib final per target (setelah recon nyata) | P3 |
 | 🔓 D18 | Halaman demo dipublikasikan lewat Artifact claude.ai atau file statis? | P10 |
 | 🔓 D20 | Repo dijadikan publik? | P12, **butuh izin user terpisah** |

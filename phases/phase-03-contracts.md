@@ -38,7 +38,7 @@ CONTRACTS = {
   },
   ...
 }
-VOLATILE = {"fetched_at", "run_id", "url", "scrape_duration_ms"}   # D7: tidak ikut di-hash
+VOLATILE = {"fetched_at", "run_id", "scrape_duration_ms"}   # D7: tidak ikut di-hash
 ```
 
 `description` dan `source_hint` bukan hiasan — keduanya menjadi isi **Sheet 5 "Kamus Data"**
@@ -85,13 +85,30 @@ uv run python -m unittest discover -s src -p 'test_*.py' -v
 - D17 terkunci di `docs/DECISIONS.md`
 
 ## Definition of Done
-- [ ] Tabel field 4 target di `docs/SCHEMA.md` §2b cocok dengan `recon/*.json`; label "draf" hilang
-- [ ] D17 dipindahkan dari 🔓 ke terkunci
-- [ ] 12 record `sample` (3 × 4 target) lulus `validate_record` tanpa pengecualian
-- [ ] Uji hash: `fetched_at` berubah → hash sama; nilai field berubah → hash beda
-- [ ] `python -m unittest discover -s src` → ≥ 6 test, semua lulus, output ditempel
-- [ ] Tiap field punya `description` + `source_hint` yang terisi (bahan kamus data)
-- [ ] **Commit + push berhasil** (D19)
+- [x] Tabel field 4 target di `docs/SCHEMA.md` §2b cocok dengan `recon/*.json`; label "draf" hilang
+- [x] D17 dipindahkan dari 🔓 ke terkunci
+- [x] 12 record `sample` (3 × 4 target) lulus `validate_record` tanpa pengecualian
+- [x] Uji hash: `fetched_at` berubah → hash sama; nilai field berubah → hash beda
+- [x] `python -m unittest discover -s src` → ≥ 6 test, semua lulus, output ditempel
+- [x] Tiap field punya `description` + `source_hint` yang terisi (bahan kamus data)
+- [x] **Commit + push berhasil** (D19)
+
+### Bukti 2026-08-27
+
+```text
+$ uv run --no-sync python -m unittest discover -s src -p 'test_*.py' -v
+Ran 11 tests in 0.001s
+OK
+
+$ uv run --no-sync python -c '<validasi 12 sampel recon>'
+samples=12/12 valid
+
+$ uv run --no-sync python -c '<hitung metadata kontrak>'
+contracts=4 fields=31 required=27 descriptions=31 source_hints=31
+
+$ uv run --no-sync python -m py_compile src/contracts.py src/validate.py src/test_contracts.py
+exit 0
+```
 
 ## Metrik selesai
 `4 kontrak terkunci · N field (M required) · 12/12 sampel lulus · X/X test lulus`

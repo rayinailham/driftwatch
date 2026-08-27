@@ -4,8 +4,8 @@ Semua fase menulis dan membaca bentuk di bawah ini apa adanya.
 Perubahan skema harus lewat `docs/DECISIONS.md` dulu.
 Enum kode alarm ada di D4, ambangnya di D5, aturan identitas di D7.
 
-**Status: draf.** Dikunci di P3 setelah dicocokkan dengan `recon.json` nyata,
-lalu `src/validate.py` menegakkannya secara otomatis.
+**Status: terkunci (D17).** Dicocokkan dengan `recon.json` nyata di P3 dan
+`src/validate.py` menegakkannya secara otomatis.
 
 ---
 
@@ -92,21 +92,25 @@ Mengikuti skill `web-recon` apa adanya, dengan **tiga field tambahan wajib**:
 Aturan:
 - `record_id` — D7. Unik dalam satu target. Duplikat ditolak di level SQLite, bukan di Python.
 - `content_hash` — sha256 atas `json.dumps(fields, sort_keys=True, separators=(",",":"), ensure_ascii=False)`.
-  `fetched_at`, `run_id`, `url` **tidak** ikut di-hash (D7).
+  `fetched_at`, `run_id`, `scrape_duration_ms` **tidak** ikut di-hash (D7). Field bisnis
+  `url` milik target `seo` tetap ikut.
 - `fields` hanya boleh memuat key yang terdaftar di `src/contracts.py`. Key asing memicu
   `SCHEMA_UNKNOWN_FIELD`.
 - `missing_fields` kosong = `[]`, bukan `null`. Tiap entri wajib punya pasangan di
   `missing_reason` (D6).
 - Tidak ada HTML mentah di nilai field mana pun. String dipangkas maksimal 2.000 karakter.
 
-### 2b. Field per target (🔓 dikunci di P3 sebagai D17)
+### 2b. Field per target (D17)
 
 | Target | Kunci identitas | Field `required` | Field opsional |
 |---|---|---|---|
-| `books` | `upc` | `upc`, `title`, `price_incl_tax`, `availability_count`, `rating`, `category` | `price_excl_tax`, `tax`, `description`, `image_url` |
-| `quotes` | `quote_id` (sha1 dari teks) | `text`, `author` | `author_url`, `tags[]` |
-| `seo` | `url` | `url`, `http_status`, `title`, `word_count` | `h1`, `meta_description`, `canonical`, `published_at`, `internal_links`, `external_links`, `lang` |
+| `books` | `upc` | `upc`, `title`, `price_incl_tax_gbp`, `price_excl_tax_gbp`, `tax_gbp`, `availability_count`, `in_stock`, `rating`, `category`, `num_reviews` | `description_words` |
+| `quotes` | `quote_id` (`sha256(text)[:16]`) | `quote_id`, `author_name`, `author_slug`, `author_goodreads_link`, `quote_word_count` | `tags` |
+| `seo` | `url` | `url`, `title`, `h1`, `meta_description`, `canonical`, `h2_count`, `word_count`, `link_count` | `og_title` |
 | `driftlab` | `item_id` | `item_id`, `name`, `price`, `category` | `note` |
+
+Untuk `quotes`, teks karya hanya dipakai sementara untuk menurunkan `quote_id` dan
+`quote_word_count`, lalu dibuang. Dataset tidak menyimpan atau meredistribusikan teks kutipan.
 
 ---
 
