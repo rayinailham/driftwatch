@@ -2,8 +2,8 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 5/13 fase · **Fase aktif:** — (P4 selesai)
-**Fase berikutnya:** **P5 — Validasi & Resume** · **soak_dibuka:** — (diisi di P7)
+**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 6/13 fase · **Fase aktif:** — (P5 selesai)
+**Fase berikutnya:** **P6 — Panen Penuh** · **soak_dibuka:** — (diisi di P7)
 
 ## Status fase
 
@@ -13,8 +13,8 @@
 | P1 Target & Etika | ✅ selesai | 4 target; HTTPX 7/7; fixture 200; oracle 2/11 · `0f69f5f` |
 | P2 Recon | ✅ selesai | 4 recon sah 4/4; quotes → `httpx+json` (8→1 request) · `2d1f585` |
 | P3 Kontrak Data | ✅ selesai | 4 kontrak; 31 field (27 required); 12/12 sampel; 11/11 test · `9e81409` |
-| P4 Mesin Scraper | ✅ selesai | 6/6 komponen; cicip 3/3 valid; gap publik min 1.000 ms |
-| P5 Validasi & Resume | ⬜ belum | 3 record manual, kill→resume, unit test (`unittest`) |
+| P4 Mesin Scraper | ✅ selesai | 6/6 komponen; cicip 3/3 valid; gap publik min 1.000 ms · `eadb3b2` |
+| P5 Validasi & Resume | ✅ selesai | 3/3 manual; resume 12→1.000 baris; dup 0; 17/17 test |
 | P6 Panen Penuh | ⬜ belum | ≥ 1.000 record, CSV+JSONL, kamus data |
 | P7 Penjadwalan | ⬜ belum | systemd timer 09:00 WIB — **dahulukan**, membuka jam soak |
 | P8 Diff & Alarm | ⬜ belum | 10 kode alarm, 11/11 drift oracle |
@@ -75,8 +75,8 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 | P2: recon sah · butuh browser · quotes request | 4/4 · 0 · turun | **4/4 · 0 · 8 → 1** |
 | P3: kontrak · field (required) · sampel · test | 4 · N · 12/12 · ≥6 | **4 · 31 (27) · 12/12 · 11/11** |
 | P4: komponen · target valid · record cicip · gap publik min | 6/6 · 3/3 · — · ≥900 ms | **6/6 · 3/3 · 100 · 1.000 ms** |
-| Record `books` · duplikat · field `required` | ≥1.000 · 0 · ≥98% | — |
-| Record manual · kill→resume · gap · hari soak | 3 · dup 0 · ≥delay×900 · 3 | — |
+| Record `books` · duplikat · field `required` | ≥1.000 · 0 · ≥98% | **1.000 · 0 · 100%** |
+| P5: manual · resume unit/baris · gap · test | 3/3 · naik/naik · ≥900 ms · ≥11 | **3/3 · 12→1050/12→1000 · 1.000 ms · 17/17** |
 | Drift oracle · kode alarm | 11/11 · 10 | — |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
 | **Acceptance project** | 12/12 | **0/12** |
@@ -90,6 +90,7 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 **P2:** `recon/{books,quotes,seo,driftlab}.json` (4/4 sah) + `scripts/validate_recon.py` (gerbang bentuk, exit 0).
 **P3:** `src/{contracts,validate,test_contracts}.py`; skema + D17 terkunci; 31/31 deskripsi dan source hint terisi.
 **P4:** `src/scrape.py`, `store.py`, `engines/{http_html,http_json}.py`, `test_scrape.py`; run cicip di `data/` (gitignored); D11 dipulihkan.
+**P5:** `docs/{MANUAL_VERIFY,RESUME_PROOF}.md`; 1.000 record books lokal (gitignored); rekaman video ditunda ke P12 agar merekam alur final sekali.
 
 ## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**

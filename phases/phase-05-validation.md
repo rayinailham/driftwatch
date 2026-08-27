@@ -78,14 +78,17 @@ uv run python -m unittest discover -s src -p 'test_*.py' -v
 - rekaman layar mentah untuk video P12, **atau** keputusan menundanya ke P12 (catat di `STATE.md`)
 
 ## Definition of Done
-- [ ] 3 record diverifikasi manual, semua field `required` cocok, tertulis di `docs/MANUAL_VERIFY.md`
-- [ ] Kill → resume terbukti: `N2 > N1`, `L2 > L1`, duplikat **0**, `resume_used == true`,
-      output ditempel di `docs/RESUME_PROOF.md`
-- [ ] `observed_min_gap_ms` ≥ ambang; angkanya ditulis
-- [ ] `grep -c RETRY run.log` = 0 walaupun ada respons 404 (jumlah 404 disebut)
-- [ ] `python -m unittest discover -s src` → ≥ 11 test total (6 dari P3 + ≥ 5 baru), semua lulus
-- [ ] Keputusan rekaman video dicatat di `STATE.md`
-- [ ] **Commit + push berhasil** (D19)
+- [x] 3 record diverifikasi manual, semua field `required` cocok, tertulis di `docs/MANUAL_VERIFY.md`
+      — posisi 1/500/1.000, 30/30 nilai cocok, ketiga URL HTTP 200.
+- [x] Kill → resume terbukti: `N2 > N1`, `L2 > L1`, duplikat **0**, `resume_used == true`,
+      output ditempel di `docs/RESUME_PROOF.md` — `12→1050` unit ok, `12→1000` baris, duplikat 0.
+- [x] `observed_min_gap_ms` ≥ ambang; angkanya ditulis — `1000 ms ≥ 900 ms`.
+- [x] `grep -c RETRY run.log` = 0 walaupun ada respons 404 (jumlah 404 disebut)
+      — `RETRY=0`, teks `404=4` dari satu request dan dua baris log.
+- [x] `python -m unittest discover -s src` → ≥ 11 test total (6 dari P3 + ≥ 5 baru), semua lulus
+      — `Ran 17 tests in 7.017s`, `OK`.
+- [x] Keputusan rekaman video dicatat di `STATE.md` — ditunda ke P12 agar satu rekaman final cukup.
+- [x] **Commit + push berhasil** (D19) — file ini berada di commit P05 yang didorong ke `origin/main`.
 
 ## Metrik selesai
 `3/3 record cocok manual · resume N1→N2, duplikat 0 · gap X ms · Y test lulus`
