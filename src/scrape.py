@@ -20,7 +20,7 @@ from contracts import CONTRACTS
 from engines.http_html import detail_links, parse_detail, parse_seo
 from engines.http_json import parse_quotes
 from store import Store
-from validate import content_hash, make_record_id, validate_record
+from validate import SchemaUnknownField, content_hash, make_record_id, validate_record
 
 UA = "DriftWatch/1.0 (+mailto:rayinailham9@gmail.com)"
 RETRYABLE_STATUSES = {429, 500, 502, 503, 504}
@@ -82,12 +82,22 @@ class Fetcher:
 
 
 class Run:
-    def __init__(self, target: str, recon: dict, directory: Path, resume: bool, delay: float, concurrency: int):
+    def __init__(
+        self,
+        target: str,
+        recon: dict,
+        directory: Path,
+        resume: bool,
+        delay: float,
+        policy_delay: float,
+        concurrency: int,
+    ):
         self.target = target
         self.recon = recon
         self.directory = directory
         self.resume = resume
         self.delay = delay
+        self.policy_delay = policy_delay
         self.concurrency = concurrency
         self.started = datetime.now(JAKARTA)
         self.run_id = self.started.strftime("%Y-%m-%dT%H-%M-%S")
@@ -97,6 +107,7 @@ class Run:
         self.duplicates_rejected = 0
         self.pages_fetched = 0
         self.errors = 0
+        self.schema_unknown_fields: set[str] = set()
         self.fetcher: Fetcher | None = None
 
     async def execute(self, limit: int | None) -> None:
@@ -154,7 +165,7 @@ class Run:
     async def _detail_target(self, limit: int | None, output: Any) -> None:
         fetcher = self._fetcher()
         pagination = self.recon["pagination"]
-        maximum = pagination["max_page_observed"]
+        maximum = pagination["max_page_observed"] + (1 if self.target == "driftlab" else 0)
         for page in range(1, min(maximum, limit or maximum) + 1):
             page_key = f"page:{page}"
             if self.resume and self.store.done(page_key):
@@ -162,6 +173,11 @@ class Run:
             page_url = pagination["url_template"].format(n=page)
             try:
                 response = await fetcher.fetch(page_url)
+                if response.status_code == 404 and self.target == "driftlab":
+                    fetcher.status_counts["404"] -= 1
+                    if fetcher.status_counts["404"] == 0:
+                        del fetcher.status_counts["404"]
+                    break
                 response.raise_for_status()
                 for url in detail_links(self.target, response.text, page_url):
                     await self._detail(url, output)
@@ -170,7 +186,7 @@ class Run:
                 log.info("page %s selesai records_written=%s", page, self.records_written)
             except Exception as error:
                 self._fail(page_key, page_url, error)
-                raise
+                continue
 
     async def _detail(self, url: str, output: Any) -> None:
         fetcher = self._fetcher()
@@ -199,7 +215,12 @@ class Run:
             "missing_fields": missing,
             "missing_reason": reasons,
         }
-        validate_record(record, self.target)
+        try:
+            validate_record(record, self.target)
+        except SchemaUnknownField:
+            known = {field.name for field in CONTRACTS[self.target]["fields"]}
+            self.schema_unknown_fields.update(set(fields) - known)
+            raise
         if not self.store.add_seen(record["record_id"], record["content_hash"]):
             self.duplicates_rejected += 1
             return
@@ -238,11 +259,13 @@ class Run:
             "records_unique": self.store.unique_count(),
             "duplicates_rejected": self.duplicates_rejected,
             "errors": self.errors,
+            "schema_unknown_fields": sorted(self.schema_unknown_fields),
             "http_status_counts": dict(fetcher.status_counts) if fetcher else {},
             "retries": fetcher.retries if fetcher else 0,
             "field_completeness": completeness,
             "rate_limit": {
-                "delay_sec": self.delay,
+                "delay_sec": self.policy_delay,
+                "actual_delay_sec": self.delay,
                 "concurrency": self.concurrency,
                 "observed_min_gap_ms": fetcher.observed_min_gap_ms if fetcher else None,
             },
@@ -256,6 +279,7 @@ def main(
     limit: int | None = typer.Option(None, min=1, help="Berhenti setelah N unit kerja"),
     resume: bool = typer.Option(False, help="Lewati unit checkpoint berstatus ok"),
     delay: float | None = typer.Option(None, min=0, help="Timpa delay; HANYA untuk uji DO-11"),
+    policy_delay: float | None = typer.Option(None, min=0, help="Jeda minimum kebijakan untuk audit"),
     concurrency: int = typer.Option(1, min=1, help="Maksimum request serentak"),
     date: str | None = typer.Option(None, help="Timpa folder tanggal: YYYY-MM-DD"),
     out: Path | None = typer.Option(None, help="Folder hasil run"),
@@ -269,9 +293,12 @@ def main(
         raise typer.BadParameter("date harus YYYY-MM-DD") from error
     recon = json.loads((Path(__file__).parents[1] / "recon" / f"{target}.json").read_text())
     local = urlparse(recon["base_url"]).hostname in {"127.0.0.1", "localhost"}
-    effective_delay = delay if delay is not None else (recon["robots"]["crawl_delay"] or (0.0 if local else 1.0))
+    default_delay = recon["robots"]["crawl_delay"] or (0.0 if local else 1.0)
+    effective_delay = delay if delay is not None else default_delay
+    effective_policy_delay = policy_delay if policy_delay is not None else default_delay
     if not local:
         effective_delay = max(1.0, effective_delay)
+        effective_policy_delay = max(1.0, effective_policy_delay)
         concurrency = min(concurrency, PUBLIC_MAX_CONCURRENCY)
     directory = out or Path("data") / target / run_date
     if directory.exists() and any(directory.iterdir()) and not resume:
@@ -281,10 +308,12 @@ def main(
         )
     directory.mkdir(parents=True, exist_ok=True)
     _configure_logging(directory / "run.log")
-    run = Run(target, recon, directory, resume, effective_delay, concurrency)
+    run = Run(target, recon, directory, resume, effective_delay, effective_policy_delay, concurrency)
     exit_code = 0
     try:
         asyncio.run(run.execute(limit))
+        if run.store.unique_count() == 0:
+            exit_code = 1
     except (Exception, KeyboardInterrupt):
         exit_code = 1
         log.exception("run gagal target=%s", target)

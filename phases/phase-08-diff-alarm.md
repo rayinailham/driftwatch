@@ -64,7 +64,7 @@ Menjalankan 11 skenario berurutan, tiap skenario: `--reset` → terapkan → pan
 
 ```
 DO-01  added=12 changed=0 removed=0   alarms=[]                              PASS
-DO-04  records=0                       alarms=[ZERO_RECORDS,RECORD_COUNT_DROP]  PASS
+DO-04  records=0                       alarms=[CHURN_SPIKE,FIELD_COMPLETENESS_DROP,RECORD_COUNT_DROP,RUN_FAILED,ZERO_RECORDS]  PASS
 ...
 11/11 PASS
 ```
@@ -88,16 +88,16 @@ jalan dan `journalctl` menunjukkannya.
 - `reports/alerts.jsonl`
 
 ## Definition of Done
-- [ ] Diff dua snapshot identik → `added=0 changed=0 removed=0` (uji kewarasan D7)
-- [ ] `diff.json` 4 target sesuai `docs/SCHEMA.md` §5, termasuk `counts` dan `health`
-- [ ] Kesepuluh kode alarm terimplementasi dengan ambang **persis** seperti D5
-- [ ] `make oracles` → **11/11 PASS**, exit 0 (output ditempel penuh) — **A8**
-- [ ] DO-01..DO-03 lulus **tanpa** alarm apa pun (uji false positive)
-- [ ] Tiap `message` alarm bebas jargon; ada validator yang menolak daftar kata terlarang
+- [x] Diff dua snapshot identik → `added=0 changed=0 removed=0` (uji kewarasan D7)
+- [x] `diff.json` 4 target sesuai `docs/SCHEMA.md` §5, termasuk `counts` dan `health`
+- [x] Kesepuluh kode alarm terimplementasi dengan ambang **persis** seperti D5
+- [x] `make oracles` → **11/11 PASS**, exit 0 (output ditempel penuh) — **A8**
+- [x] DO-01..DO-03 lulus **tanpa** alarm apa pun (uji false positive)
+- [x] Tiap `message` alarm bebas jargon; ada validator yang menolak daftar kata terlarang
       (`docs/CLIENT_REPORT.md` §2 aturan 3)
-- [ ] Tiap alarm punya `next_action` yang konkret
-- [ ] `daily_run.sh` menjalankan diff + alarm; terlihat di `journalctl`
-- [ ] **Commit + push berhasil** (D19)
+- [x] Tiap alarm punya `next_action` yang konkret
+- [x] `daily_run.sh` menjalankan diff + alarm; terlihat di `journalctl`
+- [x] **Commit + push berhasil** (D19)
 
 ## Metrik selesai
 `11/11 oracle PASS · 10 kode alarm · N alarm sah, 0 false positive di DO-01..03`
@@ -117,3 +117,47 @@ jalan dan `journalctl` menunjukkannya.
 1. Centang DoD dengan output nyata (tempel output `make oracles` penuh).
 2. Update `STATE.md`: P8 ✅, 11/11, jumlah alarm sah.
 3. `git add -A && git commit -m "P08: mesin diff + 10 kode alarm + 11/11 drift oracle" && git push`
+
+## Bukti selesai — 2026-08-27
+
+Uji kewarasan dan unit test: `uv run --no-sync python -m unittest discover -s src -p 'test_*.py' -v`
+→ `Ran 24 tests in 7.015s` · `OK`. Test
+`test_identical_snapshots_have_zero_changes` membuktikan `added=0 changed=0 removed=0`.
+
+Empat hasil produksi diverifikasi dengan `jq`: `books=1000`, `quotes=100`, `seo=23`,
+`driftlab=200`; semuanya punya `counts`, `health`, `baseline_date=null`, dan `alarms=[]`.
+`reports/alerts.jsonl` ada dan kosong (0 alarm produksi sah pada baseline pertama).
+
+```text
+$ make oracles
+bash scripts/lab_down.sh
+DriftLab stopped (PID 201556)
+bash scripts/lab_up.sh
+DriftLab ready on http://127.0.0.1:8100 (PID 211167)
+uv run --no-sync python scripts/run_oracles.py
+DO-01  added=12 changed=0 removed=0  alarms=[]  PASS
+DO-02  added=0 changed=4 removed=0  alarms=[]  PASS
+DO-03  added=0 changed=0 removed=1  alarms=[]  PASS
+DO-04  records=0  alarms=['CHURN_SPIKE', 'FIELD_COMPLETENESS_DROP', 'RECORD_COUNT_DROP', 'RUN_FAILED', 'ZERO_RECORDS']  PASS
+DO-05  records=200  alarms=['FIELD_COMPLETENESS_DROP']  PASS
+DO-06  records=200  alarms=['HTTP_ERROR_SPIKE']  PASS
+DO-07  records=180  alarms=['SCHEMA_UNKNOWN_FIELD']  PASS
+DO-08  records=200  alarms=['DURATION_ANOMALY']  PASS
+DO-09  records=0  alarms=['RUN_MISSING']  PASS
+DO-10  added=0 changed=80 removed=0  alarms=['CHURN_SPIKE']  PASS
+DO-11  records=200  alarms=['RATE_LIMIT_VIOLATION']  PASS
+11/11 PASS
+```
+
+Integrasi unit eksplisit:
+
+```text
+ActiveState=inactive
+Result=success
+ExecMainStatus=0
+driftlab 2026-08-27: alarms=[]
+books 2026-08-27: alarms=[]
+quotes 2026-08-27: alarms=[]
+seo 2026-08-27: alarms=[]
+Finished DriftWatch daily harvest.
+```

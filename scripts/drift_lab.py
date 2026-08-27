@@ -13,6 +13,7 @@ from gen_fixture import SITE_DIR, generate_fixture, render_fixture
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENARIO_FILE = ROOT / "fixtures" / ".scenario"
+SCENARIOS = tuple(f"DO-{number:02d}" for number in range(1, 12))
 
 
 def reset() -> None:
@@ -38,10 +39,47 @@ def apply_scenario(code: str) -> None:
                     "note": "DO-01 deterministic addition",
                 }
             )
+    elif code == "DO-02":
+        for item in items[:4]:
+            item["price"] = f"{float(item['price']) + 10:.2f}"
     elif code == "DO-03":
         items.pop(0)
+    elif code == "DO-04":
+        render_fixture(items)
+        for path in [SITE_DIR / "index.html", *SITE_DIR.glob("page-*.html")]:
+            path.write_text(path.read_text().replace('class="item-card"', 'class="c-9f2a1"'))
+        return
+    elif code == "DO-05":
+        render_fixture(items)
+        for item in items[:60]:
+            path = SITE_DIR / "items" / f"{item['item_id']}.html"
+            path.write_text(path.read_text().replace('class="item-name"', 'class="name-missing"', 1))
+        return
+    elif code in {"DO-06", "DO-08"}:
+        SCENARIO_FILE.write_text(code)
+        return
+    elif code == "DO-07":
+        render_fixture(items)
+        path = SITE_DIR / "items" / f"{items[0]['item_id']}.html"
+        path.write_text(
+            path.read_text().replace(
+                '<article class="item-detail"',
+                '<article class="item-detail" data-promo="unexpected"',
+                1,
+            )
+        )
+        return
+    elif code == "DO-09":
+        SCENARIO_FILE.write_text(code)
+        return
+    elif code == "DO-10":
+        for item in items[:80]:
+            item["category"] = "restructured"
+    elif code == "DO-11":
+        SCENARIO_FILE.write_text(code)
+        return
     else:
-        raise ValueError(f"unsupported P1 scenario: {code}")
+        raise ValueError(f"unsupported scenario: {code}")
     render_fixture(items)
 
 
@@ -64,18 +102,30 @@ def verify() -> None:
     assert first_hash == second_hash
     print(f"baseline items=200 reproducible_sha256={first_hash}")
 
-    apply_scenario("DO-01")
-    assert len(load_items()) == 212
-    print("DO-01 added=12 PASS")
+    checks = {
+        "DO-01": lambda: len(load_items()) == 212,
+        "DO-02": lambda: load_items()[0]["price"] != build_baseline()[0]["price"],
+        "DO-03": lambda: len(load_items()) == 199,
+        "DO-04": lambda: "c-9f2a1" in (SITE_DIR / "page-1.html").read_text(),
+        "DO-05": lambda: "name-missing" in (SITE_DIR / "items" / "DW-0001.html").read_text(),
+        "DO-06": lambda: SCENARIO_FILE.read_text() == "DO-06",
+        "DO-07": lambda: "data-promo" in (SITE_DIR / "items" / "DW-0001.html").read_text(),
+        "DO-08": lambda: SCENARIO_FILE.read_text() == "DO-08",
+        "DO-09": lambda: SCENARIO_FILE.read_text() == "DO-09",
+        "DO-10": lambda: sum(item["category"] == "restructured" for item in load_items()) == 80,
+        "DO-11": lambda: SCENARIO_FILE.read_text() == "DO-11",
+    }
+    for code in SCENARIOS:
+        apply_scenario(code)
+        assert checks[code](), code
+        print(f"{code} fixture PASS")
     reset()
-    assert len(load_items()) == 200
+    print("11/11 PASS; fixture reset to 200 items")
 
-    apply_scenario("DO-03")
-    assert len(load_items()) == 199
-    print("DO-03 removed=1 PASS")
-    reset()
-    assert len(load_items()) == 200
-    print("2/11 PASS; fixture reset to 200 items")
+
+def build_baseline() -> list[dict[str, str]]:
+    generate_fixture(1337)
+    return load_items()
 
 
 def main() -> None:
@@ -83,7 +133,7 @@ def main() -> None:
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument("--reset", action="store_true")
     action.add_argument("--verify", action="store_true")
-    action.add_argument("--scenario", choices=("DO-01", "DO-03"))
+    action.add_argument("--scenario", choices=SCENARIOS)
     args = parser.parse_args()
     if args.reset:
         reset()

@@ -15,12 +15,8 @@ for TARGET in driftlab books quotes seo; do
   uv run --no-sync python src/scrape.py --target "$TARGET" --resume || FAIL=1
   uv run --no-sync python src/validate.py "data/$TARGET/$TODAY/records.jsonl" || FAIL=1
 
-  if [[ -f src/diff.py ]]; then
-    uv run --no-sync python src/diff.py --target "$TARGET" --today || FAIL=1
-  fi
-  if [[ -f src/alarm.py ]]; then
-    uv run --no-sync python src/alarm.py --target "$TARGET" --today || FAIL=1
-  fi
+  uv run --no-sync python src/diff.py --target "$TARGET" --today || FAIL=1
+  uv run --no-sync python src/alarm.py --target "$TARGET" --today || FAIL=1
   if [[ -f src/report.py ]]; then
     uv run --no-sync python src/report.py --target "$TARGET" --today || true
   fi

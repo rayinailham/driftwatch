@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import threading
 import time
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -20,6 +21,9 @@ def bucket(path: str) -> int:
 
 
 class DriftLabHandler(SimpleHTTPRequestHandler):
+    failed_once: set[str] = set()
+    hook_lock = threading.Lock()
+
     def _scenario(self) -> str:
         return SCENARIO_FILE.read_text().strip() if SCENARIO_FILE.exists() else ""
 
@@ -27,8 +31,12 @@ class DriftLabHandler(SimpleHTTPRequestHandler):
         scenario = self._scenario()
         request_bucket = bucket(self.path.split("?", 1)[0])
         if scenario == "DO-06" and request_bucket < 15:
-            self.send_error(503, "DriftLab injected failure")
-            return True
+            with self.hook_lock:
+                first_failure = self.path not in self.failed_once
+                self.failed_once.add(self.path)
+            if first_failure:
+                self.send_error(503, "DriftLab injected failure")
+                return True
         if scenario == "DO-08" and request_bucket < 10:
             time.sleep(4)
         return False

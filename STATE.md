@@ -2,8 +2,8 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 8/13 fase · **Fase aktif:** — (P7 selesai)
-**Fase berikutnya:** **P8 — Diff & Alarm** (P9 menunggu soak) · **soak_dibuka:** **2026-08-27**
+**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 9/13 fase · **Fase aktif:** — (P8 selesai)
+**Fase berikutnya:** **P10 — Demo + LLM** (P9 menunggu soak) · **soak_dibuka:** **2026-08-27**
 
 ## Status fase
 
@@ -14,10 +14,10 @@
 | P2 Recon | ✅ selesai | 4 recon sah 4/4; quotes → `httpx+json` (8→1 request) · `2d1f585` |
 | P3 Kontrak Data | ✅ selesai | 4 kontrak; 31 field (27 required); 12/12 sampel; 11/11 test · `9e81409` |
 | P4 Mesin Scraper | ✅ selesai | 6/6 komponen; cicip 3/3 valid; gap publik min 1.000 ms · `eadb3b2` |
-| P5 Validasi & Resume | ✅ selesai | 3/3 manual; resume 12→1.000 baris; dup 0; 17/17 test |
-| P6 Panen Penuh | ✅ selesai | 4 target; 1.323 record; dup 0; required 100%; CSV BOM; 18/18 test |
-| P7 Penjadwalan | ✅ selesai | timer aktif; NEXT 2026-08-28 09:04:10 WIB; run unit 4/4 sukses |
-| P8 Diff & Alarm | ⬜ belum | 10 kode alarm, 11/11 drift oracle |
+| P5 Validasi & Resume | ✅ selesai | 3/3 manual; resume 12→1.000; 17/17 test · `e551205` |
+| P6 Panen Penuh | ✅ selesai | 4 target; 1.323 record; required 100%; 18/18 test · `e6ad2f3` |
+| P7 Penjadwalan | ✅ selesai | timer aktif; NEXT 2026-08-28 09:04:10 WIB; unit sukses · `c9978ec` |
+| P8 Diff & Alarm | ✅ selesai | 10 kode; 11/11 oracle; 12 alarm sah; 0 false positive |
 | P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding, bukan sesi kerja |
 | P10 Demo + LLM | ⬜ belum | halaman publik + insight Claude API ber-pagar |
 | P11 Laporan Klien | ⬜ belum | `daily.md` 0 jargon + `REPORT.xlsx` 5 sheet |
@@ -75,9 +75,9 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 | P5: manual · resume unit/baris · gap · test | 3/3 · naik/naik · ≥900 ms · ≥11 | **3/3 · 12→1050/12→1000 · 1.000 ms · 17/17** |
 | P6: record total · books · dup · required min · test · loop resume | ≥1.000 · ≥1.000 · 0 · ≥98% · — · — | **1.323 · 1.000 · 0 · 100% · 18/18 · 40,927 dtk** |
 | P7: timer · NEXT · run unit · target · soak | aktif · waktu · sukses · 4/4 · tanggal | **aktif · 2026-08-28 09:04:10 WIB · 1/1 · 4/4 · 2026-08-27** |
-| Drift oracle · kode alarm | 11/11 · 10 | — |
+| P8: oracle · kode · alarm sah · false positive · unit | 11/11 · 10 · N · 0 · sukses | **11/11 · 10 · 12 · 0 · sukses** |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
-| **Acceptance project** | 12/12 | **0/12** |
+| **Acceptance project** | 12/12 | **1/12 (A8)** |
 
 ## Artefak yang sudah lahir
 
@@ -91,6 +91,7 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 **P5:** `docs/{MANUAL_VERIFY,RESUME_PROOF}.md`; 1.000 record books lokal (gitignored); rekaman video ditunda ke P12 agar merekam alur final sekali.
 **P6:** `src/{export,test_export}.py`, `docs/DATA_DICTIONARY.md`; 4 snapshot JSONL+CSV BOM (gitignored); D12 dikunci.
 **P7:** `scripts/{daily_run,prune}.sh`, `deploy/driftwatch.{service,timer}`, `Makefile`; D9/D10 dikunci; timer aktif.
+**P8:** `src/{diff,alarm,test_diff_alarm}.py`, `scripts/run_oracles.py`; 4 `diff.json`; `alerts.jsonl`; 10 detector; oracle 11/11.
 
 ## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**

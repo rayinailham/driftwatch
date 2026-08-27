@@ -64,6 +64,17 @@ class ContractTests(unittest.TestCase):
         with self.assertRaisesRegex(RecordValidationError, "missing_reason wajib"):
             validate_record({"item_id": "DW-1", "name": "Lamp", "price": 1.0, "category": "home"}, "driftlab")
 
+    def test_required_field_may_be_empty_with_reason(self):
+        record = {
+            "item_id": "DW-1",
+            "name": None,
+            "price": 1.0,
+            "category": "home",
+            "missing_fields": ["name", "note"],
+            "missing_reason": {"name": "heading hilang", "note": "catatan hilang"},
+        }
+        self.assertEqual(validate_record(record, "driftlab"), record)
+
     def test_record_id_consistent(self):
         self.assertEqual(make_record_id("books", "abc"), "books:upc:abc")
 

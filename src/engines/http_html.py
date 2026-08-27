@@ -36,6 +36,7 @@ def parse_detail(target: str, html: str, url: str) -> tuple[dict, list[str], dic
         }
         return _with_missing(fields, {"description_words": "elemen #product_description tidak ada"})
 
+    item = tree.css_first("article.item-detail")
     fields = {
         "item_id": _attribute(tree, "article.item-detail", "data-item-id"),
         "name": _text(tree, "h1.item-name"),
@@ -43,6 +44,10 @@ def parse_detail(target: str, html: str, url: str) -> tuple[dict, list[str], dic
         "category": _text(tree, "span.category"),
         "note": _text(tree, "p.note"),
     }
+    if item:
+        for name, value in item.attributes.items():
+            if name.startswith("data-") and name != "data-item-id":
+                fields[name.removeprefix("data-").replace("-", "_")] = value
     return _with_missing(fields, {"note": "elemen p.note tidak ada di halaman detail"})
 
 

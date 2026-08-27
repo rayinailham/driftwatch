@@ -1,6 +1,11 @@
 MAKEFLAGS := -j16
 .NOTPARALLEL:
 
-.PHONY: prune
+.PHONY: oracles prune
+oracles:
+	bash scripts/lab_down.sh
+	bash scripts/lab_up.sh
+	uv run --no-sync python scripts/run_oracles.py
+
 prune:
 	bash scripts/prune.sh --dry-run

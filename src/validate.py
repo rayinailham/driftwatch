@@ -56,8 +56,6 @@ def validate_record(rec: dict[str, Any], target: str) -> dict[str, Any]:
     for name, definition in definitions.items():
         empty = name not in fields or _is_empty(fields.get(name))
         if empty:
-            if definition.required:
-                raise RecordValidationError(f"field required kosong: {name}")
             if name not in missing_fields or not missing_reason.get(name):
                 raise RecordValidationError(f"missing_reason wajib untuk field kosong: {name}")
         elif not _matches_type(fields[name], definition.type):

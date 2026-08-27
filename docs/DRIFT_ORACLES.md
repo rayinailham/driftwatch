@@ -25,7 +25,7 @@ make oracles                                            # jalankan semua 11, ass
 | DO-01 | data bertambah | tambah 12 item baru | *tidak ada alarm*; `diff.counts.added == 12` | — |
 | DO-02 | nilai berubah | ubah `price` di 4 item | *tidak ada alarm*; `changed == 4`, `fields_changed[].field == "price"` | — |
 | DO-03 | data hilang | hapus 1 item | *tidak ada alarm*; `removed == 1` | — |
-| DO-04 | **struktur patah** | ganti class `.item-card` → `.c-9f2a1` di semua halaman | `ZERO_RECORDS` + `RECORD_COUNT_DROP` | critical |
+| DO-04 | **struktur patah** | ganti class `.item-card` → `.c-9f2a1` di semua halaman | `ZERO_RECORDS` + `RECORD_COUNT_DROP` + `FIELD_COMPLETENESS_DROP` + `RUN_FAILED` + `CHURN_SPIKE` | critical + warning |
 | DO-05 | field hilang sebagian | hapus `<h2 class="item-name">` di 30% halaman | `FIELD_COMPLETENESS_DROP` | critical |
 | DO-06 | situs bermasalah | 15% request dibalas HTTP 503 (kait handler `lab_serve.py`) | `HTTP_ERROR_SPIKE` | critical |
 | DO-07 | field asing muncul | tambah `data-promo` yang ikut terparse | `SCHEMA_UNKNOWN_FIELD` | warning |
@@ -34,8 +34,9 @@ make oracles                                            # jalankan semua 11, ass
 | DO-10 | restrukturisasi besar | ubah `category` di 40% item | `CHURN_SPIKE` | warning |
 | DO-11 | scraper terlalu cepat | jalankan dengan `--delay 0.1` melawan `crawl_delay 1.0` | `RATE_LIMIT_VIOLATION` | warning |
 
-`RUN_FAILED` tercakup sebagai efek samping DO-04 (`exit_code != 0` saat 0 record).
-Kalau setelah implementasi ternyata tidak, tambahkan DO-12 khusus dan catat di `STATE.md`.
+DO-04 sengaja memicu lima kode karena kondisi nol record sekaligus memenuhi lima ambang D5:
+jumlah nol, penurunan jumlah, kelengkapan field nol, run gagal, dan churn di atas 30%.
+Ini bukan false positive; menekan salah satunya akan melanggar keputusan ambang terkunci.
 
 ---
 
@@ -69,7 +70,7 @@ Tiga skenario itu adalah uji false-positive: pipeline melihat 12 data baru, 4 be
 DO-01  added=12 changed=0 removed=0   alarms=[]                            PASS
 DO-02  added=0  changed=4  removed=0   alarms=[]                           PASS
 ...
-DO-04  records=0                       alarms=[ZERO_RECORDS,RECORD_COUNT_DROP]  PASS
+DO-04  records=0                       alarms=[CHURN_SPIKE,FIELD_COMPLETENESS_DROP,RECORD_COUNT_DROP,RUN_FAILED,ZERO_RECORDS]  PASS
 ...
 11/11 PASS
 ```
