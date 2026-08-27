@@ -76,15 +76,44 @@ Angka `records_unique` tiap target hari ini adalah **baseline pertama** untuk al
 - `docs/DATA_DICTIONARY.md`
 
 ## Definition of Done
-- [ ] `books` ≥ **1.000** record; duplikat **0** (perintah §2 ditempel)
-- [ ] Keempat target selesai dengan `exit_code == 0`
-- [ ] Semua field `required` kelengkapan ≥ **98%**; angkanya ditulis per target
-- [ ] Field kosong tanpa `missing_reason` = **0** (D6)
-- [ ] `records.csv` ada untuk 4 target, `utf-8-sig`, jumlah baris = JSONL + 1
-- [ ] CSV dibuka dan karakter non-ASCII tampil benar (bukan mojibake) — sebutkan contohnya
-- [ ] `docs/DATA_DICTIONARY.md` lahir, digenerate dari `contracts.py`, memuat contoh nilai nyata
-- [ ] Baseline `records_unique` per target dicatat di `STATE.md`
-- [ ] **Commit + push berhasil** (D19)
+- [x] `books` ≥ **1.000** record; duplikat **0** (perintah §2 ditempel)
+- [x] Keempat target selesai dengan `exit_code == 0`
+- [x] Semua field `required` kelengkapan ≥ **98%**; angkanya ditulis per target
+- [x] Field kosong tanpa `missing_reason` = **0** (D6)
+- [x] `records.csv` ada untuk 4 target, `utf-8-sig`, jumlah baris = JSONL + 1
+- [x] CSV dibuka dan karakter non-ASCII tampil benar (bukan mojibake) — sebutkan contohnya
+- [x] `docs/DATA_DICTIONARY.md` lahir, digenerate dari `contracts.py`, memuat contoh nilai nyata
+- [x] Baseline `records_unique` per target dicatat di `STATE.md`
+- [x] **Commit + push berhasil** (D19)
+
+### Bukti 2026-08-27
+
+```text
+$ wc -l data/books/2026-08-27/records.jsonl
+1000
+$ jq -r .record_id data/books/2026-08-27/records.jsonl | sort | uniq -d | wc -l
+0
+
+driftlab exit=0 unique=200 duration=8.943s
+quotes exit=0 unique=100 duration=9.212s
+books exit=0 unique=1000 duration=0.033s
+seo exit=0 unique=23 duration=22.739s
+total_duration=40.927s
+
+books:    required_min=1.000 missing_without_reason=0 bom=efbbbf csv/jsonl+header=1001/1001
+quotes:   required_min=1.000 missing_without_reason=0 bom=efbbbf csv/jsonl+header=101/101
+seo:      required_min=1.000 missing_without_reason=0 bom=efbbbf csv/jsonl+header=24/24
+driftlab: required_min=1.000 missing_without_reason=0 bom=efbbbf csv/jsonl+header=201/201
+non_ascii_ok: books.title=Worlds Elsewhere: Journeys Around Shakespeare’s Globe
+
+$ rg -c '^## `' docs/DATA_DICTIONARY.md
+4
+$ rg -c '^\| `' docs/DATA_DICTIONARY.md
+31
+$ uv run --no-sync python -m unittest discover -s src -p 'test_*.py' -v
+Ran 18 tests in 7.012s
+OK
+```
 
 ## Metrik selesai
 `books N record · duplikat 0 · kelengkapan X% · 4 target · durasi Y dtk`

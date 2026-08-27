@@ -114,6 +114,14 @@ Alasan: menimpa snapshot menghapus baseline diff dan merusak bukti monitoring. P
 sudah diwajibkan aturan data serta fase P4; entri D11 dipulihkan 2026-08-27 karena daftar
 keputusan sebelumnya mengklaim D1–D15 terkunci tetapi tidak memuat teks D11.
 
+## D12 — CSV kompatibel Excel dan mengikuti kontrak
+
+Dikunci 2026-08-27 di P6 saat format ekspor pertama kali dipakai. `records.csv` ditulis
+dengan encoding `utf-8-sig`; kolom bisnis mengikuti urutan field di `src/contracts.py`;
+nilai list seperti `tags` digabung dengan `"; "`; kolom teknis berada di sisi kanan,
+dengan `content_hash` dan `run_id` sebagai dua kolom terakhir. CSV selalu diturunkan dari
+`records.jsonl`, sehingga JSONL tetap sumber data utama dan tidak pernah diubah oleh ekspor.
+
 ## D17 — Kontrak field final per target
 
 Dikunci 2026-08-27 di P3 setelah dicocokkan dengan 12 sampel recon nyata. Bentuk final

@@ -2,8 +2,8 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 6/13 fase · **Fase aktif:** — (P5 selesai)
-**Fase berikutnya:** **P6 — Panen Penuh** · **soak_dibuka:** — (diisi di P7)
+**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 7/13 fase · **Fase aktif:** — (P6 selesai)
+**Fase berikutnya:** **P7 — Penjadwalan** · **soak_dibuka:** — (diisi di P7)
 
 ## Status fase
 
@@ -15,7 +15,7 @@
 | P3 Kontrak Data | ✅ selesai | 4 kontrak; 31 field (27 required); 12/12 sampel; 11/11 test · `9e81409` |
 | P4 Mesin Scraper | ✅ selesai | 6/6 komponen; cicip 3/3 valid; gap publik min 1.000 ms · `eadb3b2` |
 | P5 Validasi & Resume | ✅ selesai | 3/3 manual; resume 12→1.000 baris; dup 0; 17/17 test |
-| P6 Panen Penuh | ⬜ belum | ≥ 1.000 record, CSV+JSONL, kamus data |
+| P6 Panen Penuh | ✅ selesai | 4 target; 1.323 record; dup 0; required 100%; CSV BOM; 18/18 test |
 | P7 Penjadwalan | ⬜ belum | systemd timer 09:00 WIB — **dahulukan**, membuka jam soak |
 | P8 Diff & Alarm | ⬜ belum | 10 kode alarm, 11/11 drift oracle |
 | P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding, bukan sesi kerja |
@@ -26,7 +26,6 @@
 Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 ## Fakta mesin — DIVERIFIKASI P0, bukan warisan
 
-10 tool terverifikasi, versi lengkap di `env-check.md`.
 - ✅ `systemctl --user` ADA (`systemd 261`), TZ `Asia/Jakarta` → **D9 berlaku**, bukan cron. Bukan blocker.
 - ⚠️ Venv 3.13.13 ≠ sistem 3.14.6 → perintah produksi **wajib** `uv run`.
 - tidak ada `just` (→ `make`, D10; `Makefile` wajib `.NOTPARALLEL:`, `MAKEFLAGS=-j16`) · tidak ada `pytest` (→ `unittest`)
@@ -48,12 +47,12 @@ Tidak dipakai walau ada: MySQL/Redis/TiDB (checkpoint wajib SQLite), MCP `excel`
 
 ## Fakta terverifikasi tentang target — DIKONFIRMASI P2
 
-| Target | `render_mode` | Engine | Volume | Kunci | Pagination / batas |
-|---|---|---|---|---:|---|
-| `books` | `server_html` | `httpx+selectolax` | 1.000 | `upc` | `page-{n}.html` 1..50, berhenti saat `li.next a` hilang |
-| `quotes` | **`json_api`** | **`httpx+json`** | 100 | `quote_id` | `/api/quotes?page=N`, berhenti saat `has_next == false` (page 10) |
-| `seo` | `server_html` | `httpx+selectolax` | 23 | `url` | bukan pagination — 23 URL dari `sitemap.xml` |
-| `driftlab` | `server_html` | `httpx+selectolax` | 200 | `item_id` | `page-{n}.html` 1..10 + 200 halaman detail |
+| Target | Engine | Baseline P6 | Kunci | Pagination / batas |
+|---|---|---:|---|---|
+| `books` | `httpx+selectolax` | **1.000** | `upc` | `page-{n}.html` 1..50, berhenti saat `li.next a` hilang |
+| `quotes` | **`httpx+json`** | **100** | `quote_id` | `/api/quotes?page=N`, berhenti saat `has_next == false` (page 10) |
+| `seo` | `httpx+selectolax` | **23** | `url` | 23 URL dari `sitemap.xml` |
+| `driftlab` | `httpx+selectolax` | **200** | `item_id` | `page-{n}.html` 1..10 + 200 halaman detail |
 
 **Keputusan Playwright: TIDAK dipasang.** Nol target `js_required` → lapis 2 tak pernah terpakai.
 Browser dipakai sekali di P2 (MCP `chrome-devtools`, recon `quotes`) lalu dibuang; deliverable bebas
@@ -77,6 +76,7 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 | P4: komponen · target valid · record cicip · gap publik min | 6/6 · 3/3 · — · ≥900 ms | **6/6 · 3/3 · 100 · 1.000 ms** |
 | Record `books` · duplikat · field `required` | ≥1.000 · 0 · ≥98% | **1.000 · 0 · 100%** |
 | P5: manual · resume unit/baris · gap · test | 3/3 · naik/naik · ≥900 ms · ≥11 | **3/3 · 12→1050/12→1000 · 1.000 ms · 17/17** |
+| P6: record total · books · dup · required min · test · loop resume | ≥1.000 · ≥1.000 · 0 · ≥98% · — · — | **1.323 · 1.000 · 0 · 100% · 18/18 · 40,927 dtk** |
 | Drift oracle · kode alarm | 11/11 · 10 | — |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
 | **Acceptance project** | 12/12 | **0/12** |
@@ -91,6 +91,7 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 **P3:** `src/{contracts,validate,test_contracts}.py`; skema + D17 terkunci; 31/31 deskripsi dan source hint terisi.
 **P4:** `src/scrape.py`, `store.py`, `engines/{http_html,http_json}.py`, `test_scrape.py`; run cicip di `data/` (gitignored); D11 dipulihkan.
 **P5:** `docs/{MANUAL_VERIFY,RESUME_PROOF}.md`; 1.000 record books lokal (gitignored); rekaman video ditunda ke P12 agar merekam alur final sekali.
+**P6:** `src/{export,test_export}.py`, `docs/DATA_DICTIONARY.md`; 4 snapshot JSONL+CSV BOM (gitignored); D12 dikunci.
 
 ## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**
