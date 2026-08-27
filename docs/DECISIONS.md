@@ -104,6 +104,16 @@ Tiga alasan, berurutan dari yang paling mengikat:
 Tetap: bind `127.0.0.1` (jangan `0.0.0.0`), port **8100**, salinan bersih **8101**.
 Ganti port berarti mengubah D8 ini.
 
+## D11 — Snapshot tanggal tidak pernah ditimpa diam-diam
+
+Setiap run menulis ke `data/<target>/<YYYY-MM-DD>/`. Kalau folder sudah berisi hasil,
+run tanpa `--resume` wajib meminta konfirmasi eksplisit; run tanpa konfirmasi berhenti.
+`--resume` memakai checkpoint SQLite dan append JSONL, sehingga baseline lama tetap utuh.
+
+Alasan: menimpa snapshot menghapus baseline diff dan merusak bukti monitoring. Perilaku ini
+sudah diwajibkan aturan data serta fase P4; entri D11 dipulihkan 2026-08-27 karena daftar
+keputusan sebelumnya mengklaim D1–D15 terkunci tetapi tidak memuat teks D11.
+
 ## D17 — Kontrak field final per target
 
 Dikunci 2026-08-27 di P3 setelah dicocokkan dengan 12 sampel recon nyata. Bentuk final

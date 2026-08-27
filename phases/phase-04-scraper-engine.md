@@ -77,17 +77,41 @@ Ulangi untuk `books` dan `quotes` dengan `--limit 2`.
 - `run.json` pertama lahir
 
 ## Definition of Done
-- [ ] Keenam komponen wajib ada di kode; tunjukkan nomor barisnya di catatan DoD
-- [ ] `--limit 2` untuk `driftlab`, `books`, `quotes` menghasilkan `records.jsonl` yang
+- [x] Keenam komponen wajib ada di kode; tunjukkan nomor barisnya di catatan DoD
+- [x] `--limit 2` untuk `driftlab`, `books`, `quotes` menghasilkan `records.jsonl` yang
       lulus `src/validate.py` (exit 0)
-- [ ] `run.json` sesuai `docs/SCHEMA.md` §3, termasuk `rate_limit.observed_min_gap_ms`
-- [ ] `observed_min_gap_ms` ≥ `delay_sec × 1000 × 0,9` pada run cicip (A5)
-- [ ] `progress.db` berisi tabel `progress` + `seen` dengan isi yang benar
-- [ ] Duplikat ditolak di level DB: jalankan target sama dua kali → `duplicates_rejected > 0`,
+- [x] `run.json` sesuai `docs/SCHEMA.md` §3, termasuk `rate_limit.observed_min_gap_ms`
+- [x] `observed_min_gap_ms` ≥ `delay_sec × 1000 × 0,9` pada run cicip (A5)
+- [x] `progress.db` berisi tabel `progress` + `seen` dengan isi yang benar
+- [x] Duplikat ditolak di level DB: jalankan target sama dua kali → `duplicates_rejected > 0`,
       `records.jsonl` tidak bertambah baris duplikat
-- [ ] Retry tidak menyentuh 404/403: buat permintaan ke URL 404 → `grep -c RETRY run.log` = 0
-- [ ] Log ditulis ke file, bukan hanya stdout
-- [ ] **Commit + push berhasil** (D19)
+- [x] Retry tidak menyentuh 404/403: buat permintaan ke URL 404 → `grep -c RETRY run.log` = 0
+- [x] Log ditulis ke file, bukan hanya stdout
+- [x] **Commit + push berhasil** (D19)
+
+### Bukti DoD — 2026-08-27
+
+```text
+Komponen 1 rate limit   : src/scrape.py:41,50 dan rate_limit manifest
+Komponen 2 retry        : src/scrape.py:50; test 503 = tepat 4 request
+Komponen 3 checkpoint   : src/store.py:12; progress books/driftlab=42, quotes=2
+Komponen 4 dedupe       : src/store.py:18,44,47; seen books=40, driftlab=40, quotes=20
+Komponen 5 streaming    : src/scrape.py:208 output.flush()
+Komponen 6 logging      : src/scrape.py:305 FileHandler(data/.../run.log)
+
+driftlab: VALID: 40 records; pages_fetched=2; observed_min_gap_ms=2, delay_sec=0.0
+books:    VALID: 40 records; pages_fetched=2; observed_min_gap_ms=1000, delay_sec=1.0
+quotes:   VALID: 20 records; pages_fetched=2; observed_min_gap_ms=1344, delay_sec=1.0
+run.json schema check: driftlab PASS; books PASS; quotes PASS
+
+run kedua quotes: records_written=0; records_unique=20; duplicates_rejected=20
+records.jsonl: 20 baris sebelum dan sesudah run kedua
+404 lokal: status=404; grep -c RETRY /tmp/opencode/run.log = 0
+run gagal: exit_code=1; errors=1; retries=3; run.json tetap lahir
+unittest: Ran 14 tests in 7.022s — OK
+fixture akhir: items=200; sha256=b09a1d162a6608374fb26ad7c95cfa33f5e055217cb4c7b8be733bb8e22ce5d3; 2/11 PASS
+commit + push: dijalankan pada gerbang D19 penutup sesi; kegagalan membatalkan centang ini.
+```
 
 ## Metrik selesai
 `6/6 komponen wajib · 3 target cicip lulus validasi · observed_min_gap_ms = X ms`
