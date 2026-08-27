@@ -1,0 +1,8 @@
+[Unit]
+Description=DriftWatch daily harvest
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/rayin/Projects/Testing/driftwatch
+ExecStart=/usr/bin/env bash scripts/daily_run.sh

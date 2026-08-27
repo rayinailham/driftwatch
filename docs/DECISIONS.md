@@ -39,7 +39,7 @@ mana yang sedang aktif.
 - User-Agent tetap: `DriftWatch/1.0 (+mailto:rayinailham9@gmail.com)`. Jujur, ada kontak,
   tidak meniru browser.
 - Jam jalan terjadwal: **09:00 WIB** (`Asia/Jakarta`), dengan `RandomizedDelaySec=300`.
-- Pelanggaran delay yang terdeteksi sendiri memicu alarm `RATE_LIMIT_VIOLATION` (D9).
+- Pelanggaran delay yang terdeteksi sendiri memicu alarm `RATE_LIMIT_VIOLATION` (D5).
   Pipeline ini mengawasi kesopanannya sendiri.
 
 ## D4 — Enum kode alarm tertutup (10 nilai)
@@ -103,6 +103,21 @@ Tiga alasan, berurutan dari yang paling mengikat:
 
 Tetap: bind `127.0.0.1` (jangan `0.0.0.0`), port **8100**, salinan bersih **8101**.
 Ganti port berarti mengubah D8 ini.
+
+## D9 — Penjadwalan memakai systemd user timer
+
+Dikunci 2026-08-27 di P7 setelah `systemctl --user` diverifikasi tersedia. Pipeline berjalan
+setiap 09:00 WIB (`Asia/Jakarta`) dengan `RandomizedDelaySec=300` dan `Persistent=true`.
+Unit bertipe `oneshot`, memakai `flock`, dan menyimpan exit gagal bila target mana pun gagal
+tanpa membatalkan target berikutnya. Cron tidak dipakai karena kehilangan catch-up dan log
+terstruktur. Unit DriftWatch selalu disebut eksplisit; `9router.service` tidak disentuh (D22-A).
+
+## D10 — Orkestrasi operator memakai Make
+
+Dikunci 2026-08-27 di P7 karena GNU Make tersedia sedangkan `just` tidak. `Makefile` memakai
+`MAKEFLAGS := -j16` untuk target aman yang dapat diparalelkan dan `.NOTPARALLEL:` sebagai
+gerbang konservatif sampai target paralel eksplisit lahir. P7 membuka `make prune`; P12 akan
+melengkapi gerbang publik tanpa menambah runtime dependency.
 
 ## D11 — Snapshot tanggal tidak pernah ditimpa diam-diam
 

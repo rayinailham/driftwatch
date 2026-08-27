@@ -22,7 +22,7 @@ cd /home/rayin/Projects/Testing/driftwatch
 FAIL=0
 for T in driftlab books quotes seo; do
   uv run --no-sync python src/scrape.py --target "$T" --resume || FAIL=1
-  uv run --no-sync python src/validate.py --target "$T" --today || FAIL=1
+  uv run --no-sync python src/validate.py "data/$T/$(date +%F)/records.jsonl" || FAIL=1
   uv run --no-sync python src/diff.py   --target "$T" --today || FAIL=1   # ada setelah P8
   uv run --no-sync python src/alarm.py  --target "$T" --today || FAIL=1   # ada setelah P8
   uv run --no-sync python src/report.py --target "$T" --today || true     # ada setelah P11
@@ -113,16 +113,62 @@ Catat di `STATE.md`: **`soak_dibuka: <tanggal>`**. P9 baru boleh ditutup kalau s
 - `soak_dibuka` tercatat di `STATE.md`
 
 ## Definition of Done
-- [ ] `systemctl --user list-timers driftwatch.timer` menunjukkan `NEXT` yang masuk akal (output ditempel)
-- [ ] `systemctl --user start driftwatch.service` sukses; `journalctl` menunjukkan 4 target diproses
-- [ ] Folder `data/<target>/<hari ini>/` lahir untuk keempat target dari run terjadwal itu
-- [ ] `flock` terbukti: jalankan dua kali bersamaan → yang kedua keluar rapi, tidak menabrak
-- [ ] Satu target sengaja digagalkan → target lain tetap jalan, `daily_run.sh` exit ≠ 0
-- [ ] `scripts/prune.sh` ada dan dry-run-nya benar
-- [ ] `soak_dibuka: <tanggal>` tertulis di `STATE.md`
-- [ ] `systemctl --user is-active 9router.service` → **`active`** (dicek sesudah semua
+- [x] `systemctl --user list-timers driftwatch.timer` menunjukkan `NEXT` yang masuk akal (output ditempel)
+- [x] `systemctl --user start driftwatch.service` sukses; `journalctl` menunjukkan 4 target diproses
+- [x] Folder `data/<target>/<hari ini>/` lahir untuk keempat target dari run terjadwal itu
+- [x] `flock` terbukti: jalankan dua kali bersamaan → yang kedua keluar rapi, tidak menabrak
+- [x] Satu target sengaja digagalkan → target lain tetap jalan, `daily_run.sh` exit ≠ 0
+- [x] `scripts/prune.sh` ada dan dry-run-nya benar
+- [x] `soak_dibuka: 2026-08-27` tertulis di `STATE.md`
+- [x] `systemctl --user is-active 9router.service` → **`active`** (dicek sesudah semua
       pemasangan; buktinya ditempel) — D22-A
-- [ ] **Commit + push berhasil** (D19)
+- [x] **Commit + push berhasil** (D19)
+
+## Bukti 2026-08-27
+
+```text
+$ systemctl --user list-timers driftwatch.timer
+NEXT                        LEFT LAST PASSED UNIT             ACTIVATES
+Fri 2026-08-28 09:04:10 WIB  18h -         - driftwatch.timer driftwatch.service
+
+$ systemctl --user show driftwatch.service -p Result -p ExecMainStatus
+Result=success
+ExecMainStatus=0
+
+$ journalctl --user -u driftwatch.service --since '10 minutes ago' --no-pager -o cat
+target=driftlab start
+VALID: 200 records
+target=driftlab done
+target=books start
+VALID: 1000 records
+target=books done
+target=quotes start
+VALID: 100 records
+target=quotes done
+target=seo start
+VALID: 23 records
+target=seo done
+Finished DriftWatch daily harvest.
+
+$ wc -l data/{driftlab,books,quotes,seo}/2026-08-27/records.jsonl
+200 driftlab · 1000 books · 100 quotes · 23 seo
+
+$ PATH=<fake-uv-failing-driftlab> bash scripts/daily_run.sh
+failure_test_exit=1
+target=driftlab start/done · books start/done · quotes start/done · seo start/done
+
+$ PATH=<fake-uv> bash scripts/daily_run.sh & PATH=<fake-uv> bash scripts/daily_run.sh
+parallel_first_exit=0 parallel_second_exit=0 second_output=run lain masih jalan
+
+$ python <isolated-prune-self-check>
+prune_test=PASS dry_run_preserved=1 delete_old_log=1 run_json_preserved=1
+
+$ systemctl --user is-active driftwatch.timer; systemctl --user is-enabled driftwatch.timer
+active
+enabled
+$ systemctl --user is-active 9router.service
+active
+```
 
 ## Metrik selesai
 `timer aktif · NEXT = <waktu> · 1 run terjadwal sukses · soak dibuka <tanggal>`

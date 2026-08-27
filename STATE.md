@@ -2,8 +2,8 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 7/13 fase · **Fase aktif:** — (P6 selesai)
-**Fase berikutnya:** **P7 — Penjadwalan** · **soak_dibuka:** — (diisi di P7)
+**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 8/13 fase · **Fase aktif:** — (P7 selesai)
+**Fase berikutnya:** **P8 — Diff & Alarm** (P9 menunggu soak) · **soak_dibuka:** **2026-08-27**
 
 ## Status fase
 
@@ -16,7 +16,7 @@
 | P4 Mesin Scraper | ✅ selesai | 6/6 komponen; cicip 3/3 valid; gap publik min 1.000 ms · `eadb3b2` |
 | P5 Validasi & Resume | ✅ selesai | 3/3 manual; resume 12→1.000 baris; dup 0; 17/17 test |
 | P6 Panen Penuh | ✅ selesai | 4 target; 1.323 record; dup 0; required 100%; CSV BOM; 18/18 test |
-| P7 Penjadwalan | ⬜ belum | systemd timer 09:00 WIB — **dahulukan**, membuka jam soak |
+| P7 Penjadwalan | ✅ selesai | timer aktif; NEXT 2026-08-28 09:04:10 WIB; run unit 4/4 sukses |
 | P8 Diff & Alarm | ⬜ belum | 10 kode alarm, 11/11 drift oracle |
 | P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding, bukan sesi kerja |
 | P10 Demo + LLM | ⬜ belum | halaman publik + insight Claude API ber-pagar |
@@ -32,11 +32,8 @@ Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 - Docker tanpa sudo; `sudo` butuh password, tanpa askpass. Port user penuh → `driftlab` **8100**, salinan bersih **8101** (D8)
 
 ### 🚨 `9router.service` — JANGAN PERNAH DISENTUH (D22-A · AGENTS.md §0)
-
-systemd **user** unit, port **20128**, proxy AI lokal — matinya bisa memutus sesi agent sendiri.
-Dilarang stop/restart/kill/disable/mask/edit + dilarang pakai port 20128. **Satu direktori** dengan
-`driftwatch.timer` (P7) → selalu sebut nama unit eksplisit, **jangan pernah wildcard**.
-`daemon-reload` aman. Cek P2 (`is-active`, baca-saja) → `active`.
+systemd **user**, port **20128**, proxy AI lokal. Dilarang stop/restart/kill/disable/mask/edit/pakai port.
+Satu direktori dengan `driftwatch.timer` → unit selalu eksplisit, tanpa wildcard. Cek pasca-P7 → `active`.
 
 ## Infra device (D21/D22-B)
 
@@ -77,6 +74,7 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 | Record `books` · duplikat · field `required` | ≥1.000 · 0 · ≥98% | **1.000 · 0 · 100%** |
 | P5: manual · resume unit/baris · gap · test | 3/3 · naik/naik · ≥900 ms · ≥11 | **3/3 · 12→1050/12→1000 · 1.000 ms · 17/17** |
 | P6: record total · books · dup · required min · test · loop resume | ≥1.000 · ≥1.000 · 0 · ≥98% · — · — | **1.323 · 1.000 · 0 · 100% · 18/18 · 40,927 dtk** |
+| P7: timer · NEXT · run unit · target · soak | aktif · waktu · sukses · 4/4 · tanggal | **aktif · 2026-08-28 09:04:10 WIB · 1/1 · 4/4 · 2026-08-27** |
 | Drift oracle · kode alarm | 11/11 · 10 | — |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
 | **Acceptance project** | 12/12 | **0/12** |
@@ -92,8 +90,9 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 **P4:** `src/scrape.py`, `store.py`, `engines/{http_html,http_json}.py`, `test_scrape.py`; run cicip di `data/` (gitignored); D11 dipulihkan.
 **P5:** `docs/{MANUAL_VERIFY,RESUME_PROOF}.md`; 1.000 record books lokal (gitignored); rekaman video ditunda ke P12 agar merekam alur final sekali.
 **P6:** `src/{export,test_export}.py`, `docs/DATA_DICTIONARY.md`; 4 snapshot JSONL+CSV BOM (gitignored); D12 dikunci.
+**P7:** `scripts/{daily_run,prune}.sh`, `deploy/driftwatch.{service,timer}`, `Makefile`; D9/D10 dikunci; timer aktif.
 
 ## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**
 - 🔓 **D18** publikasi demo → **P10** · 🔓 **D20** repo publik → **P12, butuh izin eksplisit user**
-- ⚠️ D9/D10 belum punya entri sendiri; rapikan saat P7 memakai keduanya. D12–D15 ditulis saat pertama dipakai.
+- D13–D15 ditulis saat pertama dipakai.
