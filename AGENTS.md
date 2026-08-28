@@ -81,6 +81,12 @@ uv run --no-sync python scripts/drift_lab.py --verify    # sebelum P8: 2/11 · s
 Fixture **tidak** auto-start. Ambang PASS bergantung fase: DO-04..DO-11 baru dibangun di P8,
 jadi sebelum P8 hasil sah adalah **2/11** (DO-01, DO-03) dan sejak P8 **wajib 11/11**.
 
+Oracle alarm dijalankan lewat `make oracles`, **bukan** `python scripts/run_oracles.py` langsung.
+DO-06 menggagalkan tiap path hanya sekali per umur proses server (`failed_once` di
+`lab_serve.py`), jadi server yang sudah dipakai `--verify` akan membalas 200 dan DO-06 gagal
+dengan `alarms=[]` — kelihatan seperti regresi detector padahal server yang basi.
+`make oracles` menurunkan lalu menaikkan server dulu, itu sebabnya target itu ada.
+
 Yang **selalu** wajib di fase mana pun adalah `reproducible_sha256` tetap
 `b09a1d162a6608374fb26ad7c95cfa33f5e055217cb4c7b8be733bb8e22ce5d3` dengan `items=200`.
 Kalau hash itu bergeser, berhenti dan laporkan: oracle alarm tidak sah kalau fixture-nya bergeser.

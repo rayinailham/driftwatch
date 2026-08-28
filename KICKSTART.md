@@ -38,7 +38,20 @@ LANGKAH 1 — ORIENTASI (lakukan ini dulu, sebelum apa pun):
    Kalau STATE.md bilang sebuah fase ✅ tapi tidak ada commit untuk fase itu, fase itu
    BELUM selesai (D19) — turunkan statusnya jadi 🟨.
 
-3. Tentukan sendiri fase mana yang dikerjakan sesi ini, memakai aturan berikut:
+3. Jalankan gerbang kesehatan sebelum memilih fase:
+     cd driftwatch
+     uv run --no-sync python -m compileall -q src scripts
+     uv run --no-sync python -m unittest discover -s src -v
+     uv run --no-sync python scripts/validate_recon.py
+     cd ..
+   Kalau salah satu gagal, atau `STATE.md` mencatat temuan audit / bug terbuka yang
+   memengaruhi correctness, reliability, keamanan, pipeline harian, atau acceptance:
+   JANGAN lanjut ke fase berikutnya. Kerjakan remediasi terkecil lebih dulu, tambah test
+   regresi, verifikasi penuh, commit terpisah, lalu update `STATE.md`. Temuan audit terbuka
+   menang atas pemilihan fase otomatis. Jangan menurunkan fase yang sudah sah selesai;
+   catat remediasi sebagai pekerjaan lintas-fase terpisah.
+
+4. Tentukan sendiri fase mana yang dikerjakan sesi ini, memakai aturan berikut:
 
      P0 → P1 → P2 → P3 → P4 → P5 → P6 → P7 ──► P9 (soak, jam dinding)
                                         │
@@ -53,12 +66,15 @@ LANGKAH 1 — ORIENTASI (lakukan ini dulu, sebelum apa pun):
      (P8, P10, atau P11). Ini bukan kemunduran — memang begitu rancangannya.
    - P11 tidak boleh mulai sebelum P8 punya output. P12 butuh P9, P10, P11 selesai.
 
-4. Buka HANYA file fase yang terpilih: driftwatch/phases/phase-NN-*.md
+5. Buka HANYA file fase yang terpilih: driftwatch/phases/phase-NN-*.md
    Lalu buka file yang disebut di bagian "Read-set" fase itu. Tidak lebih.
    Kalau file fase bertentangan dengan docs/DECISIONS.md, docs/SCHEMA.md, atau
    docs/ETHICS.md: ketiganya menang, dan perbaiki file fase itu di sesi yang sama.
+   Pengecualian read-set hanya untuk remediasi gerbang kesehatan poin 3: baca file yang
+   diperlukan untuk menelusuri root cause, caller/callee, test terdekat, dan kontraknya;
+   jangan membaca atau mengubah file tak terkait.
 
-5. Sebelum mulai kerja, sebutkan ke saya dalam 3 baris: fase yang kamu pilih,
+6. Sebelum mulai kerja, sebutkan ke saya dalam 3 baris: fase atau remediasi yang kamu pilih,
    alasannya, dan apa yang akan lahir di akhir sesi.
 
 LANGKAH 2 — SIAPKAN (hanya kalau fase terpilih menyentuhnya):
@@ -75,8 +91,9 @@ LANGKAH 2 — SIAPKAN (hanya kalau fase terpilih menyentuhnya):
 
 LANGKAH 3 — KERJAKAN:
 
-Selesaikan fase itu sampai SEMUA "Definition of Done"-nya tercentang dengan
-bukti nyata (output perintah yang ditempel), bukan klaim.
+Jika mengerjakan fase, selesaikan sampai SEMUA "Definition of Done"-nya tercentang dengan
+bukti nyata (output perintah yang ditempel), bukan klaim. Jika mengerjakan remediasi,
+selesaikan seluruh temuan audit aktif + test regresinya; jangan mencentang DoD fase lain.
 
 ATURAN HEMAT TOKEN (wajib):
 - Jangan baca file fase selain yang terpilih.
@@ -110,10 +127,17 @@ ATURAN KERJA:
 - Kalau gagal, laporkan output error persis. Jangan diperhalus, jangan diklaim sukses.
 - Kalau sebuah keputusan 🔓 di DECISIONS.md jatuh di fase ini, kunci sekarang dan tulis
   alasannya. Kecuali D20 (repo publik) — itu butuh izin eksplisit saya.
+- Perubahan pada scraper, validator, exporter, scheduler, diff, alarm, report, publish,
+  atau orkestrasi harian membatalkan soak P9 yang sedang berjalan. Reset `soak_dibuka`
+  ke tanggal versi perbaikan benar-benar mulai berjalan, jelaskan alasannya di `STATE.md`,
+  dan kumpulkan ulang 3 tanggal berturut. Jangan mempertahankan bukti soak dari versi lama.
 
 LANGKAH 4 — PENUTUP SESI (wajib, jangan dilewat):
 
-1. Centang DoD di file fase (edit di tempat), tempel output perintahnya.
+1. Jika mengerjakan fase: centang DoD di file fase dan tempel output perintahnya.
+   Jika mengerjakan remediasi gerbang kesehatan: catat temuan, perubahan, test regresi,
+   hasil verifikasi, dan dampak soak di `STATE.md`; jangan mencentang DoD fase yang tidak
+   dikerjakan.
 2. GERBANG COMMIT (D19) — fase BELUM ✅ sebelum tiga langkah ini berhasil:
      make audit          # atau cek manual sebelum P12: git status --short tidak boleh
                          # memuat .env, data/, reports/, auth/, *.db
@@ -122,7 +146,8 @@ LANGKAH 4 — PENUTUP SESI (wajib, jangan dilewat):
      git push
    Remote: git@rayin-personal:rayinailham/driftwatch.git (akun PERSONAL, repo privat).
    Jangan pakai akun work. Kalau push gagal, fase tetap 🟨 dan alasannya dicatat.
-   Satu fase = satu commit.
+   Satu fase = satu commit. Remediasi lintas-fase = satu commit terpisah dan tidak boleh
+   digabung dengan commit fase berikutnya.
 3. Update driftwatch/STATE.md:
    - tabel status fase (⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked)
    - tanggal, fase aktif, fase berikutnya, soak_dibuka kalau sudah ada
@@ -130,11 +155,12 @@ LANGKAH 4 — PENUTUP SESI (wajib, jangan dilewat):
    - tabel metrik diisi ANGKA NYATA dari file hasil, bukan perkiraan
    - blocker / keputusan yang masih 🔓
    - jaga STATE.md tetap < 100 baris; buang catatan yang sudah tidak relevan
-4. Laporkan ke saya: fase apa yang selesai, metrik selesainya, hash commit-nya,
-   dan apa yang jadi fase berikutnya.
+4. Laporkan ke saya: fase/remediasi apa yang selesai, metrik dan hasil test, hash commit-nya,
+   dampak ke `soak_dibuka`, dan apa yang jadi fase berikutnya.
 
-Selesaikan SATU fase saja per sesi. Jangan lanjut ke fase berikutnya, kecuali fase itu
-bertanda "ringan" di PLAN.md dan fase sekarang sudah 100% selesai termasuk push-nya.
+Selesaikan SATU fase atau SATU paket remediasi saja per sesi. Jangan lanjut ke fase
+berikutnya, kecuali fase itu bertanda "ringan" di PLAN.md dan pekerjaan sekarang sudah
+100% selesai termasuk push-nya. Remediasi tidak pernah digabung dengan fase berikutnya.
 ```
 
 ---
@@ -154,8 +180,12 @@ bertanda "ringan" di PLAN.md dan fase sekarang sudah 100% selesai termasuk push-
   `Abaikan pemilihan otomatis, kerjakan fase P07.`
 - **Sesi terputus di tengah fase:** prompt yang sama tetap dipakai — agent melihat 🟨 di
   `STATE.md` dan melanjutkan fase itu.
+- **Ada bug/temuan audit terbuka:** prompt yang sama akan menghentikan pemilihan fase,
+  menyelesaikan remediasi dengan test regresi, lalu membuat commit terpisah.
 - **Setelah P7:** prompt yang sama akan otomatis melewati P9 selama soak belum matang, dan
   mengambil P8/P10/P11. Begitu 3 hari terkumpul, ia akan menutup P9 sendiri tanpa diminta.
+- **Runtime berubah saat soak:** `soak_dibuka` wajib di-reset dan bukti 3 hari dikumpulkan
+  ulang dari versi baru.
 - **Kalau agent mengklaim fase selesai tanpa commit:** prompt ini sudah menyuruhnya
   menurunkan status sendiri di langkah orientasi 2. Kalau tetap terjadi, itu bug perilaku —
   tunjukkan langkah 4 poin 2 kepadanya.

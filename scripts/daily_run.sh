@@ -55,8 +55,15 @@ for TARGET in $TARGETS; do
     --data-root "$DATA_ROOT" --reports-root "$REPORTS_ROOT" || FAIL=1
   uv run --no-sync python src/alarm.py --target "$TARGET" --date "$TODAY" \
     --data-root "$DATA_ROOT" --reports-root "$REPORTS_ROOT" || FAIL=1
-  if [[ -f src/report.py ]]; then
-    uv run --no-sync python src/report.py --target "$TARGET" --today || true
+  # (6) digest klien + notifikasi alarm critical. Kegagalannya tidak pernah
+  # menghapus snapshot, tetapi selalu terlihat di journal dan menggagalkan unit.
+  if uv run --no-sync python src/report.py --target "$TARGET" --date "$TODAY" --notify \
+    --data-root "$DATA_ROOT" --reports-root "$REPORTS_ROOT"; then
+    :
+  else
+    REPORT_STATUS=$?
+    echo "ERROR target=$TARGET laporan harian gagal exit=$REPORT_STATUS; snapshot data tetap dipertahankan" >&2
+    FAIL=1
   fi
   echo "target=$TARGET done"
 done

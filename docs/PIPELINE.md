@@ -138,6 +138,26 @@ terlihat di `systemctl --user --failed`. Plus `notify-send` di desktop dan baris
 `daily.md` untuk manusia. Aturan nadanya di `docs/CLIENT_REPORT.md`.
 Digenerate **setiap hari**, termasuk hari yang tidak ada perubahannya.
 
+Validator jargon jalan di dalam build, bukan sebagai catatan di dokumen: dua belas kata
+(`selector`, `selectolax`, `tenacity`, `XPath`, `stacktrace`, `traceback`, `regex`,
+`checkpoint`, `SQLite`, `exception`, `storage_state`, `semaphore`) menggagalkan build dengan
+`exit 2` dan `daily.md` tidak ditulis. Nilai yang dikutip apa adanya dari situs sumber
+dikecualikan — halaman HTTPX benar-benar berjudul "Exceptions", dan itu data klien,
+bukan kosakata pipeline.
+
+Alarm `critical` juga melahirkan `reports/X/<tanggal>/notification-<KODE>.txt`: empat baris
+dengan urutan tetap (apa yang terjadi · seberapa parah · dugaan penyebab · apa yang sedang
+saya lakukan), dikirim juga lewat `notify-send`. Field `next_action` sengaja tidak ikut —
+ia memuat perintah dan nama berkas kode, jadi tinggal di `reports/alerts.jsonl` untuk developer.
+
+Kegagalan langkah ini tidak menghapus snapshot, tetapi menulis
+`ERROR target=X laporan harian gagal exit=...` ke stderr dan menggagalkan unit systemd.
+
+`src/report.py --weekly` membangun `REPORT.xlsx` tujuh hari dengan lima sheet berurutan
+(Ringkasan · Perubahan · Data Baru · Kesehatan Pipeline · Kamus Data). Sheet 5 digenerate
+dari `src/contracts.py`, jadi ia tidak pernah basi. Dikirim manusia tiap Senin (bukan bagian
+dari `daily_run.sh`).
+
 ### (7) Publikasi — `src/publish.py`
 
 Menyegarkan `web/data.json` (metadata saja, D13) dan meminta satu ringkasan ke Claude API
