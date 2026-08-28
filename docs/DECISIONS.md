@@ -295,7 +295,7 @@ Dikunci 2026-08-28 di P10 atas keputusan user, dari tiga jalur yang ditawarkan
 
 `web/index.html` adalah satu berkas mandiri: payload JSON ditanam langsung di dalamnya, tanpa
 `fetch`, tanpa pustaka pihak ketiga, sehingga bisa dibuka lewat `file://` tanpa server apa pun.
-Ia ikut masuk repo dan diperbarui otomatis oleh langkah (6) `scripts/daily_run.sh`.
+Ia ikut masuk repo dan diperbarui otomatis oleh langkah (7) `scripts/daily_run.sh`.
 
 Alasan jalur ini dipilih: GitHub Pages menuntut repo publik (🔓 D20, izin terpisah dan belum
 diberikan), sedangkan Artifact menuntut redeploy manual tiap data berubah — keduanya membayar
@@ -303,6 +303,19 @@ ongkos untuk sesuatu yang belum dibutuhkan. Konsekuensi yang diterima sadar: **t
 publik**, jadi bukti A9 berupa halaman yang dirender lokal, bukan tautan yang bisa dibuka orang
 lain. Kalau nanti dibutuhkan URL hidup, `web/index.html` sudah siap terbit apa adanya —
 keputusan ini yang diubah, bukan kodenya.
+
+## D23 — Deteksi run terlewat memakai preflight dan watchdog H+1
+
+Dikunci 2026-08-28 saat remediasi audit reliability. `RUN_MISSING` diperiksa untuk tanggal
+kemarin dengan dua jalur lokal: preflight di awal `scripts/daily_run.sh`, dan timer terpisah
+`driftwatch-watchdog.timer` pukul 10:00 WIB. Watchdog diperlukan karena preflight pipeline
+utama tidak pernah berjalan bila timer harian mati total. Keduanya memanggil detector yang
+sama, tanpa daemon Python, cron, layanan jaringan, atau database eksternal.
+
+Alert tetap append-only, tetapi identitas `(target, date, code)` dideduplikasi sebelum tulis
+dan notifikasi. Pemeriksaan berulang tetap mengembalikan status kritis agar systemd terlihat
+gagal, tanpa menambah baris `RUN_MISSING` identik. Tanggal target selalu diberikan eksplisit
+ke detector; test tidak bergantung jam nyata.
 
 ---
 

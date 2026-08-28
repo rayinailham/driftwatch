@@ -113,6 +113,7 @@ def generate_dictionary(data_root: Path, date: str, output: Path) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--date", required=True, help="Tanggal snapshot: YYYY-MM-DD")
+    parser.add_argument("--target", choices=list(CONTRACTS), help="Ekspor satu target tanpa membuat ulang kamus")
     parser.add_argument("--data-root", type=Path, default=Path("data"))
     parser.add_argument("--dictionary", type=Path, default=Path("docs/DATA_DICTIONARY.md"))
     return parser.parse_args()
@@ -120,11 +121,13 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    for target in CONTRACTS:
+    targets = [args.target] if args.target else list(CONTRACTS)
+    for target in targets:
         output, count = export_csv(args.data_root / target / args.date, target)
         print(f"{target}: {output} ({count} record)")
-    generate_dictionary(args.data_root, args.date, args.dictionary)
-    print(f"dictionary: {args.dictionary}")
+    if args.target is None:
+        generate_dictionary(args.data_root, args.date, args.dictionary)
+        print(f"dictionary: {args.dictionary}")
 
 
 if __name__ == "__main__":

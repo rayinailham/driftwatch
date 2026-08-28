@@ -272,6 +272,9 @@ class Run:
             "code_version": _code_version(),
         }
 
+    def exit_code(self) -> int:
+        return int(self.store.unique_count() == 0 or self.errors > 0)
+
 
 @app.command()
 def main(
@@ -312,8 +315,7 @@ def main(
     exit_code = 0
     try:
         asyncio.run(run.execute(limit))
-        if run.store.unique_count() == 0:
-            exit_code = 1
+        exit_code = run.exit_code()
     except (Exception, KeyboardInterrupt):
         exit_code = 1
         log.exception("run gagal target=%s", target)

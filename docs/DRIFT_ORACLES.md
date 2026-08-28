@@ -28,7 +28,7 @@ make oracles                                            # jalankan semua 11, ass
 | DO-04 | **struktur patah** | ganti class `.item-card` → `.c-9f2a1` di semua halaman | `ZERO_RECORDS` + `RECORD_COUNT_DROP` + `FIELD_COMPLETENESS_DROP` + `RUN_FAILED` + `CHURN_SPIKE` | critical + warning |
 | DO-05 | field hilang sebagian | hapus `<h2 class="item-name">` di 30% halaman | `FIELD_COMPLETENESS_DROP` | critical |
 | DO-06 | situs bermasalah | 15% request dibalas HTTP 503 (kait handler `lab_serve.py`) | `HTTP_ERROR_SPIKE` | critical |
-| DO-07 | field asing muncul | tambah `data-promo` yang ikut terparse | `SCHEMA_UNKNOWN_FIELD` | warning |
+| DO-07 | field asing muncul | tambah `data-promo` yang ikut terparse; unit detail gagal kontrak | `SCHEMA_UNKNOWN_FIELD` + `RUN_FAILED` | warning + critical |
 | DO-08 | situs melambat | jeda 4 detik di 10% halaman (kait handler `lab_serve.py`) | `DURATION_ANOMALY` | warning |
 | DO-09 | run terlewat | hapus folder run kemarin sebelum diff H+1 | `RUN_MISSING` | critical |
 | DO-10 | restrukturisasi besar | ubah `category` di 40% item | `CHURN_SPIKE` | warning |

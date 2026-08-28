@@ -2,8 +2,8 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-28 · **Status:** 🟨 JALAN — 10/13 fase · **Fase aktif:** — (P10 selesai)
-**Fase berikutnya:** **P11 — Laporan Klien** (P9 menunggu soak) · **soak_dibuka:** **2026-08-27**
+**Diperbarui:** 2026-08-28 · **Status:** 🟨 JALAN — 10/13 fase · **Fase aktif:** — (remediasi audit selesai)
+**Fase berikutnya:** **P11 — Laporan Klien** (P9 menunggu soak) · **soak_dibuka:** **2026-08-28**
 
 ## Status fase
 
@@ -18,28 +18,20 @@
 | P6 Panen Penuh | ✅ selesai | 4 target; 1.323 record; required 100%; 18/18 test · `e6ad2f3` |
 | P7 Penjadwalan | ✅ selesai | timer aktif; NEXT 2026-08-28 09:04:10 WIB; unit sukses · `c9978ec` |
 | P8 Diff & Alarm | ✅ selesai | 10 kode; 11/11 oracle; 12 alarm sah; 0 false positive · `eb46245` |
-| P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding; 1/3 tanggal (2026-08-27). Buka ≥ 2026-08-30 |
+| P9 Soak 3 Hari | ⬜ belum | reset 2026-08-28 karena pipeline operasional diperbaiki; bukti lama bukan soak versi ini |
 | P10 Demo + LLM | ✅ selesai | 323 baris; 3 situs; D13/D14/D18 dikunci; 0 kebocoran · `6f7409d` |
 | P11 Laporan Klien | ⬜ belum | `daily.md` 0 jargon + `REPORT.xlsx` 5 sheet |
 | P12 Packaging | ⬜ belum | video 60 dtk, `make all`, README publik, audit |
 
 Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 ## Fakta mesin — DIVERIFIKASI P0, bukan warisan
-
-- ✅ `systemctl --user` ADA (`systemd 261`), TZ `Asia/Jakarta` → **D9 berlaku**, bukan cron. Bukan blocker.
-- ⚠️ Venv 3.13.13 ≠ sistem 3.14.6 → perintah produksi **wajib** `uv run`. Tidak ada `just` (→ `make`, D10)
-  maupun `pytest` (→ `unittest`); `Makefile` wajib `.NOTPARALLEL:` + `MAKEFLAGS=-j16`.
-- Docker tanpa sudo; `sudo` butuh password, tanpa askpass. Port user penuh → `driftlab` **8100**, salinan bersih **8101** (D8)
+- `systemctl --user` ada (`systemd 261`), TZ `Asia/Jakarta` → D9, bukan cron.
+- Venv 3.13.13 ≠ sistem 3.14.6 → produksi wajib `uv run`; test `unittest`; orkestrasi GNU Make.
+- Docker tanpa sudo; `driftlab` port **8100**, salinan bersih **8101** (D8).
 
 ### 🚨 `9router.service` — JANGAN PERNAH DISENTUH (D22-A · AGENTS.md §0)
 systemd **user**, port **20128**, proxy AI lokal. Dilarang stop/restart/kill/disable/mask/edit/pakai port. Satu
 direktori dengan `driftwatch.timer` → unit selalu eksplisit, tanpa wildcard. Cek pasca-P7 → `active`.
-
-## Infra device (D21/D22-B)
-
-Cache `uv` + Playwright jangan diprune · image siap: `plantuml/plantuml-server:jetty` + `pandoc/core` (P12,
-**bukan** `texlive`). ⚠️ `crosscheck-tut-*` hidup — tanya dulu. Tidak dipakai walau ada: MySQL/Redis/TiDB
-(checkpoint wajib SQLite), MCP `excel` (laporan wajib `openpyxl`).
 
 ## Fakta terverifikasi tentang target — DIKONFIRMASI P2
 
@@ -50,11 +42,9 @@ Cache `uv` + Playwright jangan diprune · image siap: `plantuml/plantuml-server:
 | `seo` | `httpx+selectolax` | **23** | `url` | 23 URL dari `sitemap.xml` |
 | `driftlab` | `httpx+selectolax` | **200** | `item_id` | `page-{n}.html` 1..10 + 200 halaman detail |
 
-**Playwright TIDAK dipasang.** Nol target `js_required`; browser dipakai sekali di P2 lalu dibuang. Deliverable
-bebas dependensi Playwright (D21) — hanya cache-nya dipinjam untuk merender halaman P10.
+**Playwright TIDAK dipasang.** Nol target `js_required`; deliverable bebas dependency browser.
 
-Robots: `books`/`quotes`/`seo` HTTP 404 · `driftlab` 200 `Allow: /`. Nol `Crawl-delay` → default D3 1,0 dtk
-untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 proteksi ditembus.
+Robots: target publik HTTP 404; `driftlab` 200 `Allow: /`; default D3 1,0 dtk. P2: 0 HTTP 429.
 
 ## Halaman demo (D18 — berkas statis lokal, bukan URL publik)
 
@@ -76,6 +66,7 @@ untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 proteksi ditembus.
 | P7: timer · NEXT · run unit · target · soak | aktif · waktu · sukses · 4/4 · tanggal | **aktif · 2026-08-28 09:04:10 WIB · 1/1 · 4/4 · 2026-08-27** |
 | P8: oracle · kode · alarm sah · false positive · unit | 11/11 · 10 · N · 0 · sukses | **11/11 · 10 · 12 · 0 · sukses** |
 | P10: baris terbit · situs · token insight · biaya/hari · kebocoran | ≤200/situs · 3 · N · rendah · 0 | **323 (200+100+23) · 3 · 0 · $0,00000 · 0** |
+| Remediasi: regresi fokus · unit penuh · oracle · hash fixture | lulus · lulus · 11/11 · tetap | **22/22 · 34/34 · 11/11 · `b09a1d…5d3`** |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
 | **Acceptance project** | 12/12 | **2/12 (A8, A9)** |
 
@@ -92,7 +83,15 @@ untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 proteksi ditembus.
 **P6:** `src/{export,test_export}.py`, `docs/DATA_DICTIONARY.md`; 4 snapshot JSONL+CSV BOM (gitignored); D12 dikunci.
 **P7:** `scripts/{daily_run,prune}.sh`, `deploy/driftwatch.{service,timer}`, `Makefile`; D9/D10 dikunci; timer aktif.
 **P8:** `src/{diff,alarm,test_diff_alarm}.py`, `scripts/run_oracles.py`; 4 `diff.json`; `alerts.jsonl`; 10 detector; oracle 11/11.
-**P10:** `src/publish.py`, `web/{template,index}.html` + `data{,-books,-quotes,-seo}.json`; langkah (6) `daily_run.sh`; D13/D14/D18 dikunci.
+**P10:** `src/publish.py`, `web/{template,index}.html` + `data{,-books,-quotes,-seo}.json`; publikasi harian; D13/D14/D18 dikunci.
+
+## Remediasi audit 2026-08-28
+
+Kontrak alarm publish diselaraskan ke `list[str]`; H+1 memakai preflight + watchdog terpisah
+dengan dedupe; CSV masuk pipeline setelah validasi; harvest parsial menjadi nonzero; kegagalan
+publish masuk journal tanpa merusak snapshot. Soak dibuka ulang 2026-08-28 karena runtime
+pipeline berubah, bukan karena kegagalan tersembunyi. Run pertama sempat gagal karena script
+aktif diedit in-place; rerun checkpoint versi stabil sukses `0/SUCCESS`. P9/P11 tetap belum.
 
 ## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**

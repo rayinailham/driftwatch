@@ -114,7 +114,7 @@ def aggregate_prompt(target: str, payload: dict[str, Any], diff: dict[str, Any])
         f"Total record: {counts['total']} · baru: {counts['added_today']} · "
         f"berubah: {counts['changed_today']} · hilang: {counts['removed_today']}",
         f"Kelengkapan field turun: {health.get('field_completeness_delta') or 'tidak ada'}",
-        f"Peringatan aktif: {[alarm.get('code') for alarm in diff.get('alarms', [])] or 'tidak ada'}",
+        f"Peringatan aktif: {diff.get('alarms', []) or 'tidak ada'}",
         "",
         "10 baris teratas:",
     ]

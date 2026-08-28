@@ -29,27 +29,31 @@ Dokumen ini menjawab: "apa yang sebenarnya terjadi, dari situs mentah sampai ema
                                                        ▼
                     SETIAP HARI, OTOMATIS (fase operasional)
  ┌──────────────────────────────────────────────────────────────────────┐
- │ systemd timer 09:00 WIB                                              │
+ │ systemd timer 09:00 WIB + watchdog H+1 10:00 WIB                     │
  │      │  Persistent=true → run yang terlewat dikejar saat mesin nyala  │
  │      ▼                                                                │
  │ scripts/daily_run.sh                                                  │
+ │      │                                                                │
+ │      ├─(0)─► src/alarm.py --check-missing <kemarin>                   │
+ │      │        RUN_MISSING dedupe target+tanggal+kode                  │
  │      │                                                                │
  │      ├─(1)─► src/scrape.py --target X --resume                        │
  │      │        rate limit · retry · checkpoint · dedupe · log          │
  │      │        └─► data/X/<tanggal>/{records.jsonl,records.csv,run.json}│
  │      │                                                                │
  │      ├─(2)─► src/validate.py  ← tegakkan kontrak, hitung completeness │
+ │      ├─(3)─► src/export.py    ← records.jsonl → records.csv BOM       │
  │      │                                                                │
- │      ├─(3)─► src/diff.py      ← hari ini vs baseline terakhir         │
+ │      ├─(4)─► src/diff.py      ← hari ini vs baseline terakhir         │
  │      │        └─► reports/X/<tanggal>/diff.json                       │
  │      │                                                                │
- │      ├─(4)─► src/alarm.py     ← 10 kode alarm (D4/D5)                 │
+ │      ├─(5)─► src/alarm.py     ← 10 kode alarm (D4/D5)                 │
  │      │        └─► reports/alerts.jsonl  + notify-send + exit code     │
  │      │                                                                │
- │      ├─(5)─► src/report.py    ← digest manusia                        │
+ │      ├─(6)─► src/report.py    ← digest manusia                        │
  │      │        └─► reports/X/<tanggal>/daily.md                        │
  │      │                                                                │
- │      └─(6)─► src/publish.py   ← halaman demo + ringkasan Claude API   │
+ │      └─(7)─► src/publish.py   ← halaman demo + ringkasan Claude API   │
  │               └─► web/data.json → web/index.html                      │
  └──────────────────────────────────────────────────────────────────────┘
                                     │
@@ -60,7 +64,13 @@ Dokumen ini menjawab: "apa yang sebenarnya terjadi, dari situs mentah sampai ema
 
 ---
 
-## 2. Enam langkah harian, dijelaskan
+## 2. Delapan langkah harian, dijelaskan
+
+### (0) Preflight run terlewat — `src/alarm.py --check-missing`
+
+Memeriksa `run.json` tanggal kemarin sebelum panen hari ini. Jalur kedua,
+`driftwatch-watchdog.timer`, menjalankan pemeriksaan H+1 pukul 10:00 WIB meski timer panen
+utama mati total (D23). Alert dideduplikasi berdasarkan target, tanggal, dan kode.
 
 ### (1) Panen — `src/scrape.py`
 
@@ -78,15 +88,25 @@ Enam komponen wajibnya (tanpa ini, ia cuma script sekali pakai):
 
 **404 dan 403 tidak pernah di-retry.** Itu temuan (halaman hilang / diblokir),
 bukan kegagalan jaringan. Meretry-nya hanya membuang waktu dan terlihat seperti serangan.
+Kegagalan unit listing boleh meninggalkan record parsial, checkpoint, status HTTP, dan log
+untuk diagnosis, tetapi membuat `run.json.exit_code` nonzero. Khusus 404 setelah halaman
+terakhir DriftLab adalah terminator pagination dan tidak dihitung sebagai kegagalan.
 
 ### (2) Validasi — `src/validate.py`
 
 Menolak record yang melanggar `src/contracts.py`: key asing, tipe salah, field kosong tanpa
 alasan (D6). Menghitung `field_completeness` yang dipakai alarm di langkah (4).
-Kalau validasi gagal total, `run.json.exit_code` ≠ 0 dan langkah berikutnya tetap jalan —
-karena kegagalan itu sendiri yang harus dilaporkan, bukan disembunyikan.
+Kalau validasi gagal, status pipeline menjadi nonzero, ekspor dilewati, dan diff serta alarm
+tetap berjalan. Manifest ditandai `exit_code=1` agar `RUN_FAILED` muncul—kegagalan itu sendiri
+harus dilaporkan, bukan disembunyikan. Kegagalan ekspor memakai penanda yang sama.
 
-### (3) Diff — `src/diff.py`
+### (3) Ekspor — `src/export.py`
+
+Hanya berjalan bila scrape dan validasi target sukses serta `records.jsonl` ada. Menulis
+`records.csv` dengan BOM UTF-8 sesuai D12. Kegagalan ekspor membuat pipeline nonzero dan
+tidak pernah ditelan.
+
+### (4) Diff — `src/diff.py`
 
 Membandingkan snapshot hari ini dengan **run sukses terakhir** (baseline).
 
@@ -100,7 +120,7 @@ unchanged= sisanya
 Kunci kewarasannya ada di D7: field volatil (`fetched_at`, `run_id`) tidak ikut di-hash.
 Tanpa aturan itu, 100% record akan tampak "berubah" setiap hari dan laporan jadi sampah.
 
-### (4) Alarm — `src/alarm.py`
+### (5) Alarm — `src/alarm.py`
 
 Sepuluh kode tertutup (D4), ambangnya di D5. Filosofinya satu kalimat:
 
@@ -113,15 +133,17 @@ Alarm `critical` → `exit 1` dari `daily_run.sh` → systemd menandai unit gaga
 terlihat di `systemctl --user --failed`. Plus `notify-send` di desktop dan baris di
 `reports/alerts.jsonl`.
 
-### (5) Laporan — `src/report.py`
+### (6) Laporan — `src/report.py`
 
 `daily.md` untuk manusia. Aturan nadanya di `docs/CLIENT_REPORT.md`.
 Digenerate **setiap hari**, termasuk hari yang tidak ada perubahannya.
 
-### (6) Publikasi — `src/publish.py`
+### (7) Publikasi — `src/publish.py`
 
 Menyegarkan `web/data.json` (metadata saja, D13) dan meminta satu ringkasan ke Claude API
 (pagar biaya di D14). `--no-llm` mematikan bagian itu sepenuhnya.
+Kegagalan publish tidak mengubah snapshot scraper atau exit pipeline, tetapi selalu menulis
+pesan `ERROR publish gagal exit=...` ke stderr sehingga terlihat di journal systemd.
 
 ---
 
@@ -136,7 +158,7 @@ Menyegarkan `web/data.json` (metadata saja, D13) dan meminta satu ringkasan ke C
 | Situs ganti struktur HTML | record anjlok → `RECORD_COUNT_DROP` | email: "struktur situs berubah, saya perbaiki hari ini" |
 | Satu field hilang di 30% halaman | `FIELD_COMPLETENESS_DROP` | email: "kolom tanggal mulai kosong di sebagian halaman" |
 | Situs restrukturisasi besar | `CHURN_SPIKE` (warning, bukan critical) | email: "banyak perubahan, ini normal atau perlu ditinjau?" |
-| Timer tidak jalan | `RUN_MISSING` pada H+1 | email: "run kemarin tidak terjadi, sudah dikejar" |
+| Timer tidak jalan | watchdog terpisah memicu `RUN_MISSING` pada H+1 | email: "run kemarin tidak terjadi" |
 
 Perbedaan `critical` vs `warning` bukan kosmetik: `critical` berarti **datanya tidak boleh
 dipercaya hari ini**; `warning` berarti **datanya sah tapi ada yang perlu dilihat manusia**.

@@ -232,6 +232,59 @@ def load_json(path: Path) -> dict | None:
     return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else None
 
 
+def append_alerts(
+    alarms: list[Alarm],
+    target: str,
+    run_date: str,
+    reports_root: Path,
+    notify: bool,
+) -> list[Alarm]:
+    """Append only alarms not already recorded for the same target, date, and code."""
+    alerts_path = reports_root / "alerts.jsonl"
+    alerts_path.parent.mkdir(parents=True, exist_ok=True)
+    alerts_path.touch(exist_ok=True)
+    existing: set[tuple[str, str, str]] = set()
+    with alerts_path.open(encoding="utf-8") as source:
+        for line in source:
+            if line.strip():
+                payload = json.loads(line)
+                existing.add((payload.get("target"), payload.get("date"), payload.get("code")))
+
+    raised_at = datetime.now(JAKARTA).isoformat(timespec="seconds")
+    new_alarms = [alarm for alarm in alarms if (target, run_date, alarm.code) not in existing]
+    if new_alarms:
+        with alerts_path.open("a", encoding="utf-8") as output:
+            for alarm in new_alarms:
+                payload = {"raised_at": raised_at, "target": target, "date": run_date, **asdict(alarm)}
+                output.write(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n")
+        if notify and shutil.which("notify-send"):
+            subprocess.run(
+                ["notify-send", f"DriftWatch: {target}", "\n".join(alarm.message for alarm in new_alarms)],
+                check=False,
+            )
+    return new_alarms
+
+
+def check_missing_runs(
+    targets: list[str],
+    run_date: str,
+    data_root: Path,
+    reports_root: Path,
+    notify: bool = True,
+) -> dict[str, list[Alarm]]:
+    """Check an explicit scheduled date and emit deduplicated RUN_MISSING alerts."""
+    results: dict[str, list[Alarm]] = {}
+    for target in targets:
+        if (data_root / target / run_date / "run.json").is_file():
+            results[target] = []
+            continue
+        missing = run_missing(None, None, {})
+        alarms = [missing] if missing is not None else []
+        append_alerts(alarms, target, run_date, reports_root, notify)
+        results[target] = alarms
+    return results
+
+
 def run_alarms(target: str, run_date: str, data_root: Path, reports_root: Path, notify: bool = True) -> list[Alarm]:
     diff_path = reports_root / target / run_date / "diff.json"
     diff = json.loads(diff_path.read_text(encoding="utf-8"))
@@ -241,33 +294,31 @@ def run_alarms(target: str, run_date: str, data_root: Path, reports_root: Path, 
     alarms = evaluate(run_today, run_baseline, diff)
     diff["alarms"] = [alarm.code for alarm in alarms]
     diff_path.write_text(json.dumps(diff, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    alerts_path = reports_root / "alerts.jsonl"
-    alerts_path.parent.mkdir(parents=True, exist_ok=True)
-    alerts_path.touch(exist_ok=True)
-    if alarms:
-        raised_at = datetime.now(JAKARTA).isoformat(timespec="seconds")
-        with alerts_path.open("a", encoding="utf-8") as output:
-            for alarm in alarms:
-                payload = {"raised_at": raised_at, "target": target, "date": run_date, **asdict(alarm)}
-                output.write(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n")
-        if notify and shutil.which("notify-send"):
-            subprocess.run(
-                ["notify-send", f"DriftWatch: {target}", "\n".join(alarm.message for alarm in alarms)],
-                check=False,
-            )
+    append_alerts(alarms, target, run_date, reports_root, notify)
     return alarms
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--target", required=True)
-    date_group = parser.add_mutually_exclusive_group(required=True)
+    parser.add_argument("--target", choices=list(CONTRACTS))
+    date_group = parser.add_mutually_exclusive_group()
     date_group.add_argument("--today", action="store_true")
     date_group.add_argument("--date")
+    date_group.add_argument("--check-missing", metavar="DATE")
     parser.add_argument("--data-root", type=Path, default=Path("data"))
     parser.add_argument("--reports-root", type=Path, default=Path("reports"))
     parser.add_argument("--no-notify", action="store_true")
     args = parser.parse_args()
+    if args.check_missing:
+        targets = [args.target] if args.target else list(CONTRACTS)
+        results = check_missing_runs(
+            targets, args.check_missing, args.data_root, args.reports_root, not args.no_notify
+        )
+        missing = [target for target, alarms in results.items() if alarms]
+        print(f"check {args.check_missing}: RUN_MISSING={missing}")
+        return int(bool(missing))
+    if not args.target or not (args.today or args.date):
+        parser.error("--target dan salah satu --today/--date wajib untuk evaluasi alarm")
     run_date = Date.today().isoformat() if args.today else args.date
     alarms = run_alarms(args.target, run_date, args.data_root, args.reports_root, not args.no_notify)
     print(f"{args.target} {run_date}: alarms={[alarm.code for alarm in alarms]}")

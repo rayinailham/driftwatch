@@ -1,0 +1,7 @@
+[Unit]
+Description=DriftWatch missing-run watchdog
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/rayin/Projects/Testing/driftwatch
+ExecStart=/usr/bin/env bash scripts/check_missing.sh

@@ -1,13 +1,15 @@
 """Focused checks for scraper retry and SQLite deduplication."""
 
 import asyncio
+import io
+import json
 import tempfile
 import unittest
 from pathlib import Path
 
 import httpx
 
-from scrape import Fetcher
+from scrape import Fetcher, Run
 from engines.http_html import parse_detail
 from store import Store
 
@@ -57,6 +59,83 @@ class StoreTests(unittest.TestCase):
                 self.assertEqual(store.unique_count(), 1)
             finally:
                 store.close()
+
+
+class PartialHarvestTests(unittest.TestCase):
+    def test_listing_failure_keeps_partial_output_and_sets_nonzero_exit(self) -> None:
+        listing = '<article class="item-card"><h2><a href="/item/1.html">One</a></h2></article>'
+        detail = (
+            '<article class="item-detail" data-item-id="DW-001">'
+            '<h1 class="item-name">One</h1><span class="price">1.0</span>'
+            '<span class="category">fixture</span></article>'
+        )
+
+        class FakeFetcher:
+            status_counts = {"200": 2, "500": 1}
+            retries = 0
+            observed_min_gap_ms = None
+
+            async def fetch(self, url: str, params: dict | None = None) -> httpx.Response:
+                request = httpx.Request("GET", url)
+                if url.endswith("page-1.html"):
+                    return httpx.Response(200, text=listing, request=request)
+                if url.endswith("1.html"):
+                    return httpx.Response(200, text=detail, request=request)
+                return httpx.Response(500, request=request)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            recon = {
+                "pagination": {
+                    "max_page_observed": 1,
+                    "url_template": "http://127.0.0.1:8100/page-{n}.html",
+                },
+                "recommended_engine": "httpx+selectolax",
+            }
+            run = Run("driftlab", recon, directory, False, 0.0, 0.0, 1)
+            run.fetcher = FakeFetcher()  # type: ignore[assignment]
+            output = io.StringIO()
+            try:
+                asyncio.run(run._detail_target(None, output))
+                manifest_data = run.manifest(run.exit_code())
+                rows = [json.loads(line) for line in output.getvalue().splitlines()]
+
+                self.assertEqual(len(rows), 1)
+                self.assertEqual(rows[0]["record_id"], "driftlab:item_id:DW-001")
+                self.assertEqual(run.errors, 1)
+                self.assertEqual(manifest_data["exit_code"], 1)
+                self.assertEqual(manifest_data["http_status_counts"], {"200": 2, "500": 1})
+                self.assertTrue(run.store.done("page:1"))
+                self.assertFalse(run.store.done("page:2"))
+            finally:
+                run.store.close()
+
+    def test_driftlab_404_pagination_terminator_is_not_failure(self) -> None:
+        class FakeFetcher:
+            status_counts = {"404": 1}
+            retries = 0
+            observed_min_gap_ms = None
+
+            async def fetch(self, url: str, params: dict | None = None) -> httpx.Response:
+                return httpx.Response(404, request=httpx.Request("GET", url))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            recon = {
+                "pagination": {
+                    "max_page_observed": 1,
+                    "url_template": "http://127.0.0.1:8100/page-{n}.html",
+                },
+                "recommended_engine": "httpx+selectolax",
+            }
+            run = Run("driftlab", recon, Path(temporary), False, 0.0, 0.0, 1)
+            fetcher = FakeFetcher()
+            run.fetcher = fetcher  # type: ignore[assignment]
+            try:
+                asyncio.run(run._detail_target(None, io.StringIO()))
+                self.assertEqual(run.errors, 0)
+                self.assertEqual(fetcher.status_counts, {})
+            finally:
+                run.store.close()
 
     def test_progress_marked_ok_is_done(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

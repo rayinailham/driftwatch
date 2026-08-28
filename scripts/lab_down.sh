@@ -10,6 +10,11 @@ if [[ ! -f "$pid_file" ]]; then
 fi
 
 pid=$(<"$pid_file")
+if ! kill -0 "$pid" 2>/dev/null; then
+  rm -f "$pid_file"
+  echo "DriftLab is not running (removed stale PID $pid)"
+  exit 0
+fi
 cmdline=$(tr '\0' ' ' <"/proc/$pid/cmdline" 2>/dev/null || true)
 if [[ "$cmdline" != *"scripts/lab_serve.py"* ]]; then
   echo "Refusing to stop PID $pid: not DriftLab" >&2

@@ -1,9 +1,13 @@
 """Focused unit tests for diff and all ten alarm detectors."""
 
+import json
+import tempfile
 import unittest
+from pathlib import Path
 
 import alarm
 from diff import compare_records
+from scripts.mark_run_failed import mark_failed
 
 
 def manifest(records=200, exit_code=0, duration=10.0):
@@ -36,6 +40,20 @@ class DiffTests(unittest.TestCase):
         self.assertEqual(result["counts"]["added"], 0)
         self.assertEqual(result["counts"]["changed"], 0)
         self.assertEqual(result["counts"]["removed"], 0)
+
+    def test_postprocess_failure_marks_manifest_for_run_failed_alarm(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "run.json"
+            path.write_text(json.dumps(manifest(exit_code=0)) + "\n", encoding="utf-8")
+
+            mark_failed(path)
+
+            failed = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual(failed["exit_code"], 1)
+            detected = alarm.run_failed(failed, None, diff_data())
+            self.assertIsNotNone(detected)
+            assert detected is not None
+            self.assertEqual(detected.code, "RUN_FAILED")
 
 
 class AlarmTests(unittest.TestCase):
@@ -75,6 +93,36 @@ class AlarmTests(unittest.TestCase):
     def test_message_validator_rejects_jargon(self):
         with self.assertRaisesRegex(ValueError, "jargon"):
             alarm._alarm("RUN_FAILED", "critical", 1, 0, None, "SQLite gagal", "x", "Buka log.")
+
+    def test_missing_run_check_is_explicit_and_deduplicated(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            data_root = root / "data"
+            reports_root = root / "reports"
+            run_date = "2026-08-14"
+            existing = data_root / "books" / run_date
+            existing.mkdir(parents=True)
+            (existing / "run.json").write_text("{}\n", encoding="utf-8")
+
+            first = alarm.check_missing_runs(
+                ["books", "quotes"], run_date, data_root, reports_root, notify=False
+            )
+            second = alarm.check_missing_runs(
+                ["books", "quotes"], run_date, data_root, reports_root, notify=False
+            )
+
+            self.assertEqual(first["books"], [])
+            self.assertEqual([item.code for item in first["quotes"]], ["RUN_MISSING"])
+            self.assertEqual([item.code for item in second["quotes"]], ["RUN_MISSING"])
+            alerts = [
+                json.loads(line)
+                for line in (reports_root / "alerts.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual(len(alerts), 1)
+            self.assertEqual(
+                (alerts[0]["target"], alerts[0]["date"], alerts[0]["code"]),
+                ("quotes", run_date, "RUN_MISSING"),
+            )
 
 
 if __name__ == "__main__":
