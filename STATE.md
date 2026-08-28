@@ -19,7 +19,7 @@
 | P7 Penjadwalan | ✅ selesai | timer aktif; NEXT 2026-08-28 09:04:10 WIB; unit sukses · `c9978ec` |
 | P8 Diff & Alarm | ✅ selesai | 10 kode; 11/11 oracle; 12 alarm sah; 0 false positive · `eb46245` |
 | P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding; 1/3 tanggal (2026-08-27). Buka ≥ 2026-08-30 |
-| P10 Demo + LLM | ✅ selesai | 323 baris; 3 situs; D13/D14/D18 dikunci; 0 kebocoran · `HASHP10` |
+| P10 Demo + LLM | ✅ selesai | 323 baris; 3 situs; D13/D14/D18 dikunci; 0 kebocoran · `6f7409d` |
 | P11 Laporan Klien | ⬜ belum | `daily.md` 0 jargon + `REPORT.xlsx` 5 sheet |
 | P12 Packaging | ⬜ belum | video 60 dtk, `make all`, README publik, audit |
 
