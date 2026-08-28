@@ -56,19 +56,13 @@ Robots: target publik HTTP 404; `driftlab` 200 `Allow: /`; default D3 1,0 dtk. P
 | Metrik | Target | Aktual |
 |---|---|---|
 | P0: tool terverifikasi · error `uv sync` | — · 0 | **10 · 0** |
-| P1: target · kandidat SEO · lolos · item · oracle | 4 · ≥3 · 1 · 200 · 2/11 | **4 · 3 · 1 · 200 · 2/11** |
-| P2: recon sah · butuh browser · quotes request | 4/4 · 0 · turun | **4/4 · 0 · 8 → 1** |
-| P3: kontrak · field (required) · sampel · test | 4 · N · 12/12 · ≥6 | **4 · 31 (27) · 12/12 · 11/11** |
-| P4: komponen · target valid · record cicip · gap publik min | 6/6 · 3/3 · — · ≥900 ms | **6/6 · 3/3 · 100 · 1.000 ms** |
-| Record `books` · duplikat · field `required` | ≥1.000 · 0 · ≥98% | **1.000 · 0 · 100%** |
-| P5: manual · resume unit/baris · gap · test | 3/3 · naik/naik · ≥900 ms · ≥11 | **3/3 · 12→1050/12→1000 · 1.000 ms · 17/17** |
+| P1–P5 (ringkas) | — | **4 target · recon 4/4 · 31 field (27 req) · 12/12 sampel · resume 12→1.000 · gap 1.000 ms** |
 | P6: record total · books · dup · required min · test · loop resume | ≥1.000 · ≥1.000 · 0 · ≥98% · — · — | **1.323 · 1.000 · 0 · 100% · 18/18 · 40,927 dtk** |
 | P7: timer · NEXT · run unit · target · soak | aktif · waktu · sukses · 4/4 · tanggal | **aktif · 2026-08-28 09:04:10 WIB · 1/1 · 4/4 · 2026-08-27** |
 | P8: oracle · kode · alarm sah · false positive · unit | 11/11 · 10 · N · 0 · sukses | **11/11 · 10 · 12 · 0 · sukses** |
 | P10: baris terbit · situs · token insight · biaya/hari · kebocoran | ≤200/situs · 3 · N · rendah · 0 | **323 (200+100+23) · 3 · 0 · $0,00000 · 0** |
 | P11: `daily.md` · sheet · jargon · notifikasi critical · kebocoran sampel · test | N · 5 · 0 · ≥1 · 0 · ≥6 | **8 · 5 · 0 · 4 · 0 · 9** |
-| Remediasi: regresi fokus · unit penuh · oracle · hash fixture | lulus · lulus · 11/11 · tetap | **22/22 · 34/34 · 11/11 · `b09a1d…5d3`** |
-| P11 gerbang: compile · unit · recon · oracle · hash fixture | 0 · lulus · 4/4 · 11/11 · tetap | **0 · 43/43 · 4/4 · 11/11 · `b09a1d…5d3`** |
+| Gerbang P11: compile · unit · recon · oracle · hash fixture | 0 · lulus · 4/4 · 11/11 · tetap | **0 · 43/43 · 4/4 · 11/11 · `b09a1d…5d3`** |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
 | **Acceptance project** | 12/12 | **3/12 (A8, A9, A10)** |
 
