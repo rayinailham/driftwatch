@@ -48,15 +48,13 @@ Robots: target publik HTTP 404; `driftlab` 200 `Allow: /`; default D3 1,0 dtk. P
 
 ## Halaman demo (D18 — berkas statis lokal, bukan URL publik)
 
-`web/index.html`: berkas mandiri, payload ditanam, dibuka lewat `file://` tanpa server. 3 situs publik
-(books 200 · quotes 100 · seo 23); `driftlab` tidak terbit (fixture lokal). Insight **`claude-haiku-4-5`** — $1/$5 per 1 juta token, termurah yang memadai (D14).
+`web/index.html`: berkas mandiri, payload ditanam, `file://` tanpa server. 3 situs publik (books 200 · quotes 100 · seo 23); `driftlab` tidak terbit. Insight **`claude-haiku-4-5`** — $1/$5 per 1 juta token (D14).
 
 ## Metrik
 
 | Metrik | Target | Aktual |
 |---|---|---|
-| P0: tool terverifikasi · error `uv sync` | — · 0 | **10 · 0** |
-| P1–P5 (ringkas) | — | **4 target · recon 4/4 · 31 field (27 req) · 12/12 sampel · resume 12→1.000 · gap 1.000 ms** |
+| P0–P5 (ringkas) | — | **10 tool · 0 error `uv sync` · 4 target · recon 4/4 · 31 field (27 req) · 12/12 sampel · resume 12→1.000 · gap 1.000 ms** |
 | P6: record total · books · dup · required min · test · loop resume | ≥1.000 · ≥1.000 · 0 · ≥98% · — · — | **1.323 · 1.000 · 0 · 100% · 18/18 · 40,927 dtk** |
 | P7: timer · NEXT · run unit · target · soak | aktif · waktu · sukses · 4/4 · tanggal | **aktif · 2026-08-28 09:04:10 WIB · 1/1 · 4/4 · 2026-08-27** |
 | P8: oracle · kode · alarm sah · false positive · unit | 11/11 · 10 · N · 0 · sukses | **11/11 · 10 · 12 · 0 · sukses** |
