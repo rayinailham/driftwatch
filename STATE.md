@@ -2,8 +2,8 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-27 · **Status:** 🟨 JALAN — 9/13 fase · **Fase aktif:** — (P8 selesai)
-**Fase berikutnya:** **P10 — Demo + LLM** (P9 menunggu soak) · **soak_dibuka:** **2026-08-27**
+**Diperbarui:** 2026-08-28 · **Status:** 🟨 JALAN — 10/13 fase · **Fase aktif:** — (P10 selesai)
+**Fase berikutnya:** **P11 — Laporan Klien** (P9 menunggu soak) · **soak_dibuka:** **2026-08-27**
 
 ## Status fase
 
@@ -17,9 +17,9 @@
 | P5 Validasi & Resume | ✅ selesai | 3/3 manual; resume 12→1.000; 17/17 test · `e551205` |
 | P6 Panen Penuh | ✅ selesai | 4 target; 1.323 record; required 100%; 18/18 test · `e6ad2f3` |
 | P7 Penjadwalan | ✅ selesai | timer aktif; NEXT 2026-08-28 09:04:10 WIB; unit sukses · `c9978ec` |
-| P8 Diff & Alarm | ✅ selesai | 10 kode; 11/11 oracle; 12 alarm sah; 0 false positive |
-| P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding, bukan sesi kerja |
-| P10 Demo + LLM | ⬜ belum | halaman publik + insight Claude API ber-pagar |
+| P8 Diff & Alarm | ✅ selesai | 10 kode; 11/11 oracle; 12 alarm sah; 0 false positive · `eb46245` |
+| P9 Soak 3 Hari | ⬜ belum | gerbang jam dinding; 1/3 tanggal (2026-08-27). Buka ≥ 2026-08-30 |
+| P10 Demo + LLM | ✅ selesai | 323 baris; 3 situs; D13/D14/D18 dikunci; 0 kebocoran · `HASHP10` |
 | P11 Laporan Klien | ⬜ belum | `daily.md` 0 jargon + `REPORT.xlsx` 5 sheet |
 | P12 Packaging | ⬜ belum | video 60 dtk, `make all`, README publik, audit |
 
@@ -27,20 +27,19 @@ Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
 ## Fakta mesin — DIVERIFIKASI P0, bukan warisan
 
 - ✅ `systemctl --user` ADA (`systemd 261`), TZ `Asia/Jakarta` → **D9 berlaku**, bukan cron. Bukan blocker.
-- ⚠️ Venv 3.13.13 ≠ sistem 3.14.6 → perintah produksi **wajib** `uv run`.
-- tidak ada `just` (→ `make`, D10; `Makefile` wajib `.NOTPARALLEL:`, `MAKEFLAGS=-j16`) · tidak ada `pytest` (→ `unittest`)
+- ⚠️ Venv 3.13.13 ≠ sistem 3.14.6 → perintah produksi **wajib** `uv run`. Tidak ada `just` (→ `make`, D10)
+  maupun `pytest` (→ `unittest`); `Makefile` wajib `.NOTPARALLEL:` + `MAKEFLAGS=-j16`.
 - Docker tanpa sudo; `sudo` butuh password, tanpa askpass. Port user penuh → `driftlab` **8100**, salinan bersih **8101** (D8)
 
 ### 🚨 `9router.service` — JANGAN PERNAH DISENTUH (D22-A · AGENTS.md §0)
-systemd **user**, port **20128**, proxy AI lokal. Dilarang stop/restart/kill/disable/mask/edit/pakai port.
-Satu direktori dengan `driftwatch.timer` → unit selalu eksplisit, tanpa wildcard. Cek pasca-P7 → `active`.
+systemd **user**, port **20128**, proxy AI lokal. Dilarang stop/restart/kill/disable/mask/edit/pakai port. Satu
+direktori dengan `driftwatch.timer` → unit selalu eksplisit, tanpa wildcard. Cek pasca-P7 → `active`.
 
 ## Infra device (D21/D22-B)
 
-Cache `uv` + Playwright jangan diprune · image siap: `plantuml/plantuml-server:jetty` (P12),
-`pandoc/core` (PDF P12, **bukan** `texlive`). ⚠️ `crosscheck-tut-*` hidup — tanya dulu.
-P0+P2: **0 `docker pull`, 0 start/stop service infra, 0 edit `infra/docker-compose.yml`.**
-Tidak dipakai walau ada: MySQL/Redis/TiDB (checkpoint wajib SQLite), MCP `excel` (laporan wajib `openpyxl`).
+Cache `uv` + Playwright jangan diprune · image siap: `plantuml/plantuml-server:jetty` + `pandoc/core` (P12,
+**bukan** `texlive`). ⚠️ `crosscheck-tut-*` hidup — tanya dulu. Tidak dipakai walau ada: MySQL/Redis/TiDB
+(checkpoint wajib SQLite), MCP `excel` (laporan wajib `openpyxl`).
 
 ## Fakta terverifikasi tentang target — DIKONFIRMASI P2
 
@@ -51,16 +50,16 @@ Tidak dipakai walau ada: MySQL/Redis/TiDB (checkpoint wajib SQLite), MCP `excel`
 | `seo` | `httpx+selectolax` | **23** | `url` | 23 URL dari `sitemap.xml` |
 | `driftlab` | `httpx+selectolax` | **200** | `item_id` | `page-{n}.html` 1..10 + 200 halaman detail |
 
-**Keputusan Playwright: TIDAK dipasang.** Nol target `js_required` → lapis 2 tak pernah terpakai.
-Browser dipakai sekali di P2 (MCP `chrome-devtools`, recon `quotes`) lalu dibuang; deliverable bebas
-dependensi Playwright (D21). Kalau P4 ternyata butuh: salin `../crosscheck/scripts/arch_provision.sh`
-ke `scripts/` dulu, jangan panggil lintas-project.
+**Playwright TIDAK dipasang.** Nol target `js_required`; browser dipakai sekali di P2 lalu dibuang. Deliverable
+bebas dependensi Playwright (D21) — hanya cache-nya dipinjam untuk merender halaman P10.
 
-**`driftlab` sengaja TOLAK `/items.json`** (1 request vs 210): DO-04/05/07 memutasi HTML saja →
-lewat JSON recall oracle mentok 8/11, padahal P8 minta 11/11.
+Robots: `books`/`quotes`/`seo` HTTP 404 · `driftlab` 200 `Allow: /`. Nol `Crawl-delay` → default D3 1,0 dtk
+untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 proteksi ditembus.
 
-Robots: `books`/`quotes`/`seo` HTTP 404 · `driftlab` 200 `Allow: /`. Nol `Crawl-delay` →
-default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 proteksi ditembus.
+## Halaman demo (D18 — berkas statis lokal, bukan URL publik)
+
+`web/index.html`: berkas mandiri, payload ditanam, dibuka lewat `file://` tanpa server. 3 situs publik
+(books 200 · quotes 100 · seo 23); `driftlab` tidak terbit (fixture lokal). Insight **`claude-haiku-4-5`** — $1/$5 per 1 juta token, termurah yang memadai (D14).
 
 ## Metrik
 
@@ -76,8 +75,9 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 | P6: record total · books · dup · required min · test · loop resume | ≥1.000 · ≥1.000 · 0 · ≥98% · — · — | **1.323 · 1.000 · 0 · 100% · 18/18 · 40,927 dtk** |
 | P7: timer · NEXT · run unit · target · soak | aktif · waktu · sukses · 4/4 · tanggal | **aktif · 2026-08-28 09:04:10 WIB · 1/1 · 4/4 · 2026-08-27** |
 | P8: oracle · kode · alarm sah · false positive · unit | 11/11 · 10 · N · 0 · sukses | **11/11 · 10 · 12 · 0 · sukses** |
+| P10: baris terbit · situs · token insight · biaya/hari · kebocoran | ≤200/situs · 3 · N · rendah · 0 | **323 (200+100+23) · 3 · 0 · $0,00000 · 0** |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
-| **Acceptance project** | 12/12 | **1/12 (A8)** |
+| **Acceptance project** | 12/12 | **2/12 (A8, A9)** |
 
 ## Artefak yang sudah lahir
 
@@ -88,12 +88,13 @@ default D3 1,0 dtk untuk 3 host publik. Selama P2: 0 HTTP 429, 0 login, 0 protek
 **P2:** `recon/{books,quotes,seo,driftlab}.json` (4/4 sah) + `scripts/validate_recon.py` (gerbang bentuk, exit 0).
 **P3:** `src/{contracts,validate,test_contracts}.py`; skema + D17 terkunci; 31/31 deskripsi dan source hint terisi.
 **P4:** `src/scrape.py`, `store.py`, `engines/{http_html,http_json}.py`, `test_scrape.py`; run cicip di `data/` (gitignored); D11 dipulihkan.
-**P5:** `docs/{MANUAL_VERIFY,RESUME_PROOF}.md`; 1.000 record books lokal (gitignored); rekaman video ditunda ke P12 agar merekam alur final sekali.
+**P5:** `docs/{MANUAL_VERIFY,RESUME_PROOF}.md`; 1.000 record books lokal (gitignored); rekaman video ditunda ke P12.
 **P6:** `src/{export,test_export}.py`, `docs/DATA_DICTIONARY.md`; 4 snapshot JSONL+CSV BOM (gitignored); D12 dikunci.
 **P7:** `scripts/{daily_run,prune}.sh`, `deploy/driftwatch.{service,timer}`, `Makefile`; D9/D10 dikunci; timer aktif.
 **P8:** `src/{diff,alarm,test_diff_alarm}.py`, `scripts/run_oracles.py`; 4 `diff.json`; `alerts.jsonl`; 10 detector; oracle 11/11.
+**P10:** `src/publish.py`, `web/{template,index}.html` + `data{,-books,-quotes,-seo}.json`; langkah (6) `daily_run.sh`; D13/D14/D18 dikunci.
 
 ## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**
-- 🔓 **D18** publikasi demo → **P10** · 🔓 **D20** repo publik → **P12, butuh izin eksplisit user**
-- D13–D15 ditulis saat pertama dipakai.
+- 🔓 **D20** repo publik → **P12, butuh izin eksplisit user**. D15 ditulis saat pertama dipakai.
+- `ANTHROPIC_API_KEY` **kosong** → insight P10 = 0 token, $0. Isi kunci lalu `uv run --no-sync python src/publish.py` (≈ $0,005/hari).

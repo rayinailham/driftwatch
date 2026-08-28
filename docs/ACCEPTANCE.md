@@ -21,8 +21,8 @@ dan perintah pembuktinya.
 | A5 | Rate limit terbukti dihormati | ⬜ | `jq '.rate_limit' run.json` → `observed_min_gap_ms` ≥ `delay_sec×1000×0,9` |
 | A6 | Timer harian jalan **3 hari berturut** tanpa disentuh | ⬜ | `journalctl --user -u driftwatch.service --since "4 days ago" \| grep -c Started` ≥ 3 · 3 folder tanggal berurutan |
 | A7 | Laporan diff otomatis terbentuk tiap hari | ⬜ | `ls reports/*/*/diff.json \| wc -l` ≥ 3 · tiap tanggal punya `daily.md` |
-| A8 | Alarm patah terbukti: sengaja dirusak → sistem berteriak | ⬜ | `make oracles` → **11/11 PASS**, exit 0 |
-| A9 | Halaman demo bisa dibuka & memuat data asli hasil scraping | ⬜ | URL hidup + `web/data.json` `generated_at` ≤ 24 jam + hanya metadata (D13) |
+| A8 | Alarm patah terbukti: sengaja dirusak → sistem berteriak | ✅ | `make oracles` → **11/11 PASS**, exit 0 |
+| A9 | Halaman demo bisa dibuka & memuat data asli hasil scraping | ✅ | `web/index.html` dirender `file://` → 200 baris nyata (D18 menggantikan "URL hidup" dengan berkas statis lokal) + `web/data.json` `generated_at` ≤ 24 jam + hanya metadata (D13) |
 | A10 | Turun lapis terbukti: minimal 1 target pindah dari browser ke httpx | ⬜ | `recon/quotes.json` `recommended_engine` = `httpx+json` + `engine_rationale` menyebut endpoint yang ditemukan |
 | A11 | Reproducible satu perintah di salinan bersih | ⬜ | `rsync` ke folder baru → `cp .env.example .env` → `make all` exit 0 |
 | A12 | Nol kredensial bocor | ⬜ | `make audit` → 0 kebocoran · `.env`, `data/`, `reports/` tidak ter-track git |

@@ -245,11 +245,69 @@ Keadaan saat plan ditulis (2026-08-27) — **hidup:** `9router.service` (jangan 
 **Mati:** `plantuml-server`, `infra-dashboard`, `mysql-db`, `redisinsight`, dan ±20
 container project lain yang sudah `Exited`.
 
+## D13 — Halaman demo: metadata saja, maksimal 200 baris per situs
+
+Dikunci 2026-08-28 di P10 saat halaman demo pertama kali dibangun.
+
+`web/data.json` dan `web/index.html` hanya memuat **metadata kontrak** (`src/contracts.py`)
+plus `record_id`, `url` sumber, dan status diff (`baru` / `berubah` / `tetap`). Tidak ada isi
+karya: teks kutipan tidak disimpan sejak D17, deskripsi buku hanya dihitung katanya, dan
+halaman `seo` hanya menyumbang judul, H1, meta description, jumlah kata, dan jumlah tautan.
+
+Batas keras: **200 baris per situs**, diurutkan agar baris `baru`/`berubah` naik lebih dulu —
+yang layak dilihat manusia harus ada di layar pertama, bukan di baris ke-800.
+
+Target `driftlab` **tidak** dipublikasikan. Ia fixture lokal di `127.0.0.1`, dan alamat host
+internal dilarang muncul di halaman publik. Yang terbit hanya `books`, `quotes`, `seo`.
+
+Setiap halaman wajib memuat baris atribusi (nama situs + tautan) dan catatan etika
+(`robots.txt` dihormati, 1 permintaan/detik, User-Agent jujur berisi kontak) — `docs/ETHICS.md` §3.
+
+## D14 — Insight LLM: model termurah yang memadai, dengan pagar biaya
+
+Dikunci 2026-08-28 di P10. Model dan tarif diambil dari skill `claude-api`
+(tabel model, cache 2026-06-24), bukan dari ingatan.
+
+**Model: `claude-haiku-4-5`** — $1,00 / 1 juta token masuk, $5,00 / 1 juta token keluar;
+tarif terendah pada tabel dan cukup untuk tugasnya, yaitu meringkas ~20 baris agregat menjadi
+maksimal empat kalimat. Ini bukan tugas penalaran berat, jadi model kelas Opus tidak dibayar
+apa pun di sini. Pemilihan "termurah yang memadai" adalah instruksi eksplisit fase P10.
+
+Pagar biaya, semuanya ditegakkan di `src/publish.py`:
+
+| Pagar | Cara ditegakkan |
+|---|---|
+| Maks 1 panggilan per target per hari | insight hari ini dipakai ulang dari `web/data-<target>.json` |
+| Input = agregat, bukan dataset | hanya `counts`, delta kelengkapan, kode alarm, dan 10 baris teratas |
+| `max_tokens` 400 | ringkasan pendek; tidak ada jalan membengkak |
+| Biaya nol atas permintaan | `--no-llm` — SDK `anthropic` bahkan tidak diimpor |
+| Kunci kosong bukan crash | jatuh otomatis ke mode tanpa LLM dengan peringatan |
+| Biaya terukur | `input_tokens` + `output_tokens` dicatat di `web/data.json` |
+
+Kegagalan API (status error atau tidak bisa terhubung) juga jatuh ke mode tanpa LLM.
+Halaman tetap terbit dengan angka dan tabel dari data asli; hanya blok ringkasannya kosong,
+dan blok itu selalu berlabel jelas bahwa isinya dibuat AI.
+
+## D18 — Halaman demo terbit sebagai berkas statis lokal, bukan hosting publik
+
+Dikunci 2026-08-28 di P10 atas keputusan user, dari tiga jalur yang ditawarkan
+(Artifact claude.ai · GitHub Pages · berkas statis lokal).
+
+`web/index.html` adalah satu berkas mandiri: payload JSON ditanam langsung di dalamnya, tanpa
+`fetch`, tanpa pustaka pihak ketiga, sehingga bisa dibuka lewat `file://` tanpa server apa pun.
+Ia ikut masuk repo dan diperbarui otomatis oleh langkah (6) `scripts/daily_run.sh`.
+
+Alasan jalur ini dipilih: GitHub Pages menuntut repo publik (🔓 D20, izin terpisah dan belum
+diberikan), sedangkan Artifact menuntut redeploy manual tiap data berubah — keduanya membayar
+ongkos untuk sesuatu yang belum dibutuhkan. Konsekuensi yang diterima sadar: **tidak ada URL
+publik**, jadi bukti A9 berupa halaman yang dirender lokal, bukan tautan yang bisa dibuka orang
+lain. Kalau nanti dibutuhkan URL hidup, `web/index.html` sudah siap terbit apa adanya —
+keputusan ini yang diubah, bukan kodenya.
+
 ---
 
 ## 🔓 Terbuka — wajib dikunci
 
 | Kode | Pertanyaan | Dikunci di |
 |---|---|---|
-| 🔓 D18 | Halaman demo dipublikasikan lewat Artifact claude.ai atau file statis? | P10 |
 | 🔓 D20 | Repo dijadikan publik? | P12, **butuh izin user terpisah** |

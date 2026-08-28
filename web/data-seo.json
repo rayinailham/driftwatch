@@ -1,0 +1,394 @@
+{
+  "generated_at": "2026-08-28T08:13:27+07:00",
+  "target": "seo",
+  "snapshot_date": "2026-08-27",
+  "source": {
+    "name": "python-httpx.org",
+    "url": "https://www.python-httpx.org",
+    "attribution": "Dokumentasi HTTPX (proyek sumber terbuka). Hanya metadata SEO, bukan isi halaman."
+  },
+  "counts": {
+    "total": 23,
+    "added_today": 23,
+    "changed_today": 0,
+    "removed_today": 0
+  },
+  "insight": {
+    "model": null,
+    "text": null,
+    "reason": "panen ini dijalankan tanpa ringkasan AI",
+    "generated_at": null,
+    "input_tokens": 0,
+    "output_tokens": 0
+  },
+  "rows": [
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/",
+      "url": "https://www.python-httpx.org/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/",
+        "title": "HTTPX",
+        "h1": "HTTPX",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/",
+        "h2_count": 4,
+        "word_count": 416,
+        "link_count": 12,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/api/",
+      "url": "https://www.python-httpx.org/api/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/api/",
+        "title": "Developer Interface - HTTPX",
+        "h1": "Developer Interface",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/api/",
+        "h2_count": 9,
+        "word_count": 2201,
+        "link_count": 13,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/async/",
+      "url": "https://www.python-httpx.org/async/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/async/",
+        "title": "Async Support - HTTPX",
+        "h1": "Async Support",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/async/",
+        "h2_count": 4,
+        "word_count": 737,
+        "link_count": 11,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/code_of_conduct/",
+      "url": "https://www.python-httpx.org/code_of_conduct/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/code_of_conduct/",
+        "title": "Code of Conduct - HTTPX",
+        "h1": "Code of Conduct",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/code_of_conduct/",
+        "h2_count": 4,
+        "word_count": 637,
+        "link_count": 2,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/compatibility/",
+      "url": "https://www.python-httpx.org/compatibility/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/compatibility/",
+        "title": "Requests Compatibility - HTTPX",
+        "h1": "Requests Compatibility Guide",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/compatibility/",
+        "h2_count": 22,
+        "word_count": 1218,
+        "link_count": 14,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/contributing/",
+      "url": "https://www.python-httpx.org/contributing/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/contributing/",
+        "title": "Contributing - HTTPX",
+        "h1": "Contributing",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/contributing/",
+        "h2_count": 7,
+        "word_count": 1028,
+        "link_count": 16,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/environment_variables/",
+      "url": "https://www.python-httpx.org/environment_variables/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/environment_variables/",
+        "title": "Environment Variables - HTTPX",
+        "h1": "Environment Variables",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/environment_variables/",
+        "h2_count": 3,
+        "word_count": 294,
+        "link_count": 5,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/exceptions/",
+      "url": "https://www.python-httpx.org/exceptions/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/exceptions/",
+        "title": "Exceptions - HTTPX",
+        "h1": "Exceptions",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/exceptions/",
+        "h2_count": 2,
+        "word_count": 489,
+        "link_count": 1,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/http2/",
+      "url": "https://www.python-httpx.org/http2/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/http2/",
+        "title": "HTTP/2 Support - HTTPX",
+        "h1": "HTTP/2",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/http2/",
+        "h2_count": 2,
+        "word_count": 373,
+        "link_count": 1,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/logging/",
+      "url": "https://www.python-httpx.org/logging/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/logging/",
+        "title": "Logging - HTTPX",
+        "h1": "Logging",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/logging/",
+        "h2_count": 0,
+        "word_count": 369,
+        "link_count": 0,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/quickstart/",
+      "url": "https://www.python-httpx.org/quickstart/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/quickstart/",
+        "title": "QuickStart - HTTPX",
+        "h1": "QuickStart",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/quickstart/",
+        "h2_count": 17,
+        "word_count": 1742,
+        "link_count": 3,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/third_party_packages/",
+      "url": "https://www.python-httpx.org/third_party_packages/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/third_party_packages/",
+        "title": "Third Party Packages - HTTPX",
+        "h1": "Third Party Packages",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/third_party_packages/",
+        "h2_count": 3,
+        "word_count": 250,
+        "link_count": 33,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/troubleshooting/",
+      "url": "https://www.python-httpx.org/troubleshooting/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/troubleshooting/",
+        "title": "Troubleshooting - HTTPX",
+        "h1": "Troubleshooting",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/troubleshooting/",
+        "h2_count": 1,
+        "word_count": 230,
+        "link_count": 6,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/authentication/",
+      "url": "https://www.python-httpx.org/advanced/authentication/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/authentication/",
+        "title": "Authentication - HTTPX",
+        "h1": "Authentication",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/authentication/",
+        "h2_count": 4,
+        "word_count": 945,
+        "link_count": 2,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/clients/",
+      "url": "https://www.python-httpx.org/advanced/clients/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/clients/",
+        "title": "Clients - HTTPX",
+        "h1": "Clients",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/clients/",
+        "h2_count": 10,
+        "word_count": 1308,
+        "link_count": 14,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/event-hooks/",
+      "url": "https://www.python-httpx.org/advanced/event-hooks/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/event-hooks/",
+        "title": "Event Hooks - HTTPX",
+        "h1": "Event Hooks",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/event-hooks/",
+        "h2_count": 0,
+        "word_count": 301,
+        "link_count": 0,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/extensions/",
+      "url": "https://www.python-httpx.org/advanced/extensions/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/extensions/",
+        "title": "Extensions - HTTPX",
+        "h1": "Extensions",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/extensions/",
+        "h2_count": 2,
+        "word_count": 1066,
+        "link_count": 3,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/proxies/",
+      "url": "https://www.python-httpx.org/advanced/proxies/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/proxies/",
+        "title": "Proxies - HTTPX",
+        "h1": "Proxies",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/proxies/",
+        "h2_count": 4,
+        "word_count": 437,
+        "link_count": 5,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/resource-limits/",
+      "url": "https://www.python-httpx.org/advanced/resource-limits/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/resource-limits/",
+        "title": "Resource Limits - HTTPX",
+        "h1": "Resource Limits",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/resource-limits/",
+        "h2_count": 0,
+        "word_count": 73,
+        "link_count": 0,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/ssl/",
+      "url": "https://www.python-httpx.org/advanced/ssl/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/ssl/",
+        "title": "SSL - HTTPX",
+        "h1": "SSL",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/ssl/",
+        "h2_count": 0,
+        "word_count": 406,
+        "link_count": 8,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/text-encodings/",
+      "url": "https://www.python-httpx.org/advanced/text-encodings/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/text-encodings/",
+        "title": "Text Encodings - HTTPX",
+        "h1": "Text Encodings",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/text-encodings/",
+        "h2_count": 3,
+        "word_count": 495,
+        "link_count": 3,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/timeouts/",
+      "url": "https://www.python-httpx.org/advanced/timeouts/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/timeouts/",
+        "title": "Timeouts - HTTPX",
+        "h1": "Timeouts",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/timeouts/",
+        "h2_count": 3,
+        "word_count": 386,
+        "link_count": 0,
+        "og_title": null
+      }
+    },
+    {
+      "record_id": "seo:url:https://www.python-httpx.org/advanced/transports/",
+      "url": "https://www.python-httpx.org/advanced/transports/",
+      "status": "baru",
+      "fields": {
+        "url": "https://www.python-httpx.org/advanced/transports/",
+        "title": "Transports - HTTPX",
+        "h1": "Transports",
+        "meta_description": "A next-generation HTTP client for Python.",
+        "canonical": "https://www.python-httpx.org/advanced/transports/",
+        "h2_count": 6,
+        "word_count": 1582,
+        "link_count": 8,
+        "og_title": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,5939 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>DriftWatch — pemantauan perubahan situs harian</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfbfa; --panel: #ffffff; --ink: #1b1b1a; --muted: #6a6a68;
+    --line: #e3e2df; --accent: #7a5cff; --baru: #1a7f52; --berubah: #9a6400;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16161a; --panel: #1e1e24; --ink: #eceaf3; --muted: #a0a0ad;
+      --line: #313139; --accent: #a58bff; --baru: #4fd39a; --berubah: #f0b64a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 1.5rem 1rem 3rem; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 62rem; margin: 0 auto; }
+  h1 { font-size: 1.45rem; margin: 0 0 .2rem; letter-spacing: -.01em; }
+  h2 { font-size: .95rem; margin: 0 0 .6rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  a { color: var(--accent); }
+  .sub { color: var(--muted); margin: 0 0 1.2rem; font-size: .93rem; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 1rem; }
+  .ethics { font-size: .87rem; color: var(--muted); margin: .4rem 0 0; }
+  .tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+  .tabs button {
+    font: inherit; font-size: .9rem; padding: .4rem .85rem; cursor: pointer;
+    background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+  }
+  .tabs button[aria-selected="true"] { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .cards { display: grid; gap: .7rem; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); margin-bottom: 1rem; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .8rem .9rem; }
+  .card .n { font-size: 1.6rem; font-weight: 650; letter-spacing: -.02em; }
+  .card .k { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .ai-tag {
+    display: inline-block; font-size: .72rem; letter-spacing: .05em; text-transform: uppercase;
+    border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: .1rem .5rem; margin-bottom: .5rem;
+  }
+  .controls { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .7rem; }
+  .controls input {
+    font: inherit; font-size: .92rem; padding: .45rem .7rem; flex: 1 1 14rem;
+    background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 8px;
+  }
+  .count { font-size: .85rem; color: var(--muted); }
+  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th, td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { cursor: pointer; user-select: none; position: sticky; top: 0; background: var(--panel); font-size: .78rem;
+       text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  th:hover { color: var(--accent); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.wrap { white-space: normal; min-width: 16rem; }
+  .st { font-size: .76rem; font-weight: 650; text-transform: uppercase; letter-spacing: .04em; }
+  .st-baru { color: var(--baru); }
+  .st-berubah { color: var(--berubah); }
+  .st-tetap { color: var(--muted); }
+  footer { color: var(--muted); font-size: .85rem; margin-top: 1.4rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>DriftWatch</h1>
+  <p class="sub">Pipeline pemantauan perubahan situs. Setiap hari data dipanen, dibandingkan dengan
+  panen kemarin, lalu perubahannya dilaporkan.</p>
+
+  <section class="panel" id="source-panel">
+    <h2>Sumber data</h2>
+    <p id="source-line"></p>
+    <p class="ethics">Dikumpulkan dengan menghormati <code>robots.txt</code>, 1 permintaan per detik per
+    situs, maksimal 3 permintaan bersamaan, dan User-Agent jujur yang memuat alamat kontak. Halaman ini
+    hanya menampilkan <strong>metadata</strong> beserta tautan ke sumber aslinya, bukan isi karya. Pemilik
+    situs yang keberatan dapat meminta penghapusan lewat alamat kontak pada User-Agent.</p>
+  </section>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="cards" id="cards"></div>
+
+  <section class="panel">
+    <span class="ai-tag">Ringkasan dibuat AI</span>
+    <p id="insight"></p>
+    <p class="ethics" id="insight-meta"></p>
+  </section>
+
+  <div class="controls">
+    <input id="q" type="search" placeholder="Cari di tabel…" aria-label="Cari di tabel">
+    <span class="count" id="count"></span>
+  </div>
+  <div class="scroll"><table><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div>
+
+  <footer>
+    <span id="stamp"></span> · Kode: <code>rayinailham/driftwatch</code> (repositori privat) ·
+    Halaman statis, tanpa pustaka pihak ketiga.
+  </footer>
+</main>
+
+<script id="dw-data" type="application/json">
+[
+ {
+  "generated_at": "2026-08-28T08:13:27+07:00",
+  "target": "books",
+  "snapshot_date": "2026-08-27",
+  "source": {
+   "name": "books.toscrape.com",
+   "url": "https://books.toscrape.com",
+   "attribution": "Sandbox latihan scraping milik Scraping Hub. Metadata katalog saja."
+  },
+  "counts": {
+   "total": 1000,
+   "added_today": 1000,
+   "changed_today": 0,
+   "removed_today": 0
+  },
+  "insight": {
+   "model": null,
+   "text": null,
+   "reason": "panen ini dijalankan tanpa ringkasan AI",
+   "generated_at": null,
+   "input_tokens": 0,
+   "output_tokens": 0
+  },
+  "rows": [
+   {
+    "record_id": "books:upc:0312262ecafa5a40",
+    "url": "https://books.toscrape.com/catalogue/starving-hearts-triangular-trade-trilogy-1_990/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0312262ecafa5a40",
+     "title": "Starving Hearts (Triangular Trade Trilogy, #1)",
+     "price_incl_tax_gbp": 13.99,
+     "price_excl_tax_gbp": 13.99,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 196
+    }
+   },
+   {
+    "record_id": "books:upc:00bfed9e18bb36f3",
+    "url": "https://books.toscrape.com/catalogue/black-dust_976/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "00bfed9e18bb36f3",
+     "title": "Black Dust",
+     "price_incl_tax_gbp": 34.53,
+     "price_excl_tax_gbp": 34.53,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Romance",
+     "num_reviews": 0,
+     "description_words": 216
+    }
+   },
+   {
+    "record_id": "books:upc:094b269567e1c300",
+    "url": "https://books.toscrape.com/catalogue/maude-1883-1993she-grew-up-with-the-country_964/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "094b269567e1c300",
+     "title": "Maude (1883-1993):She Grew Up with the country",
+     "price_incl_tax_gbp": 18.02,
+     "price_excl_tax_gbp": 18.02,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 211
+    }
+   },
+   {
+    "record_id": "books:upc:09555be379ad9253",
+    "url": "https://books.toscrape.com/catalogue/tsubasa-world-chronicle-2-tsubasa-world-chronicle-2_949/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "09555be379ad9253",
+     "title": "Tsubasa: WoRLD CHRoNiCLE 2 (Tsubasa WoRLD CHRoNiCLE #2)",
+     "price_incl_tax_gbp": 16.28,
+     "price_excl_tax_gbp": 16.28,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 144
+    }
+   },
+   {
+    "record_id": "books:upc:09b6cc87e62c2c58",
+    "url": "https://books.toscrape.com/catalogue/danganronpa-volume-1_889/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "09b6cc87e62c2c58",
+     "title": "Danganronpa Volume 1",
+     "price_incl_tax_gbp": 51.99,
+     "price_excl_tax_gbp": 51.99,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 196
+    }
+   },
+   {
+    "record_id": "books:upc:01d2001ac1e6f8a3",
+    "url": "https://books.toscrape.com/catalogue/a-court-of-thorns-and-roses-a-court-of-thorns-and-roses-1_874/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "01d2001ac1e6f8a3",
+     "title": "A Court of Thorns and Roses (A Court of Thorns and Roses #1)",
+     "price_incl_tax_gbp": 52.37,
+     "price_excl_tax_gbp": 52.37,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 218
+    }
+   },
+   {
+    "record_id": "books:upc:0651062381f0636a",
+    "url": "https://books.toscrape.com/catalogue/the-regional-office-is-under-attack_858/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0651062381f0636a",
+     "title": "The Regional Office Is Under Attack!",
+     "price_incl_tax_gbp": 51.36,
+     "price_excl_tax_gbp": 51.36,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 213
+    }
+   },
+   {
+    "record_id": "books:upc:08db62f24627e71f",
+    "url": "https://books.toscrape.com/catalogue/the-matchmakers-playbook-wingmen-inc-1_850/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "08db62f24627e71f",
+     "title": "The Matchmaker's Playbook (Wingmen Inc. #1)",
+     "price_incl_tax_gbp": 55.85,
+     "price_excl_tax_gbp": 55.85,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "New Adult",
+     "num_reviews": 0,
+     "description_words": 213
+    }
+   },
+   {
+    "record_id": "books:upc:05f7c6d9a4e582d3",
+    "url": "https://books.toscrape.com/catalogue/ayumis-violin_791/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "05f7c6d9a4e582d3",
+     "title": "Ayumi's Violin",
+     "price_incl_tax_gbp": 15.48,
+     "price_excl_tax_gbp": 15.48,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 140
+    }
+   },
+   {
+    "record_id": "books:upc:024387ca4cafd5cc",
+    "url": "https://books.toscrape.com/catalogue/you-you-1_784/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "024387ca4cafd5cc",
+     "title": "You (You #1)",
+     "price_incl_tax_gbp": 43.61,
+     "price_excl_tax_gbp": 43.61,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Thriller",
+     "num_reviews": 0,
+     "description_words": 204
+    }
+   },
+   {
+    "record_id": "books:upc:047097293bb4d1c0",
+    "url": "https://books.toscrape.com/catalogue/wonder-woman-earth-one-volume-one-wonder-woman-earth-one-1_783/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "047097293bb4d1c0",
+     "title": "Wonder Woman: Earth One, Volume One (Wonder Woman: Earth One #1)",
+     "price_incl_tax_gbp": 37.34,
+     "price_excl_tax_gbp": 37.34,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 145
+    }
+   },
+   {
+    "record_id": "books:upc:08b2f71d93836313",
+    "url": "https://books.toscrape.com/catalogue/the-wright-brothers_769/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "08b2f71d93836313",
+     "title": "The Wright Brothers",
+     "price_incl_tax_gbp": 56.8,
+     "price_excl_tax_gbp": 56.8,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 369
+    }
+   },
+   {
+    "record_id": "books:upc:081305e6df719dff",
+    "url": "https://books.toscrape.com/catalogue/the-testament-of-mary_765/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "081305e6df719dff",
+     "title": "The Testament of Mary",
+     "price_incl_tax_gbp": 52.67,
+     "price_excl_tax_gbp": 52.67,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 269
+    }
+   },
+   {
+    "record_id": "books:upc:00c4543ec6bd25b4",
+    "url": "https://books.toscrape.com/catalogue/the-songs-of-the-gods_763/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "00c4543ec6bd25b4",
+     "title": "The Songs of the Gods",
+     "price_incl_tax_gbp": 44.48,
+     "price_excl_tax_gbp": 44.48,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 172
+    }
+   },
+   {
+    "record_id": "books:upc:012094e90a4b908d",
+    "url": "https://books.toscrape.com/catalogue/the-rosie-project-don-tillman-1_761/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "012094e90a4b908d",
+     "title": "The Rosie Project (Don Tillman #1)",
+     "price_incl_tax_gbp": 54.04,
+     "price_excl_tax_gbp": 54.04,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 321
+    }
+   },
+   {
+    "record_id": "books:upc:02b74068fa98d8a4",
+    "url": "https://books.toscrape.com/catalogue/old-school-diary-of-a-wimpy-kid-10_723/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "02b74068fa98d8a4",
+     "title": "Old School (Diary of a Wimpy Kid #10)",
+     "price_incl_tax_gbp": 11.83,
+     "price_excl_tax_gbp": 11.83,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Humor",
+     "num_reviews": 0,
+     "description_words": 79
+    }
+   },
+   {
+    "record_id": "books:upc:0b165bd4b9f42fd5",
+    "url": "https://books.toscrape.com/catalogue/hold-your-breath-search-and-rescue-1_700/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0b165bd4b9f42fd5",
+     "title": "Hold Your Breath (Search and Rescue #1)",
+     "price_incl_tax_gbp": 28.82,
+     "price_excl_tax_gbp": 28.82,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Romance",
+     "num_reviews": 0,
+     "description_words": 233
+    }
+   },
+   {
+    "record_id": "books:upc:047dfa57ba0bf638",
+    "url": "https://books.toscrape.com/catalogue/eat-fat-get-thin_688/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "047dfa57ba0bf638",
+     "title": "Eat Fat, Get Thin",
+     "price_incl_tax_gbp": 54.07,
+     "price_excl_tax_gbp": 54.07,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Health",
+     "num_reviews": 0,
+     "description_words": 6
+    }
+   },
+   {
+    "record_id": "books:upc:01a177623cce9596",
+    "url": "https://books.toscrape.com/catalogue/a-brush-of-wings-angels-walking-3_651/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "01a177623cce9596",
+     "title": "A Brush of Wings (Angels Walking #3)",
+     "price_incl_tax_gbp": 55.51,
+     "price_excl_tax_gbp": 55.51,
+     "tax_gbp": 0.0,
+     "availability_count": 14,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 284
+    }
+   },
+   {
+    "record_id": "books:upc:077b635ff2afc578",
+    "url": "https://books.toscrape.com/catalogue/will-you-wont-you-want-me_644/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "077b635ff2afc578",
+     "title": "Will You Won't You Want Me?",
+     "price_incl_tax_gbp": 13.86,
+     "price_excl_tax_gbp": 13.86,
+     "tax_gbp": 0.0,
+     "availability_count": 12,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Womens Fiction",
+     "num_reviews": 0,
+     "description_words": 198
+    }
+   },
+   {
+    "record_id": "books:upc:05a61a3bd8ca4149",
+    "url": "https://books.toscrape.com/catalogue/playing-with-fire_602/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "05a61a3bd8ca4149",
+     "title": "Playing with Fire",
+     "price_incl_tax_gbp": 13.71,
+     "price_excl_tax_gbp": 13.71,
+     "tax_gbp": 0.0,
+     "availability_count": 11,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Mystery",
+     "num_reviews": 0,
+     "description_words": 163
+    }
+   },
+   {
+    "record_id": "books:upc:0967effecd292a86",
+    "url": "https://books.toscrape.com/catalogue/underlying-notes_577/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0967effecd292a86",
+     "title": "Underlying Notes",
+     "price_incl_tax_gbp": 11.82,
+     "price_excl_tax_gbp": 11.82,
+     "tax_gbp": 0.0,
+     "availability_count": 9,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 39
+    }
+   },
+   {
+    "record_id": "books:upc:04f6c929888f4f11",
+    "url": "https://books.toscrape.com/catalogue/why-not-me_554/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "04f6c929888f4f11",
+     "title": "Why Not Me?",
+     "price_incl_tax_gbp": 17.76,
+     "price_excl_tax_gbp": 17.76,
+     "tax_gbp": 0.0,
+     "availability_count": 8,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 335
+    }
+   },
+   {
+    "record_id": "books:upc:044534b0b28b4e87",
+    "url": "https://books.toscrape.com/catalogue/living-forward-a-proven-plan-to-stop-drifting-and-get-the-life-you-want_531/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "044534b0b28b4e87",
+     "title": "Living Forward: A Proven Plan to Stop Drifting and Get the Life You Want",
+     "price_incl_tax_gbp": 12.55,
+     "price_excl_tax_gbp": 12.55,
+     "tax_gbp": 0.0,
+     "availability_count": 8,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 263
+    }
+   },
+   {
+    "record_id": "books:upc:0ab4b35dcffcffd1",
+    "url": "https://books.toscrape.com/catalogue/ill-give-you-the-sun_525/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0ab4b35dcffcffd1",
+     "title": "I'll Give You the Sun",
+     "price_incl_tax_gbp": 56.48,
+     "price_excl_tax_gbp": 56.48,
+     "tax_gbp": 0.0,
+     "availability_count": 8,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 242
+    }
+   },
+   {
+    "record_id": "books:upc:0bfdef63285d3019",
+    "url": "https://books.toscrape.com/catalogue/hystopia-a-novel_523/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0bfdef63285d3019",
+     "title": "Hystopia: A Novel",
+     "price_incl_tax_gbp": 21.96,
+     "price_excl_tax_gbp": 21.96,
+     "tax_gbp": 0.0,
+     "availability_count": 8,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 249
+    }
+   },
+   {
+    "record_id": "books:upc:04e3de7ac35ec5cd",
+    "url": "https://books.toscrape.com/catalogue/between-the-world-and-me_513/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "04e3de7ac35ec5cd",
+     "title": "Between the World and Me",
+     "price_incl_tax_gbp": 56.91,
+     "price_excl_tax_gbp": 56.91,
+     "tax_gbp": 0.0,
+     "availability_count": 8,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 322
+    }
+   },
+   {
+    "record_id": "books:upc:0345872b14f9e774",
+    "url": "https://books.toscrape.com/catalogue/the-origin-of-species_499/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0345872b14f9e774",
+     "title": "The Origin of Species",
+     "price_incl_tax_gbp": 10.01,
+     "price_excl_tax_gbp": 10.01,
+     "tax_gbp": 0.0,
+     "availability_count": 7,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Science",
+     "num_reviews": 0,
+     "description_words": 228
+    }
+   },
+   {
+    "record_id": "books:upc:012170e4fc87ace0",
+    "url": "https://books.toscrape.com/catalogue/give-it-back_430/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "012170e4fc87ace0",
+     "title": "Give It Back",
+     "price_incl_tax_gbp": 18.32,
+     "price_excl_tax_gbp": 18.32,
+     "tax_gbp": 0.0,
+     "availability_count": 6,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Thriller",
+     "num_reviews": 0,
+     "description_words": 288
+    }
+   },
+   {
+    "record_id": "books:upc:07e6810fd3236bda",
+    "url": "https://books.toscrape.com/catalogue/last-one-home-new-beginnings-1_383/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "07e6810fd3236bda",
+     "title": "Last One Home (New Beginnings #1)",
+     "price_incl_tax_gbp": 59.98,
+     "price_excl_tax_gbp": 59.98,
+     "tax_gbp": 0.0,
+     "availability_count": 5,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 275
+    }
+   },
+   {
+    "record_id": "books:upc:03cbb67c0f990d87",
+    "url": "https://books.toscrape.com/catalogue/a-game-of-thrones-a-song-of-ice-and-fire-1_358/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "03cbb67c0f990d87",
+     "title": "A Game of Thrones (A Song of Ice and Fire #1)",
+     "price_incl_tax_gbp": 46.42,
+     "price_excl_tax_gbp": 46.42,
+     "tax_gbp": 0.0,
+     "availability_count": 5,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 186
+    }
+   },
+   {
+    "record_id": "books:upc:011674f4a3834b8d",
+    "url": "https://books.toscrape.com/catalogue/the-passion-of-dolssa_351/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "011674f4a3834b8d",
+     "title": "The Passion of Dolssa",
+     "price_incl_tax_gbp": 28.32,
+     "price_excl_tax_gbp": 28.32,
+     "tax_gbp": 0.0,
+     "availability_count": 4,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Historical Fiction",
+     "num_reviews": 0,
+     "description_words": 191
+    }
+   },
+   {
+    "record_id": "books:upc:0812f54c93d726ce",
+    "url": "https://books.toscrape.com/catalogue/can-you-keep-a-secret_315/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0812f54c93d726ce",
+     "title": "Can You Keep a Secret?",
+     "price_incl_tax_gbp": 21.94,
+     "price_excl_tax_gbp": 21.94,
+     "tax_gbp": 0.0,
+     "availability_count": 4,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Womens Fiction",
+     "num_reviews": 0,
+     "description_words": 187
+    }
+   },
+   {
+    "record_id": "books:upc:07bb35158d9dd3d2",
+    "url": "https://books.toscrape.com/catalogue/whered-you-go-bernadette_304/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "07bb35158d9dd3d2",
+     "title": "Where'd You Go, Bernadette",
+     "price_incl_tax_gbp": 18.13,
+     "price_excl_tax_gbp": 18.13,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 183
+    }
+   },
+   {
+    "record_id": "books:upc:06bab964fd536971",
+    "url": "https://books.toscrape.com/catalogue/we-the-people-the-modern-day-figures-who-have-reshaped-and-affirmed-the-founding-fathers-vision-of-america_302/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "06bab964fd536971",
+     "title": "We the People: The Modern-Day Figures Who Have Reshaped and Affirmed the Founding Fathers' Vision of America",
+     "price_incl_tax_gbp": 31.95,
+     "price_excl_tax_gbp": 31.95,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 432
+    }
+   },
+   {
+    "record_id": "books:upc:0baf71623648413a",
+    "url": "https://books.toscrape.com/catalogue/the-name-of-god-is-mercy_264/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0baf71623648413a",
+     "title": "The Name of God is Mercy",
+     "price_incl_tax_gbp": 37.25,
+     "price_excl_tax_gbp": 37.25,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 626
+    }
+   },
+   {
+    "record_id": "books:upc:08decd9664e5d56e",
+    "url": "https://books.toscrape.com/catalogue/the-book-of-basketball-the-nba-according-to-the-sports-guy_232/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "08decd9664e5d56e",
+     "title": "The Book of Basketball: The NBA According to The Sports Guy",
+     "price_incl_tax_gbp": 44.84,
+     "price_excl_tax_gbp": 44.84,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Sports and Games",
+     "num_reviews": 0,
+     "description_words": 312
+    }
+   },
+   {
+    "record_id": "books:upc:07806456878931bc",
+    "url": "https://books.toscrape.com/catalogue/seven-days-in-the-art-world_220/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "07806456878931bc",
+     "title": "Seven Days in the Art World",
+     "price_incl_tax_gbp": 52.33,
+     "price_excl_tax_gbp": 52.33,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 237
+    }
+   },
+   {
+    "record_id": "books:upc:09a7b0b566ad6225",
+    "url": "https://books.toscrape.com/catalogue/outliers-the-story-of-success_204/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "09a7b0b566ad6225",
+     "title": "Outliers: The Story of Success",
+     "price_incl_tax_gbp": 14.16,
+     "price_excl_tax_gbp": 14.16,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 171
+    }
+   },
+   {
+    "record_id": "books:upc:034829ffdd0a0aea",
+    "url": "https://books.toscrape.com/catalogue/is-everyone-hanging-out-without-me-and-other-concerns_178/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "034829ffdd0a0aea",
+     "title": "Is Everyone Hanging Out Without Me? (And Other Concerns)",
+     "price_incl_tax_gbp": 20.11,
+     "price_excl_tax_gbp": 20.11,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 289
+    }
+   },
+   {
+    "record_id": "books:upc:04d858cdeeee0da4",
+    "url": "https://books.toscrape.com/catalogue/dead-wake-the-last-crossing-of-the-lusitania_147/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "04d858cdeeee0da4",
+     "title": "Dead Wake: The Last Crossing of the Lusitania",
+     "price_incl_tax_gbp": 39.24,
+     "price_excl_tax_gbp": 39.24,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 381
+    }
+   },
+   {
+    "record_id": "books:upc:0bbc48294707ba96",
+    "url": "https://books.toscrape.com/catalogue/blink-the-power-of-thinking-without-thinking_132/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0bbc48294707ba96",
+     "title": "Blink: The Power of Thinking Without Thinking",
+     "price_incl_tax_gbp": 21.74,
+     "price_excl_tax_gbp": 21.74,
+     "tax_gbp": 0.0,
+     "availability_count": 3,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 389
+    }
+   },
+   {
+    "record_id": "books:upc:09d26b5f819c6a36",
+    "url": "https://books.toscrape.com/catalogue/y-the-last-man-vol-1-unmanned-y-the-last-man-1_98/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "09d26b5f819c6a36",
+     "title": "Y: The Last Man, Vol. 1: Unmanned (Y: The Last Man #1)",
+     "price_incl_tax_gbp": 18.51,
+     "price_excl_tax_gbp": 18.51,
+     "tax_gbp": 0.0,
+     "availability_count": 1,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 172
+    }
+   },
+   {
+    "record_id": "books:upc:0268f149d014b389",
+    "url": "https://books.toscrape.com/catalogue/travels-with-charley-in-search-of-america_90/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0268f149d014b389",
+     "title": "Travels with Charley: In Search of America",
+     "price_incl_tax_gbp": 57.82,
+     "price_excl_tax_gbp": 57.82,
+     "tax_gbp": 0.0,
+     "availability_count": 1,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 314
+    }
+   },
+   {
+    "record_id": "books:upc:04e43893e32f9d29",
+    "url": "https://books.toscrape.com/catalogue/the-light-of-the-fireflies_71/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "04e43893e32f9d29",
+     "title": "The Light of the Fireflies",
+     "price_incl_tax_gbp": 54.43,
+     "price_excl_tax_gbp": 54.43,
+     "tax_gbp": 0.0,
+     "availability_count": 1,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 237
+    }
+   },
+   {
+    "record_id": "books:upc:09659d1639a1f978",
+    "url": "https://books.toscrape.com/catalogue/the-end-of-the-jesus-era-an-investigation-1_64/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "09659d1639a1f978",
+     "title": "The End of the Jesus Era (An Investigation #1)",
+     "price_incl_tax_gbp": 14.4,
+     "price_excl_tax_gbp": 14.4,
+     "tax_gbp": 0.0,
+     "availability_count": 1,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 132
+    }
+   },
+   {
+    "record_id": "books:upc:06f6a57a6d532844",
+    "url": "https://books.toscrape.com/catalogue/kitchens-of-the-great-midwest_28/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "06f6a57a6d532844",
+     "title": "Kitchens of the Great Midwest",
+     "price_incl_tax_gbp": 57.2,
+     "price_excl_tax_gbp": 57.2,
+     "tax_gbp": 0.0,
+     "availability_count": 1,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 376
+    }
+   },
+   {
+    "record_id": "books:upc:0072b94dfa30608e",
+    "url": "https://books.toscrape.com/catalogue/deep-under-walker-security-1_15/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "0072b94dfa30608e",
+     "title": "Deep Under (Walker Security #1)",
+     "price_incl_tax_gbp": 47.09,
+     "price_excl_tax_gbp": 47.09,
+     "tax_gbp": 0.0,
+     "availability_count": 1,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Romance",
+     "num_reviews": 0,
+     "description_words": 192
+    }
+   },
+   {
+    "record_id": "books:upc:099fae4a0705d63b",
+    "url": "https://books.toscrape.com/catalogue/bleach-vol-1-strawberry-and-the-soul-reapers-bleach-1_7/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "099fae4a0705d63b",
+     "title": "Bleach, Vol. 1: Strawberry and the Soul Reapers (Bleach #1)",
+     "price_incl_tax_gbp": 34.65,
+     "price_excl_tax_gbp": 34.65,
+     "tax_gbp": 0.0,
+     "availability_count": 1,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 153
+    }
+   },
+   {
+    "record_id": "books:upc:08672cd59171d5e4",
+    "url": "https://books.toscrape.com/catalogue/beyond-good-and-evil_6/index.html",
+    "status": "baru",
+    "fields": {
+     "upc": "08672cd59171d5e4",
+     "title": "Beyond Good and Evil",
+     "price_incl_tax_gbp": 43.38,
+     "price_excl_tax_gbp": 43.38,
+     "tax_gbp": 0.0,
+     "availability_count": 1,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Philosophy",
+     "num_reviews": 0,
+     "description_words": 281
+    }
+   },
+   {
+    "record_id": "books:upc:a897fe39b1053632",
+    "url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "a897fe39b1053632",
+     "title": "A Light in the Attic",
+     "price_incl_tax_gbp": 51.77,
+     "price_excl_tax_gbp": 51.77,
+     "tax_gbp": 0.0,
+     "availability_count": 22,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Poetry",
+     "num_reviews": 0,
+     "description_words": 164
+    }
+   },
+   {
+    "record_id": "books:upc:90fa61229261140a",
+    "url": "https://books.toscrape.com/catalogue/tipping-the-velvet_999/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "90fa61229261140a",
+     "title": "Tipping the Velvet",
+     "price_incl_tax_gbp": 53.74,
+     "price_excl_tax_gbp": 53.74,
+     "tax_gbp": 0.0,
+     "availability_count": 20,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Historical Fiction",
+     "num_reviews": 0,
+     "description_words": 165
+    }
+   },
+   {
+    "record_id": "books:upc:6957f44c3847a760",
+    "url": "https://books.toscrape.com/catalogue/soumission_998/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "6957f44c3847a760",
+     "title": "Soumission",
+     "price_incl_tax_gbp": 50.1,
+     "price_excl_tax_gbp": 50.1,
+     "tax_gbp": 0.0,
+     "availability_count": 20,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 163
+    }
+   },
+   {
+    "record_id": "books:upc:e00eb4fd7b871a48",
+    "url": "https://books.toscrape.com/catalogue/sharp-objects_997/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e00eb4fd7b871a48",
+     "title": "Sharp Objects",
+     "price_incl_tax_gbp": 47.82,
+     "price_excl_tax_gbp": 47.82,
+     "tax_gbp": 0.0,
+     "availability_count": 20,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Mystery",
+     "num_reviews": 0,
+     "description_words": 274
+    }
+   },
+   {
+    "record_id": "books:upc:4165285e1663650f",
+    "url": "https://books.toscrape.com/catalogue/sapiens-a-brief-history-of-humankind_996/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "4165285e1663650f",
+     "title": "Sapiens: A Brief History of Humankind",
+     "price_incl_tax_gbp": 54.23,
+     "price_excl_tax_gbp": 54.23,
+     "tax_gbp": 0.0,
+     "availability_count": 20,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "History",
+     "num_reviews": 0,
+     "description_words": 304
+    }
+   },
+   {
+    "record_id": "books:upc:f77dbf2323deb740",
+    "url": "https://books.toscrape.com/catalogue/the-requiem-red_995/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "f77dbf2323deb740",
+     "title": "The Requiem Red",
+     "price_incl_tax_gbp": 22.65,
+     "price_excl_tax_gbp": 22.65,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Young Adult",
+     "num_reviews": 0,
+     "description_words": 170
+    }
+   },
+   {
+    "record_id": "books:upc:2597b5a345f45e1b",
+    "url": "https://books.toscrape.com/catalogue/the-dirty-little-secrets-of-getting-your-dream-job_994/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "2597b5a345f45e1b",
+     "title": "The Dirty Little Secrets of Getting Your Dream Job",
+     "price_incl_tax_gbp": 33.34,
+     "price_excl_tax_gbp": 33.34,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Business",
+     "num_reviews": 0,
+     "description_words": 284
+    }
+   },
+   {
+    "record_id": "books:upc:e72a5dfc7e9267b2",
+    "url": "https://books.toscrape.com/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e72a5dfc7e9267b2",
+     "title": "The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull",
+     "price_incl_tax_gbp": 17.93,
+     "price_excl_tax_gbp": 17.93,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 568
+    }
+   },
+   {
+    "record_id": "books:upc:e10e1e165dc8be4a",
+    "url": "https://books.toscrape.com/catalogue/the-boys-in-the-boat-nine-americans-and-their-epic-quest-for-gold-at-the-1936-berlin-olympics_992/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e10e1e165dc8be4a",
+     "title": "The Boys in the Boat: Nine Americans and Their Epic Quest for Gold at the 1936 Berlin Olympics",
+     "price_incl_tax_gbp": 22.6,
+     "price_excl_tax_gbp": 22.6,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 335
+    }
+   },
+   {
+    "record_id": "books:upc:1dfe412b8ac00530",
+    "url": "https://books.toscrape.com/catalogue/the-black-maria_991/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "1dfe412b8ac00530",
+     "title": "The Black Maria",
+     "price_incl_tax_gbp": 52.15,
+     "price_excl_tax_gbp": 52.15,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Poetry",
+     "num_reviews": 0,
+     "description_words": 464
+    }
+   },
+   {
+    "record_id": "books:upc:30a7f60cd76ca58c",
+    "url": "https://books.toscrape.com/catalogue/shakespeares-sonnets_989/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "30a7f60cd76ca58c",
+     "title": "Shakespeare's Sonnets",
+     "price_incl_tax_gbp": 20.66,
+     "price_excl_tax_gbp": 20.66,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Poetry",
+     "num_reviews": 0,
+     "description_words": 143
+    }
+   },
+   {
+    "record_id": "books:upc:ce6396b0f23f6ecc",
+    "url": "https://books.toscrape.com/catalogue/set-me-free_988/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "ce6396b0f23f6ecc",
+     "title": "Set Me Free",
+     "price_incl_tax_gbp": 17.46,
+     "price_excl_tax_gbp": 17.46,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Young Adult",
+     "num_reviews": 0,
+     "description_words": 132
+    }
+   },
+   {
+    "record_id": "books:upc:3b1c02bac2a429e6",
+    "url": "https://books.toscrape.com/catalogue/scott-pilgrims-precious-little-life-scott-pilgrim-1_987/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "3b1c02bac2a429e6",
+     "title": "Scott Pilgrim's Precious Little Life (Scott Pilgrim #1)",
+     "price_incl_tax_gbp": 52.29,
+     "price_excl_tax_gbp": 52.29,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 148
+    }
+   },
+   {
+    "record_id": "books:upc:a34ba96d4081e6a4",
+    "url": "https://books.toscrape.com/catalogue/rip-it-up-and-start-again_986/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "a34ba96d4081e6a4",
+     "title": "Rip it Up and Start Again",
+     "price_incl_tax_gbp": 35.02,
+     "price_excl_tax_gbp": 35.02,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Music",
+     "num_reviews": 0,
+     "description_words": 148
+    }
+   },
+   {
+    "record_id": "books:upc:deda3e61b9514b83",
+    "url": "https://books.toscrape.com/catalogue/our-band-could-be-your-life-scenes-from-the-american-indie-underground-1981-1991_985/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "deda3e61b9514b83",
+     "title": "Our Band Could Be Your Life: Scenes from the American Indie Underground, 1981-1991",
+     "price_incl_tax_gbp": 57.25,
+     "price_excl_tax_gbp": 57.25,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Music",
+     "num_reviews": 0,
+     "description_words": 163
+    }
+   },
+   {
+    "record_id": "books:upc:feb7cc7701ecf901",
+    "url": "https://books.toscrape.com/catalogue/olio_984/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "feb7cc7701ecf901",
+     "title": "Olio",
+     "price_incl_tax_gbp": 23.88,
+     "price_excl_tax_gbp": 23.88,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Poetry",
+     "num_reviews": 0,
+     "description_words": 249
+    }
+   },
+   {
+    "record_id": "books:upc:e30f54cea9b38190",
+    "url": "https://books.toscrape.com/catalogue/mesaerion-the-best-science-fiction-stories-1800-1849_983/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e30f54cea9b38190",
+     "title": "Mesaerion: The Best Science Fiction Stories 1800-1849",
+     "price_incl_tax_gbp": 37.59,
+     "price_excl_tax_gbp": 37.59,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Science Fiction",
+     "num_reviews": 0,
+     "description_words": 283
+    }
+   },
+   {
+    "record_id": "books:upc:a18a4f574854aced",
+    "url": "https://books.toscrape.com/catalogue/libertarianism-for-beginners_982/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "a18a4f574854aced",
+     "title": "Libertarianism for Beginners",
+     "price_incl_tax_gbp": 51.33,
+     "price_excl_tax_gbp": 51.33,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Politics",
+     "num_reviews": 0,
+     "description_words": 195
+    }
+   },
+   {
+    "record_id": "books:upc:a22124811bfa8350",
+    "url": "https://books.toscrape.com/catalogue/its-only-the-himalayas_981/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "a22124811bfa8350",
+     "title": "It's Only the Himalayas",
+     "price_incl_tax_gbp": 45.17,
+     "price_excl_tax_gbp": 45.17,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Travel",
+     "num_reviews": 0,
+     "description_words": 230
+    }
+   },
+   {
+    "record_id": "books:upc:23356462d1320d61",
+    "url": "https://books.toscrape.com/catalogue/in-her-wake_980/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "23356462d1320d61",
+     "title": "In Her Wake",
+     "price_incl_tax_gbp": 12.84,
+     "price_excl_tax_gbp": 12.84,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Thriller",
+     "num_reviews": 0,
+     "description_words": 159
+    }
+   },
+   {
+    "record_id": "books:upc:327f68a59745c102",
+    "url": "https://books.toscrape.com/catalogue/how-music-works_979/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "327f68a59745c102",
+     "title": "How Music Works",
+     "price_incl_tax_gbp": 37.32,
+     "price_excl_tax_gbp": 37.32,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Music",
+     "num_reviews": 0,
+     "description_words": 243
+    }
+   },
+   {
+    "record_id": "books:upc:5674a18a29a43ced",
+    "url": "https://books.toscrape.com/catalogue/foolproof-preserving-a-guide-to-small-batch-jams-jellies-pickles-condiments-and-more-a-foolproof-guide-to-making-small-batch-jams-jellies-pickles-condiments-and-more_978/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "5674a18a29a43ced",
+     "title": "Foolproof Preserving: A Guide to Small Batch Jams, Jellies, Pickles, Condiments, and More: A Foolproof Guide to Making Small Batch Jams, Jellies, Pickles, Condiments, and More",
+     "price_incl_tax_gbp": 30.52,
+     "price_excl_tax_gbp": 30.52,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Food and Drink",
+     "num_reviews": 0,
+     "description_words": 166
+    }
+   },
+   {
+    "record_id": "books:upc:c2e46a2ee3b4a322",
+    "url": "https://books.toscrape.com/catalogue/chase-me-paris-nights-2_977/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "c2e46a2ee3b4a322",
+     "title": "Chase Me (Paris Nights #2)",
+     "price_incl_tax_gbp": 25.27,
+     "price_excl_tax_gbp": 25.27,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Romance",
+     "num_reviews": 0,
+     "description_words": 192
+    }
+   },
+   {
+    "record_id": "books:upc:9528d0948525bf5f",
+    "url": "https://books.toscrape.com/catalogue/birdsong-a-story-in-pictures_975/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9528d0948525bf5f",
+     "title": "Birdsong: A Story in Pictures",
+     "price_incl_tax_gbp": 54.64,
+     "price_excl_tax_gbp": 54.64,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Childrens",
+     "num_reviews": 0,
+     "description_words": 191
+    }
+   },
+   {
+    "record_id": "books:upc:c7d160c2c0de586f",
+    "url": "https://books.toscrape.com/catalogue/americas-cradle-of-quarterbacks-western-pennsylvanias-football-factory-from-johnny-unitas-to-joe-montana_974/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "c7d160c2c0de586f",
+     "title": "America's Cradle of Quarterbacks: Western Pennsylvania's Football Factory from Johnny Unitas to Joe Montana",
+     "price_incl_tax_gbp": 22.5,
+     "price_excl_tax_gbp": 22.5,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 252
+    }
+   },
+   {
+    "record_id": "books:upc:904208d6aa64b655",
+    "url": "https://books.toscrape.com/catalogue/aladdin-and-his-wonderful-lamp_973/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "904208d6aa64b655",
+     "title": "Aladdin and His Wonderful Lamp",
+     "price_incl_tax_gbp": 53.13,
+     "price_excl_tax_gbp": 53.13,
+     "tax_gbp": 0.0,
+     "availability_count": 19,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 337
+    }
+   },
+   {
+    "record_id": "books:upc:4c28def39d850cdf",
+    "url": "https://books.toscrape.com/catalogue/worlds-elsewhere-journeys-around-shakespeares-globe_972/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "4c28def39d850cdf",
+     "title": "Worlds Elsewhere: Journeys Around Shakespeare’s Globe",
+     "price_incl_tax_gbp": 40.3,
+     "price_excl_tax_gbp": 40.3,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 368
+    }
+   },
+   {
+    "record_id": "books:upc:ccd9ffa25efabdea",
+    "url": "https://books.toscrape.com/catalogue/wall-and-piece_971/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "ccd9ffa25efabdea",
+     "title": "Wall and Piece",
+     "price_incl_tax_gbp": 44.18,
+     "price_excl_tax_gbp": 44.18,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Art",
+     "num_reviews": 0,
+     "description_words": 129
+    }
+   },
+   {
+    "record_id": "books:upc:6258a1f6a6dcfe50",
+    "url": "https://books.toscrape.com/catalogue/the-four-agreements-a-practical-guide-to-personal-freedom_970/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "6258a1f6a6dcfe50",
+     "title": "The Four Agreements: A Practical Guide to Personal Freedom",
+     "price_incl_tax_gbp": 17.66,
+     "price_excl_tax_gbp": 17.66,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Spirituality",
+     "num_reviews": 0,
+     "description_words": 135
+    }
+   },
+   {
+    "record_id": "books:upc:3c039985229453bf",
+    "url": "https://books.toscrape.com/catalogue/the-five-love-languages-how-to-express-heartfelt-commitment-to-your-mate_969/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "3c039985229453bf",
+     "title": "The Five Love Languages: How to Express Heartfelt Commitment to Your Mate",
+     "price_incl_tax_gbp": 31.05,
+     "price_excl_tax_gbp": 31.05,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 201
+    }
+   },
+   {
+    "record_id": "books:upc:5dada2b7be26bd03",
+    "url": "https://books.toscrape.com/catalogue/the-elephant-tree_968/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "5dada2b7be26bd03",
+     "title": "The Elephant Tree",
+     "price_incl_tax_gbp": 23.82,
+     "price_excl_tax_gbp": 23.82,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Thriller",
+     "num_reviews": 0,
+     "description_words": 177
+    }
+   },
+   {
+    "record_id": "books:upc:9f6568e9c95f60b0",
+    "url": "https://books.toscrape.com/catalogue/the-bear-and-the-piano_967/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9f6568e9c95f60b0",
+     "title": "The Bear and the Piano",
+     "price_incl_tax_gbp": 36.89,
+     "price_excl_tax_gbp": 36.89,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Childrens",
+     "num_reviews": 0,
+     "description_words": 172
+    }
+   },
+   {
+    "record_id": "books:upc:6be3beb0793a53e7",
+    "url": "https://books.toscrape.com/catalogue/sophies-world_966/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "6be3beb0793a53e7",
+     "title": "Sophie's World",
+     "price_incl_tax_gbp": 15.94,
+     "price_excl_tax_gbp": 15.94,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Philosophy",
+     "num_reviews": 0,
+     "description_words": 212
+    }
+   },
+   {
+    "record_id": "books:upc:668fe56b17cfcd4f",
+    "url": "https://books.toscrape.com/catalogue/penny-maybe_965/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "668fe56b17cfcd4f",
+     "title": "Penny Maybe",
+     "price_incl_tax_gbp": 33.29,
+     "price_excl_tax_gbp": 33.29,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 48
+    }
+   },
+   {
+    "record_id": "books:upc:19ed25f4641d5efd",
+    "url": "https://books.toscrape.com/catalogue/in-a-dark-dark-wood_963/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "19ed25f4641d5efd",
+     "title": "In a Dark, Dark Wood",
+     "price_incl_tax_gbp": 19.63,
+     "price_excl_tax_gbp": 19.63,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Mystery",
+     "num_reviews": 0,
+     "description_words": 156
+    }
+   },
+   {
+    "record_id": "books:upc:be5cc846f45496fb",
+    "url": "https://books.toscrape.com/catalogue/behind-closed-doors_962/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "be5cc846f45496fb",
+     "title": "Behind Closed Doors",
+     "price_incl_tax_gbp": 52.22,
+     "price_excl_tax_gbp": 52.22,
+     "tax_gbp": 0.0,
+     "availability_count": 18,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Thriller",
+     "num_reviews": 0,
+     "description_words": 193
+    }
+   },
+   {
+    "record_id": "books:upc:55f9da0c5eea2e10",
+    "url": "https://books.toscrape.com/catalogue/you-cant-bury-them-all-poems_961/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "55f9da0c5eea2e10",
+     "title": "You can't bury them all: Poems",
+     "price_incl_tax_gbp": 33.63,
+     "price_excl_tax_gbp": 33.63,
+     "tax_gbp": 0.0,
+     "availability_count": 17,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Poetry",
+     "num_reviews": 0,
+     "description_words": 297
+    }
+   },
+   {
+    "record_id": "books:upc:b4fd5943413e089a",
+    "url": "https://books.toscrape.com/catalogue/slow-states-of-collapse-poems_960/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "b4fd5943413e089a",
+     "title": "Slow States of Collapse: Poems",
+     "price_incl_tax_gbp": 57.31,
+     "price_excl_tax_gbp": 57.31,
+     "tax_gbp": 0.0,
+     "availability_count": 17,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Poetry",
+     "num_reviews": 0,
+     "description_words": 212
+    }
+   },
+   {
+    "record_id": "books:upc:c8f7f0cb1abb9cac",
+    "url": "https://books.toscrape.com/catalogue/reasons-to-stay-alive_959/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "c8f7f0cb1abb9cac",
+     "title": "Reasons to Stay Alive",
+     "price_incl_tax_gbp": 26.41,
+     "price_excl_tax_gbp": 26.41,
+     "tax_gbp": 0.0,
+     "availability_count": 17,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 255
+    }
+   },
+   {
+    "record_id": "books:upc:b12b89017878a60d",
+    "url": "https://books.toscrape.com/catalogue/private-paris-private-10_958/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "b12b89017878a60d",
+     "title": "Private Paris (Private #10)",
+     "price_incl_tax_gbp": 47.61,
+     "price_excl_tax_gbp": 47.61,
+     "tax_gbp": 0.0,
+     "availability_count": 17,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 188
+    }
+   },
+   {
+    "record_id": "books:upc:c27f6e1f185b0383",
+    "url": "https://books.toscrape.com/catalogue/higherselfie-wake-up-your-life-free-your-soul-find-your-tribe_957/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "c27f6e1f185b0383",
+     "title": "#HigherSelfie: Wake Up Your Life. Free Your Soul. Find Your Tribe.",
+     "price_incl_tax_gbp": 23.11,
+     "price_excl_tax_gbp": 23.11,
+     "tax_gbp": 0.0,
+     "availability_count": 17,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 258
+    }
+   },
+   {
+    "record_id": "books:upc:acddfeab2a407640",
+    "url": "https://books.toscrape.com/catalogue/without-borders-wanderlove-1_956/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "acddfeab2a407640",
+     "title": "Without Borders (Wanderlove #1)",
+     "price_incl_tax_gbp": 45.07,
+     "price_excl_tax_gbp": 45.07,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "New Adult",
+     "num_reviews": 0,
+     "description_words": 263
+    }
+   },
+   {
+    "record_id": "books:upc:3ecb690d1542c568",
+    "url": "https://books.toscrape.com/catalogue/when-we-collided_955/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "3ecb690d1542c568",
+     "title": "When We Collided",
+     "price_incl_tax_gbp": 31.77,
+     "price_excl_tax_gbp": 31.77,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Contemporary",
+     "num_reviews": 0,
+     "description_words": 148
+    }
+   },
+   {
+    "record_id": "books:upc:8d455c7539795d2a",
+    "url": "https://books.toscrape.com/catalogue/we-love-you-charlie-freeman_954/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "8d455c7539795d2a",
+     "title": "We Love You, Charlie Freeman",
+     "price_incl_tax_gbp": 50.27,
+     "price_excl_tax_gbp": 50.27,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 231
+    }
+   },
+   {
+    "record_id": "books:upc:657fe5ead67a7767",
+    "url": "https://books.toscrape.com/catalogue/untitled-collection-sabbath-poems-2014_953/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "657fe5ead67a7767",
+     "title": "Untitled Collection: Sabbath Poems 2014",
+     "price_incl_tax_gbp": 14.27,
+     "price_excl_tax_gbp": 14.27,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Poetry",
+     "num_reviews": 0,
+     "description_words": 226
+    }
+   },
+   {
+    "record_id": "books:upc:d170b5a0da46380e",
+    "url": "https://books.toscrape.com/catalogue/unseen-city-the-majesty-of-pigeons-the-discreet-charm-of-snails-other-wonders-of-the-urban-wilderness_952/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "d170b5a0da46380e",
+     "title": "Unseen City: The Majesty of Pigeons, the Discreet Charm of Snails & Other Wonders of the Urban Wilderness",
+     "price_incl_tax_gbp": 44.18,
+     "price_excl_tax_gbp": 44.18,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 305
+    }
+   },
+   {
+    "record_id": "books:upc:7ae099f3898e0209",
+    "url": "https://books.toscrape.com/catalogue/unicorn-tracks_951/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7ae099f3898e0209",
+     "title": "Unicorn Tracks",
+     "price_incl_tax_gbp": 18.78,
+     "price_excl_tax_gbp": 18.78,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 198
+    }
+   },
+   {
+    "record_id": "books:upc:9a9d6e9bc555731e",
+    "url": "https://books.toscrape.com/catalogue/unbound-how-eight-technologies-made-us-human-transformed-society-and-brought-our-world-to-the-brink_950/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9a9d6e9bc555731e",
+     "title": "Unbound: How Eight Technologies Made Us Human, Transformed Society, and Brought Our World to the Brink",
+     "price_incl_tax_gbp": 25.52,
+     "price_excl_tax_gbp": 25.52,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "History",
+     "num_reviews": 0,
+     "description_words": 309
+    }
+   },
+   {
+    "record_id": "books:upc:7858914fad68493c",
+    "url": "https://books.toscrape.com/catalogue/throwing-rocks-at-the-google-bus-how-growth-became-the-enemy-of-prosperity_948/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7858914fad68493c",
+     "title": "Throwing Rocks at the Google Bus: How Growth Became the Enemy of Prosperity",
+     "price_incl_tax_gbp": 31.12,
+     "price_excl_tax_gbp": 31.12,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 389
+    }
+   },
+   {
+    "record_id": "books:upc:51653ef291ab7ddc",
+    "url": "https://books.toscrape.com/catalogue/this-one-summer_947/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "51653ef291ab7ddc",
+     "title": "This One Summer",
+     "price_incl_tax_gbp": 19.49,
+     "price_excl_tax_gbp": 19.49,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 205
+    }
+   },
+   {
+    "record_id": "books:upc:709822d0b5bcb7f4",
+    "url": "https://books.toscrape.com/catalogue/thirst_946/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "709822d0b5bcb7f4",
+     "title": "Thirst",
+     "price_incl_tax_gbp": 17.27,
+     "price_excl_tax_gbp": 17.27,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 253
+    }
+   },
+   {
+    "record_id": "books:upc:4eed62cf5f8d8edf",
+    "url": "https://books.toscrape.com/catalogue/the-torch-is-passed-a-harding-family-story_945/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "4eed62cf5f8d8edf",
+     "title": "The Torch Is Passed: A Harding Family Story",
+     "price_incl_tax_gbp": 19.09,
+     "price_excl_tax_gbp": 19.09,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 722
+    }
+   },
+   {
+    "record_id": "books:upc:b5ea0b5dabed25a8",
+    "url": "https://books.toscrape.com/catalogue/the-secret-of-dreadwillow-carse_944/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "b5ea0b5dabed25a8",
+     "title": "The Secret of Dreadwillow Carse",
+     "price_incl_tax_gbp": 56.13,
+     "price_excl_tax_gbp": 56.13,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Childrens",
+     "num_reviews": 0,
+     "description_words": 278
+    }
+   },
+   {
+    "record_id": "books:upc:142d767a56a9254d",
+    "url": "https://books.toscrape.com/catalogue/the-pioneer-woman-cooks-dinnertime-comfort-classics-freezer-food-16-minute-meals-and-other-delicious-ways-to-solve-supper_943/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "142d767a56a9254d",
+     "title": "The Pioneer Woman Cooks: Dinnertime: Comfort Classics, Freezer Food, 16-Minute Meals, and Other Delicious Ways to Solve Supper!",
+     "price_incl_tax_gbp": 56.41,
+     "price_excl_tax_gbp": 56.41,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Food and Drink",
+     "num_reviews": 0,
+     "description_words": 359
+    }
+   },
+   {
+    "record_id": "books:upc:5ee94540d0749ea0",
+    "url": "https://books.toscrape.com/catalogue/the-past-never-ends_942/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "5ee94540d0749ea0",
+     "title": "The Past Never Ends",
+     "price_incl_tax_gbp": 56.5,
+     "price_excl_tax_gbp": 56.5,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Mystery",
+     "num_reviews": 0,
+     "description_words": 238
+    }
+   },
+   {
+    "record_id": "books:upc:cedf82b5086e4691",
+    "url": "https://books.toscrape.com/catalogue/the-natural-history-of-us-the-fine-art-of-pretending-2_941/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "cedf82b5086e4691",
+     "title": "The Natural History of Us (The Fine Art of Pretending #2)",
+     "price_incl_tax_gbp": 45.22,
+     "price_excl_tax_gbp": 45.22,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Young Adult",
+     "num_reviews": 0,
+     "description_words": 271
+    }
+   },
+   {
+    "record_id": "books:upc:7d385d34d12e60ff",
+    "url": "https://books.toscrape.com/catalogue/the-nameless-city-the-nameless-city-1_940/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7d385d34d12e60ff",
+     "title": "The Nameless City (The Nameless City #1)",
+     "price_incl_tax_gbp": 38.16,
+     "price_excl_tax_gbp": 38.16,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 192
+    }
+   },
+   {
+    "record_id": "books:upc:d01ac97e2b8947c2",
+    "url": "https://books.toscrape.com/catalogue/the-murder-that-never-was-forensic-instincts-5_939/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "d01ac97e2b8947c2",
+     "title": "The Murder That Never Was (Forensic Instincts #5)",
+     "price_incl_tax_gbp": 54.11,
+     "price_excl_tax_gbp": 54.11,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 290
+    }
+   },
+   {
+    "record_id": "books:upc:aadee1c326d286e3",
+    "url": "https://books.toscrape.com/catalogue/the-most-perfect-thing-inside-and-outside-a-birds-egg_938/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "aadee1c326d286e3",
+     "title": "The Most Perfect Thing: Inside (and Outside) a Bird's Egg",
+     "price_incl_tax_gbp": 42.96,
+     "price_excl_tax_gbp": 42.96,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Science",
+     "num_reviews": 0,
+     "description_words": 286
+    }
+   },
+   {
+    "record_id": "books:upc:31075275518532d7",
+    "url": "https://books.toscrape.com/catalogue/the-mindfulness-and-acceptance-workbook-for-anxiety-a-guide-to-breaking-free-from-anxiety-phobias-and-worry-using-acceptance-and-commitment-therapy_937/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "31075275518532d7",
+     "title": "The Mindfulness and Acceptance Workbook for Anxiety: A Guide to Breaking Free from Anxiety, Phobias, and Worry Using Acceptance and Commitment Therapy",
+     "price_incl_tax_gbp": 23.89,
+     "price_excl_tax_gbp": 23.89,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 478
+    }
+   },
+   {
+    "record_id": "books:upc:0da9aa9d24677fc0",
+    "url": "https://books.toscrape.com/catalogue/the-life-changing-magic-of-tidying-up-the-japanese-art-of-decluttering-and-organizing_936/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "0da9aa9d24677fc0",
+     "title": "The Life-Changing Magic of Tidying Up: The Japanese Art of Decluttering and Organizing",
+     "price_incl_tax_gbp": 16.77,
+     "price_excl_tax_gbp": 16.77,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 207
+    }
+   },
+   {
+    "record_id": "books:upc:8c9e6bf2467d740d",
+    "url": "https://books.toscrape.com/catalogue/the-inefficiency-assassin-time-management-tactics-for-working-smarter-not-longer_935/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "8c9e6bf2467d740d",
+     "title": "The Inefficiency Assassin: Time Management Tactics for Working Smarter, Not Longer",
+     "price_incl_tax_gbp": 20.59,
+     "price_excl_tax_gbp": 20.59,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 193
+    }
+   },
+   {
+    "record_id": "books:upc:acd86a5426e21ca0",
+    "url": "https://books.toscrape.com/catalogue/the-gutsy-girl-escapades-for-your-life-of-epic-adventure_934/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "acd86a5426e21ca0",
+     "title": "The Gutsy Girl: Escapades for Your Life of Epic Adventure",
+     "price_incl_tax_gbp": 37.13,
+     "price_excl_tax_gbp": 37.13,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 280
+    }
+   },
+   {
+    "record_id": "books:upc:a30b270e25489e5c",
+    "url": "https://books.toscrape.com/catalogue/the-electric-pencil-drawings-from-inside-state-hospital-no-3_933/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "a30b270e25489e5c",
+     "title": "The Electric Pencil: Drawings from Inside State Hospital No. 3",
+     "price_incl_tax_gbp": 56.06,
+     "price_excl_tax_gbp": 56.06,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 221
+    }
+   },
+   {
+    "record_id": "books:upc:bd261725b99f5983",
+    "url": "https://books.toscrape.com/catalogue/the-death-of-humanity-and-the-case-for-life_932/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "bd261725b99f5983",
+     "title": "The Death of Humanity: and the Case for Life",
+     "price_incl_tax_gbp": 58.11,
+     "price_excl_tax_gbp": 58.11,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Philosophy",
+     "num_reviews": 0,
+     "description_words": 140
+    }
+   },
+   {
+    "record_id": "books:upc:43c6a960757cf559",
+    "url": "https://books.toscrape.com/catalogue/the-bulletproof-diet-lose-up-to-a-pound-a-day-reclaim-energy-and-focus-upgrade-your-life_931/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "43c6a960757cf559",
+     "title": "The Bulletproof Diet: Lose up to a Pound a Day, Reclaim Energy and Focus, Upgrade Your Life",
+     "price_incl_tax_gbp": 49.05,
+     "price_excl_tax_gbp": 49.05,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Health",
+     "num_reviews": 0,
+     "description_words": 301
+    }
+   },
+   {
+    "record_id": "books:upc:80cfab6bcff3a244",
+    "url": "https://books.toscrape.com/catalogue/the-art-forger_930/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "80cfab6bcff3a244",
+     "title": "The Art Forger",
+     "price_incl_tax_gbp": 40.76,
+     "price_excl_tax_gbp": 40.76,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 224
+    }
+   },
+   {
+    "record_id": "books:upc:a3d2a4250807f1e9",
+    "url": "https://books.toscrape.com/catalogue/the-age-of-genius-the-seventeenth-century-and-the-birth-of-the-modern-mind_929/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "a3d2a4250807f1e9",
+     "title": "The Age of Genius: The Seventeenth Century and the Birth of the Modern Mind",
+     "price_incl_tax_gbp": 19.73,
+     "price_excl_tax_gbp": 19.73,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "History",
+     "num_reviews": 0,
+     "description_words": 255
+    }
+   },
+   {
+    "record_id": "books:upc:7d6d2a6c0276f81b",
+    "url": "https://books.toscrape.com/catalogue/the-activists-tao-te-ching-ancient-advice-for-a-modern-revolution_928/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7d6d2a6c0276f81b",
+     "title": "The Activist's Tao Te Ching: Ancient Advice for a Modern Revolution",
+     "price_incl_tax_gbp": 32.24,
+     "price_excl_tax_gbp": 32.24,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Spirituality",
+     "num_reviews": 0,
+     "description_words": 218
+    }
+   },
+   {
+    "record_id": "books:upc:87b0615b6e1f4d7b",
+    "url": "https://books.toscrape.com/catalogue/spark-joy-an-illustrated-master-class-on-the-art-of-organizing-and-tidying-up_927/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "87b0615b6e1f4d7b",
+     "title": "Spark Joy: An Illustrated Master Class on the Art of Organizing and Tidying Up",
+     "price_incl_tax_gbp": 41.83,
+     "price_excl_tax_gbp": 41.83,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 158
+    }
+   },
+   {
+    "record_id": "books:upc:e6af5bf1163c1151",
+    "url": "https://books.toscrape.com/catalogue/soul-reader_926/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e6af5bf1163c1151",
+     "title": "Soul Reader",
+     "price_incl_tax_gbp": 39.58,
+     "price_excl_tax_gbp": 39.58,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 36
+    }
+   },
+   {
+    "record_id": "books:upc:6f78a0d744c35456",
+    "url": "https://books.toscrape.com/catalogue/security_925/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "6f78a0d744c35456",
+     "title": "Security",
+     "price_incl_tax_gbp": 39.25,
+     "price_excl_tax_gbp": 39.25,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Horror",
+     "num_reviews": 0,
+     "description_words": 477
+    }
+   },
+   {
+    "record_id": "books:upc:c849f0b2f5d6a742",
+    "url": "https://books.toscrape.com/catalogue/saga-volume-6-saga-collected-editions-6_924/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "c849f0b2f5d6a742",
+     "title": "Saga, Volume 6 (Saga (Collected Editions) #6)",
+     "price_incl_tax_gbp": 25.02,
+     "price_excl_tax_gbp": 25.02,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 40
+    }
+   },
+   {
+    "record_id": "books:upc:53a3d11bb568cc8b",
+    "url": "https://books.toscrape.com/catalogue/saga-volume-5-saga-collected-editions-5_923/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "53a3d11bb568cc8b",
+     "title": "Saga, Volume 5 (Saga (Collected Editions) #5)",
+     "price_incl_tax_gbp": 51.04,
+     "price_excl_tax_gbp": 51.04,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 50
+    }
+   },
+   {
+    "record_id": "books:upc:d7310206583a54b6",
+    "url": "https://books.toscrape.com/catalogue/reskilling-america-learning-to-labor-in-the-twenty-first-century_922/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "d7310206583a54b6",
+     "title": "Reskilling America: Learning to Labor in the Twenty-First Century",
+     "price_incl_tax_gbp": 19.83,
+     "price_excl_tax_gbp": 19.83,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 311
+    }
+   },
+   {
+    "record_id": "books:upc:c82a3e358c773c73",
+    "url": "https://books.toscrape.com/catalogue/rat-queens-vol-3-demons-rat-queens-collected-editions-11-15_921/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "c82a3e358c773c73",
+     "title": "Rat Queens, Vol. 3: Demons (Rat Queens (Collected Editions) #11-15)",
+     "price_incl_tax_gbp": 50.4,
+     "price_excl_tax_gbp": 50.4,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 47
+    }
+   },
+   {
+    "record_id": "books:upc:0fa6dceead7ce47a",
+    "url": "https://books.toscrape.com/catalogue/princess-jellyfish-2-in-1-omnibus-vol-01-princess-jellyfish-2-in-1-omnibus-1_920/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "0fa6dceead7ce47a",
+     "title": "Princess Jellyfish 2-in-1 Omnibus, Vol. 01 (Princess Jellyfish 2-in-1 Omnibus #1)",
+     "price_incl_tax_gbp": 13.61,
+     "price_excl_tax_gbp": 13.61,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 256
+    }
+   },
+   {
+    "record_id": "books:upc:0e691eda369f4e09",
+    "url": "https://books.toscrape.com/catalogue/princess-between-worlds-wide-awake-princess-5_919/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "0e691eda369f4e09",
+     "title": "Princess Between Worlds (Wide-Awake Princess #5)",
+     "price_incl_tax_gbp": 13.34,
+     "price_excl_tax_gbp": 13.34,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 57
+    }
+   },
+   {
+    "record_id": "books:upc:e80f8e518b300dfe",
+    "url": "https://books.toscrape.com/catalogue/pop-gun-war-volume-1-gift_918/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e80f8e518b300dfe",
+     "title": "Pop Gun War, Volume 1: Gift",
+     "price_incl_tax_gbp": 18.97,
+     "price_excl_tax_gbp": 18.97,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 376
+    }
+   },
+   {
+    "record_id": "books:upc:7392c0032f92d816",
+    "url": "https://books.toscrape.com/catalogue/political-suicide-missteps-peccadilloes-bad-calls-backroom-hijinx-sordid-pasts-rotten-breaks-and-just-plain-dumb-mistakes-in-the-annals-of-american-politics_917/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7392c0032f92d816",
+     "title": "Political Suicide: Missteps, Peccadilloes, Bad Calls, Backroom Hijinx, Sordid Pasts, Rotten Breaks, and Just Plain Dumb Mistakes in the Annals of American Politics",
+     "price_incl_tax_gbp": 36.28,
+     "price_excl_tax_gbp": 36.28,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "History",
+     "num_reviews": 0,
+     "description_words": 226
+    }
+   },
+   {
+    "record_id": "books:upc:9429b4d59c537af5",
+    "url": "https://books.toscrape.com/catalogue/patience_916/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9429b4d59c537af5",
+     "title": "Patience",
+     "price_incl_tax_gbp": 10.16,
+     "price_excl_tax_gbp": 10.16,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 125
+    }
+   },
+   {
+    "record_id": "books:upc:889139b8e9c4cb36",
+    "url": "https://books.toscrape.com/catalogue/outcast-vol-1-a-darkness-surrounds-him-outcast-1_915/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "889139b8e9c4cb36",
+     "title": "Outcast, Vol. 1: A Darkness Surrounds Him (Outcast #1)",
+     "price_incl_tax_gbp": 15.44,
+     "price_excl_tax_gbp": 15.44,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 53
+    }
+   },
+   {
+    "record_id": "books:upc:11809b1d323b3057",
+    "url": "https://books.toscrape.com/catalogue/orange-the-complete-collection-1-orange-the-complete-collection-1_914/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "11809b1d323b3057",
+     "title": "orange: The Complete Collection 1 (orange: The Complete Collection #1)",
+     "price_incl_tax_gbp": 48.41,
+     "price_excl_tax_gbp": 48.41,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 189
+    }
+   },
+   {
+    "record_id": "books:upc:9ffa38d3b832433a",
+    "url": "https://books.toscrape.com/catalogue/online-marketing-for-busy-authors-a-step-by-step-guide_913/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9ffa38d3b832433a",
+     "title": "Online Marketing for Busy Authors: A Step-By-Step Guide",
+     "price_incl_tax_gbp": 46.35,
+     "price_excl_tax_gbp": 46.35,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Self Help",
+     "num_reviews": 0,
+     "description_words": 231
+    }
+   },
+   {
+    "record_id": "books:upc:b757c0c361e689ce",
+    "url": "https://books.toscrape.com/catalogue/on-a-midnight-clear_912/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "b757c0c361e689ce",
+     "title": "On a Midnight Clear",
+     "price_incl_tax_gbp": 14.07,
+     "price_excl_tax_gbp": 14.07,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 180
+    }
+   },
+   {
+    "record_id": "books:upc:3c346ab1e76ae1f6",
+    "url": "https://books.toscrape.com/catalogue/obsidian-lux-1_911/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "3c346ab1e76ae1f6",
+     "title": "Obsidian (Lux #1)",
+     "price_incl_tax_gbp": 14.86,
+     "price_excl_tax_gbp": 14.86,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Young Adult",
+     "num_reviews": 0,
+     "description_words": 214
+    }
+   },
+   {
+    "record_id": "books:upc:784bc2279baa878d",
+    "url": "https://books.toscrape.com/catalogue/my-paris-kitchen-recipes-and-stories_910/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "784bc2279baa878d",
+     "title": "My Paris Kitchen: Recipes and Stories",
+     "price_incl_tax_gbp": 33.37,
+     "price_excl_tax_gbp": 33.37,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Food and Drink",
+     "num_reviews": 0,
+     "description_words": 280
+    }
+   },
+   {
+    "record_id": "books:upc:fa9610a50a1bf149",
+    "url": "https://books.toscrape.com/catalogue/masks-and-shadows_909/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "fa9610a50a1bf149",
+     "title": "Masks and Shadows",
+     "price_incl_tax_gbp": 56.4,
+     "price_excl_tax_gbp": 56.4,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 192
+    }
+   },
+   {
+    "record_id": "books:upc:72f9d5be3472d34e",
+    "url": "https://books.toscrape.com/catalogue/mama-tried-traditional-italian-cooking-for-the-screwed-crude-vegan-and-tattooed_908/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "72f9d5be3472d34e",
+     "title": "Mama Tried: Traditional Italian Cooking for the Screwed, Crude, Vegan, and Tattooed",
+     "price_incl_tax_gbp": 14.02,
+     "price_excl_tax_gbp": 14.02,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Food and Drink",
+     "num_reviews": 0,
+     "description_words": 140
+    }
+   },
+   {
+    "record_id": "books:upc:460089f796fb3f82",
+    "url": "https://books.toscrape.com/catalogue/lumberjanes-vol-2-friendship-to-the-max-lumberjanes-5-8_907/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "460089f796fb3f82",
+     "title": "Lumberjanes, Vol. 2: Friendship to the Max (Lumberjanes #5-8)",
+     "price_incl_tax_gbp": 46.91,
+     "price_excl_tax_gbp": 46.91,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 176
+    }
+   },
+   {
+    "record_id": "books:upc:b6ee99bcf06fc91f",
+    "url": "https://books.toscrape.com/catalogue/lumberjanes-vol-1-beware-the-kitten-holy-lumberjanes-1-4_906/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "b6ee99bcf06fc91f",
+     "title": "Lumberjanes, Vol. 1: Beware the Kitten Holy (Lumberjanes #1-4)",
+     "price_incl_tax_gbp": 45.61,
+     "price_excl_tax_gbp": 45.61,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 136
+    }
+   },
+   {
+    "record_id": "books:upc:57e5a4d515c8ce44",
+    "url": "https://books.toscrape.com/catalogue/lumberjanes-vol-3-a-terrible-plan-lumberjanes-9-12_905/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "57e5a4d515c8ce44",
+     "title": "Lumberjanes Vol. 3: A Terrible Plan (Lumberjanes #9-12)",
+     "price_incl_tax_gbp": 19.92,
+     "price_excl_tax_gbp": 19.92,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 47
+    }
+   },
+   {
+    "record_id": "books:upc:7b75cc7f223791f4",
+    "url": "https://books.toscrape.com/catalogue/layered-baking-building-and-styling-spectacular-cakes_904/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7b75cc7f223791f4",
+     "title": "Layered: Baking, Building, and Styling Spectacular Cakes",
+     "price_incl_tax_gbp": 40.11,
+     "price_excl_tax_gbp": 40.11,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Food and Drink",
+     "num_reviews": 0,
+     "description_words": 166
+    }
+   },
+   {
+    "record_id": "books:upc:228f74b74f3a08ae",
+    "url": "https://books.toscrape.com/catalogue/judo-seven-steps-to-black-belt-an-introductory-guide-for-beginners_903/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "228f74b74f3a08ae",
+     "title": "Judo: Seven Steps to Black Belt (an Introductory Guide for Beginners)",
+     "price_incl_tax_gbp": 53.9,
+     "price_excl_tax_gbp": 53.9,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Add a comment",
+     "num_reviews": 0,
+     "description_words": 171
+    }
+   },
+   {
+    "record_id": "books:upc:18ad3ed896c7ce05",
+    "url": "https://books.toscrape.com/catalogue/join_902/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "18ad3ed896c7ce05",
+     "title": "Join",
+     "price_incl_tax_gbp": 35.67,
+     "price_excl_tax_gbp": 35.67,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Science Fiction",
+     "num_reviews": 0,
+     "description_words": 291
+    }
+   },
+   {
+    "record_id": "books:upc:b136b1b180ca753a",
+    "url": "https://books.toscrape.com/catalogue/in-the-country-we-love-my-family-divided_901/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "b136b1b180ca753a",
+     "title": "In the Country We Love: My Family Divided",
+     "price_incl_tax_gbp": 22.0,
+     "price_excl_tax_gbp": 22.0,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 276
+    }
+   },
+   {
+    "record_id": "books:upc:e4f74c16de34d440",
+    "url": "https://books.toscrape.com/catalogue/immunity-how-elie-metchnikoff-changed-the-course-of-modern-medicine_900/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e4f74c16de34d440",
+     "title": "Immunity: How Elie Metchnikoff Changed the Course of Modern Medicine",
+     "price_incl_tax_gbp": 57.36,
+     "price_excl_tax_gbp": 57.36,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Science",
+     "num_reviews": 0,
+     "description_words": 289
+    }
+   },
+   {
+    "record_id": "books:upc:8d4eefad7a2b3915",
+    "url": "https://books.toscrape.com/catalogue/i-hate-fairyland-vol-1-madly-ever-after-i-hate-fairyland-compilations-1-5_899/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "8d4eefad7a2b3915",
+     "title": "I Hate Fairyland, Vol. 1: Madly Ever After (I Hate Fairyland (Compilations) #1-5)",
+     "price_incl_tax_gbp": 29.17,
+     "price_excl_tax_gbp": 29.17,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 270
+    }
+   },
+   {
+    "record_id": "books:upc:1c89ae5bb804e4de",
+    "url": "https://books.toscrape.com/catalogue/i-am-a-hero-omnibus-volume-1_898/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "1c89ae5bb804e4de",
+     "title": "I am a Hero Omnibus Volume 1",
+     "price_incl_tax_gbp": 54.63,
+     "price_excl_tax_gbp": 54.63,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 171
+    }
+   },
+   {
+    "record_id": "books:upc:a6f99b9e687f9d46",
+    "url": "https://books.toscrape.com/catalogue/how-to-be-miserable-40-strategies-you-already-use_897/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "a6f99b9e687f9d46",
+     "title": "How to Be Miserable: 40 Strategies You Already Use",
+     "price_incl_tax_gbp": 46.03,
+     "price_excl_tax_gbp": 46.03,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Self Help",
+     "num_reviews": 0,
+     "description_words": 264
+    }
+   },
+   {
+    "record_id": "books:upc:2a97cffe61c3c4c7",
+    "url": "https://books.toscrape.com/catalogue/her-backup-boyfriend-the-sorensen-family-1_896/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "2a97cffe61c3c4c7",
+     "title": "Her Backup Boyfriend (The Sorensen Family #1)",
+     "price_incl_tax_gbp": 33.97,
+     "price_excl_tax_gbp": 33.97,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Romance",
+     "num_reviews": 0,
+     "description_words": 217
+    }
+   },
+   {
+    "record_id": "books:upc:f2df3bb043a8abb0",
+    "url": "https://books.toscrape.com/catalogue/giant-days-vol-2-giant-days-5-8_895/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "f2df3bb043a8abb0",
+     "title": "Giant Days, Vol. 2 (Giant Days #5-8)",
+     "price_incl_tax_gbp": 22.11,
+     "price_excl_tax_gbp": 22.11,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 145
+    }
+   },
+   {
+    "record_id": "books:upc:9beb96a2300109d7",
+    "url": "https://books.toscrape.com/catalogue/forever-and-forever-the-courtship-of-henry-longfellow-and-fanny-appleton_894/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9beb96a2300109d7",
+     "title": "Forever and Forever: The Courtship of Henry Longfellow and Fanny Appleton",
+     "price_incl_tax_gbp": 29.69,
+     "price_excl_tax_gbp": 29.69,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Historical Fiction",
+     "num_reviews": 0,
+     "description_words": 269
+    }
+   },
+   {
+    "record_id": "books:upc:9e28048cea8d41f7",
+    "url": "https://books.toscrape.com/catalogue/first-and-first-five-boroughs-3_893/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9e28048cea8d41f7",
+     "title": "First and First (Five Boroughs #3)",
+     "price_incl_tax_gbp": 15.97,
+     "price_excl_tax_gbp": 15.97,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Romance",
+     "num_reviews": 0,
+     "description_words": 216
+    }
+   },
+   {
+    "record_id": "books:upc:7add3f8e49ec0826",
+    "url": "https://books.toscrape.com/catalogue/fifty-shades-darker-fifty-shades-2_892/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7add3f8e49ec0826",
+     "title": "Fifty Shades Darker (Fifty Shades #2)",
+     "price_incl_tax_gbp": 21.96,
+     "price_excl_tax_gbp": 21.96,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Romance",
+     "num_reviews": 0,
+     "description_words": 198
+    }
+   },
+   {
+    "record_id": "books:upc:311c0dd0e354a33e",
+    "url": "https://books.toscrape.com/catalogue/everydata-the-misinformation-hidden-in-the-little-data-you-consume-every-day_891/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "311c0dd0e354a33e",
+     "title": "Everydata: The Misinformation Hidden in the Little Data You Consume Every Day",
+     "price_incl_tax_gbp": 54.35,
+     "price_excl_tax_gbp": 54.35,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 260
+    }
+   },
+   {
+    "record_id": "books:upc:fce19f9b4a943f22",
+    "url": "https://books.toscrape.com/catalogue/dont-be-a-jerk-and-other-practical-advice-from-dogen-japans-greatest-zen-master_890/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "fce19f9b4a943f22",
+     "title": "Don't Be a Jerk: And Other Practical Advice from Dogen, Japan's Greatest Zen Master",
+     "price_incl_tax_gbp": 37.97,
+     "price_excl_tax_gbp": 37.97,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Religion",
+     "num_reviews": 0,
+     "description_words": 239
+    }
+   },
+   {
+    "record_id": "books:upc:7267864328ae8b9d",
+    "url": "https://books.toscrape.com/catalogue/crown-of-midnight-throne-of-glass-2_888/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7267864328ae8b9d",
+     "title": "Crown of Midnight (Throne of Glass #2)",
+     "price_incl_tax_gbp": 43.29,
+     "price_excl_tax_gbp": 43.29,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 269
+    }
+   },
+   {
+    "record_id": "books:upc:8754c83ab2a7ae71",
+    "url": "https://books.toscrape.com/catalogue/codename-baboushka-volume-1-the-conclave-of-death_887/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "8754c83ab2a7ae71",
+     "title": "Codename Baboushka, Volume 1: The Conclave of Death",
+     "price_incl_tax_gbp": 36.72,
+     "price_excl_tax_gbp": 36.72,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 393
+    }
+   },
+   {
+    "record_id": "books:upc:7b599c8bfcdd8d30",
+    "url": "https://books.toscrape.com/catalogue/camp-midnight_886/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "7b599c8bfcdd8d30",
+     "title": "Camp Midnight",
+     "price_incl_tax_gbp": 17.08,
+     "price_excl_tax_gbp": 17.08,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 156
+    }
+   },
+   {
+    "record_id": "books:upc:bee3672891cca906",
+    "url": "https://books.toscrape.com/catalogue/call-the-nurse-true-stories-of-a-country-nurse-on-a-scottish-isle_885/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "bee3672891cca906",
+     "title": "Call the Nurse: True Stories of a Country Nurse on a Scottish Isle",
+     "price_incl_tax_gbp": 29.14,
+     "price_excl_tax_gbp": 29.14,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 278
+    }
+   },
+   {
+    "record_id": "books:upc:5ceb951f629700a2",
+    "url": "https://books.toscrape.com/catalogue/burning_884/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "5ceb951f629700a2",
+     "title": "Burning",
+     "price_incl_tax_gbp": 28.81,
+     "price_excl_tax_gbp": 28.81,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Young Adult",
+     "num_reviews": 0,
+     "description_words": 176
+    }
+   },
+   {
+    "record_id": "books:upc:74baabfc8fd84b38",
+    "url": "https://books.toscrape.com/catalogue/bossypants_883/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "74baabfc8fd84b38",
+     "title": "Bossypants",
+     "price_incl_tax_gbp": 49.46,
+     "price_excl_tax_gbp": 49.46,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 229
+    }
+   },
+   {
+    "record_id": "books:upc:bdf415fd484ea8a7",
+    "url": "https://books.toscrape.com/catalogue/bitch-planet-vol-1-extraordinary-machine-bitch-planet-collected-editions_882/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "bdf415fd484ea8a7",
+     "title": "Bitch Planet, Vol. 1: Extraordinary Machine (Bitch Planet (Collected Editions))",
+     "price_incl_tax_gbp": 37.92,
+     "price_excl_tax_gbp": 37.92,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 164
+    }
+   },
+   {
+    "record_id": "books:upc:6d5300b2d8f37e07",
+    "url": "https://books.toscrape.com/catalogue/avatar-the-last-airbender-smoke-and-shadow-part-3-smoke-and-shadow-3_881/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "6d5300b2d8f37e07",
+     "title": "Avatar: The Last Airbender: Smoke and Shadow, Part 3 (Smoke and Shadow #3)",
+     "price_incl_tax_gbp": 28.09,
+     "price_excl_tax_gbp": 28.09,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 199
+    }
+   },
+   {
+    "record_id": "books:upc:38d45839cb1c83c1",
+    "url": "https://books.toscrape.com/catalogue/algorithms-to-live-by-the-computer-science-of-human-decisions_880/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "38d45839cb1c83c1",
+     "title": "Algorithms to Live By: The Computer Science of Human Decisions",
+     "price_incl_tax_gbp": 30.81,
+     "price_excl_tax_gbp": 30.81,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 272
+    }
+   },
+   {
+    "record_id": "books:upc:70ed59f194b3c556",
+    "url": "https://books.toscrape.com/catalogue/a-world-of-flavor-your-gluten-free-passport_879/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "70ed59f194b3c556",
+     "title": "A World of Flavor: Your Gluten Free Passport",
+     "price_incl_tax_gbp": 42.95,
+     "price_excl_tax_gbp": 42.95,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 291
+    }
+   },
+   {
+    "record_id": "books:upc:8a380641491d43ed",
+    "url": "https://books.toscrape.com/catalogue/a-piece-of-sky-a-grain-of-rice-a-memoir-in-four-meditations_878/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "8a380641491d43ed",
+     "title": "A Piece of Sky, a Grain of Rice: A Memoir in Four Meditations",
+     "price_incl_tax_gbp": 56.76,
+     "price_excl_tax_gbp": 56.76,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 323
+    }
+   },
+   {
+    "record_id": "books:upc:f733e8c19d40ec2e",
+    "url": "https://books.toscrape.com/catalogue/a-murder-in-time_877/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "f733e8c19d40ec2e",
+     "title": "A Murder in Time",
+     "price_incl_tax_gbp": 16.64,
+     "price_excl_tax_gbp": 16.64,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Mystery",
+     "num_reviews": 0,
+     "description_words": 261
+    }
+   },
+   {
+    "record_id": "books:upc:3a6fb983e2554023",
+    "url": "https://books.toscrape.com/catalogue/a-flight-of-arrows-the-pathfinders-2_876/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "3a6fb983e2554023",
+     "title": "A Flight of Arrows (The Pathfinders #2)",
+     "price_incl_tax_gbp": 55.53,
+     "price_excl_tax_gbp": 55.53,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Historical Fiction",
+     "num_reviews": 0,
+     "description_words": 272
+    }
+   },
+   {
+    "record_id": "books:upc:842790dfaa937484",
+    "url": "https://books.toscrape.com/catalogue/a-fierce-and-subtle-poison_875/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "842790dfaa937484",
+     "title": "A Fierce and Subtle Poison",
+     "price_incl_tax_gbp": 28.13,
+     "price_excl_tax_gbp": 28.13,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Young Adult",
+     "num_reviews": 0,
+     "description_words": 215
+    }
+   },
+   {
+    "record_id": "books:upc:e4ac92d89b946781",
+    "url": "https://books.toscrape.com/catalogue/unqualified-how-god-uses-broken-people-to-do-big-things_873/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e4ac92d89b946781",
+     "title": "(Un)Qualified: How God Uses Broken People to Do Big Things",
+     "price_incl_tax_gbp": 54.0,
+     "price_excl_tax_gbp": 54.0,
+     "tax_gbp": 0.0,
+     "availability_count": 16,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Christian",
+     "num_reviews": 0,
+     "description_words": 479
+    }
+   },
+   {
+    "record_id": "books:upc:796c87ddbbaaf8c5",
+    "url": "https://books.toscrape.com/catalogue/you-are-what-you-love-the-spiritual-power-of-habit_872/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "796c87ddbbaaf8c5",
+     "title": "You Are What You Love: The Spiritual Power of Habit",
+     "price_incl_tax_gbp": 21.87,
+     "price_excl_tax_gbp": 21.87,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Religion",
+     "num_reviews": 0,
+     "description_words": 300
+    }
+   },
+   {
+    "record_id": "books:upc:9270575728a13a61",
+    "url": "https://books.toscrape.com/catalogue/william-shakespeares-star-wars-verily-a-new-hope-william-shakespeares-star-wars-4_871/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9270575728a13a61",
+     "title": "William Shakespeare's Star Wars: Verily, A New Hope (William Shakespeare's Star Wars #4)",
+     "price_incl_tax_gbp": 43.3,
+     "price_excl_tax_gbp": 43.3,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Science Fiction",
+     "num_reviews": 0,
+     "description_words": 184
+    }
+   },
+   {
+    "record_id": "books:upc:b8736690cf263a3c",
+    "url": "https://books.toscrape.com/catalogue/tuesday-nights-in-1980_870/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "b8736690cf263a3c",
+     "title": "Tuesday Nights in 1980",
+     "price_incl_tax_gbp": 21.04,
+     "price_excl_tax_gbp": 21.04,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 400
+    }
+   },
+   {
+    "record_id": "books:upc:d7d6d50c1e3d0b81",
+    "url": "https://books.toscrape.com/catalogue/tracing-numbers-on-a-train_869/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "d7d6d50c1e3d0b81",
+     "title": "Tracing Numbers on a Train",
+     "price_incl_tax_gbp": 41.6,
+     "price_excl_tax_gbp": 41.6,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 122
+    }
+   },
+   {
+    "record_id": "books:upc:590a9cccf7db9f7d",
+    "url": "https://books.toscrape.com/catalogue/throne-of-glass-throne-of-glass-1_868/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "590a9cccf7db9f7d",
+     "title": "Throne of Glass (Throne of Glass #1)",
+     "price_incl_tax_gbp": 35.07,
+     "price_excl_tax_gbp": 35.07,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 259
+    }
+   },
+   {
+    "record_id": "books:upc:de3f25248ba0789f",
+    "url": "https://books.toscrape.com/catalogue/thomas-jefferson-and-the-tripoli-pirates-the-forgotten-war-that-changed-american-history_867/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "de3f25248ba0789f",
+     "title": "Thomas Jefferson and the Tripoli Pirates: The Forgotten War That Changed American History",
+     "price_incl_tax_gbp": 59.64,
+     "price_excl_tax_gbp": 59.64,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "History",
+     "num_reviews": 0,
+     "description_words": 385
+    }
+   },
+   {
+    "record_id": "books:upc:bc2a85fd35fdc7bd",
+    "url": "https://books.toscrape.com/catalogue/thirteen-reasons-why_866/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "bc2a85fd35fdc7bd",
+     "title": "Thirteen Reasons Why",
+     "price_incl_tax_gbp": 52.72,
+     "price_excl_tax_gbp": 52.72,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 166
+    }
+   },
+   {
+    "record_id": "books:upc:37c0cb19713d8dda",
+    "url": "https://books.toscrape.com/catalogue/the-white-cat-and-the-monk-a-retelling-of-the-poem-pangur-ban_865/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "37c0cb19713d8dda",
+     "title": "The White Cat and the Monk: A Retelling of the Poem “Pangur Bán”",
+     "price_incl_tax_gbp": 58.08,
+     "price_excl_tax_gbp": 58.08,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Childrens",
+     "num_reviews": 0,
+     "description_words": 168
+    }
+   },
+   {
+    "record_id": "books:upc:623e1a180426039b",
+    "url": "https://books.toscrape.com/catalogue/the-wedding-dress_864/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "623e1a180426039b",
+     "title": "The Wedding Dress",
+     "price_incl_tax_gbp": 24.12,
+     "price_excl_tax_gbp": 24.12,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Romance",
+     "num_reviews": 0,
+     "description_words": 287
+    }
+   },
+   {
+    "record_id": "books:upc:fd3a622648667296",
+    "url": "https://books.toscrape.com/catalogue/the-vacationers_863/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "fd3a622648667296",
+     "title": "The Vacationers",
+     "price_incl_tax_gbp": 42.15,
+     "price_excl_tax_gbp": 42.15,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Fiction",
+     "num_reviews": 0,
+     "description_words": 254
+    }
+   },
+   {
+    "record_id": "books:upc:3bebf34ee9330cbd",
+    "url": "https://books.toscrape.com/catalogue/the-third-wave-an-entrepreneurs-vision-of-the-future_862/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "3bebf34ee9330cbd",
+     "title": "The Third Wave: An Entrepreneur’s Vision of the Future",
+     "price_incl_tax_gbp": 12.61,
+     "price_excl_tax_gbp": 12.61,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Business",
+     "num_reviews": 0,
+     "description_words": 470
+    }
+   },
+   {
+    "record_id": "books:upc:f5a92cff83897d48",
+    "url": "https://books.toscrape.com/catalogue/the-stranger_861/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "f5a92cff83897d48",
+     "title": "The Stranger",
+     "price_incl_tax_gbp": 17.44,
+     "price_excl_tax_gbp": 17.44,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Philosophy",
+     "num_reviews": 0,
+     "description_words": 52
+    }
+   },
+   {
+    "record_id": "books:upc:d6361d16212664ed",
+    "url": "https://books.toscrape.com/catalogue/the-shadow-hero-the-shadow-hero_860/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "d6361d16212664ed",
+     "title": "The Shadow Hero (The Shadow Hero)",
+     "price_incl_tax_gbp": 33.14,
+     "price_excl_tax_gbp": 33.14,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Sequential Art",
+     "num_reviews": 0,
+     "description_words": 187
+    }
+   },
+   {
+    "record_id": "books:upc:961f18db4f138211",
+    "url": "https://books.toscrape.com/catalogue/the-secret-the-secret-1_859/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "961f18db4f138211",
+     "title": "The Secret (The Secret #1)",
+     "price_incl_tax_gbp": 27.37,
+     "price_excl_tax_gbp": 27.37,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 214
+    }
+   },
+   {
+    "record_id": "books:upc:e98a4efa85070c2f",
+    "url": "https://books.toscrape.com/catalogue/the-psychopath-test-a-journey-through-the-madness-industry_857/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e98a4efa85070c2f",
+     "title": "The Psychopath Test: A Journey Through the Madness Industry",
+     "price_incl_tax_gbp": 36.0,
+     "price_excl_tax_gbp": 36.0,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 286
+    }
+   },
+   {
+    "record_id": "books:upc:790ef197c8f236f5",
+    "url": "https://books.toscrape.com/catalogue/the-project_856/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "790ef197c8f236f5",
+     "title": "The Project",
+     "price_incl_tax_gbp": 10.65,
+     "price_excl_tax_gbp": 10.65,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Science Fiction",
+     "num_reviews": 0,
+     "description_words": 188
+    }
+   },
+   {
+    "record_id": "books:upc:8ec14b1576cb7cb5",
+    "url": "https://books.toscrape.com/catalogue/the-power-of-now-a-guide-to-spiritual-enlightenment_855/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "8ec14b1576cb7cb5",
+     "title": "The Power of Now: A Guide to Spiritual Enlightenment",
+     "price_incl_tax_gbp": 43.54,
+     "price_excl_tax_gbp": 43.54,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 261
+    }
+   },
+   {
+    "record_id": "books:upc:209adad1015af86f",
+    "url": "https://books.toscrape.com/catalogue/the-omnivores-dilemma-a-natural-history-of-four-meals_854/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "209adad1015af86f",
+     "title": "The Omnivore's Dilemma: A Natural History of Four Meals",
+     "price_incl_tax_gbp": 38.21,
+     "price_excl_tax_gbp": 38.21,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 596
+    }
+   },
+   {
+    "record_id": "books:upc:e4c7f3487d17fd42",
+    "url": "https://books.toscrape.com/catalogue/the-nerdy-nummies-cookbook-sweet-treats-for-the-geek-in-all-of-us_853/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e4c7f3487d17fd42",
+     "title": "The Nerdy Nummies Cookbook: Sweet Treats for the Geek in All of Us",
+     "price_incl_tax_gbp": 37.34,
+     "price_excl_tax_gbp": 37.34,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Five",
+     "category": "Food and Drink",
+     "num_reviews": 0,
+     "description_words": 293
+    }
+   },
+   {
+    "record_id": "books:upc:c7b5183f4d1d4efe",
+    "url": "https://books.toscrape.com/catalogue/the-murder-of-roger-ackroyd-hercule-poirot-4_852/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "c7b5183f4d1d4efe",
+     "title": "The Murder of Roger Ackroyd (Hercule Poirot #4)",
+     "price_incl_tax_gbp": 44.1,
+     "price_excl_tax_gbp": 44.1,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Mystery",
+     "num_reviews": 0,
+     "description_words": 242
+    }
+   },
+   {
+    "record_id": "books:upc:99ff4cc6491e8f5c",
+    "url": "https://books.toscrape.com/catalogue/the-mistake-off-campus-2_851/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "99ff4cc6491e8f5c",
+     "title": "The Mistake (Off-Campus #2)",
+     "price_incl_tax_gbp": 43.29,
+     "price_excl_tax_gbp": 43.29,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Three",
+     "category": "New Adult",
+     "num_reviews": 0,
+     "description_words": 256
+    }
+   },
+   {
+    "record_id": "books:upc:e28e330cbdf01126",
+    "url": "https://books.toscrape.com/catalogue/the-love-and-lemons-cookbook-an-apple-to-zucchini-celebration-of-impromptu-cooking_849/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e28e330cbdf01126",
+     "title": "The Love and Lemons Cookbook: An Apple-to-Zucchini Celebration of Impromptu Cooking",
+     "price_incl_tax_gbp": 37.6,
+     "price_excl_tax_gbp": 37.6,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Food and Drink",
+     "num_reviews": 0,
+     "description_words": 226
+    }
+   },
+   {
+    "record_id": "books:upc:abeafe151a587d3b",
+    "url": "https://books.toscrape.com/catalogue/the-long-shadow-of-small-ghosts-murder-and-memory-in-an-american-city_848/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "abeafe151a587d3b",
+     "title": "The Long Shadow of Small Ghosts: Murder and Memory in an American City",
+     "price_incl_tax_gbp": 10.97,
+     "price_excl_tax_gbp": 10.97,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Crime",
+     "num_reviews": 0,
+     "description_words": 350
+    }
+   },
+   {
+    "record_id": "books:upc:eac1a180047ad54e",
+    "url": "https://books.toscrape.com/catalogue/the-kite-runner_847/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "eac1a180047ad54e",
+     "title": "The Kite Runner",
+     "price_incl_tax_gbp": 41.82,
+     "price_excl_tax_gbp": 41.82,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Four",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 301
+    }
+   },
+   {
+    "record_id": "books:upc:9287e238d7c3b06e",
+    "url": "https://books.toscrape.com/catalogue/the-house-by-the-lake_846/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "9287e238d7c3b06e",
+     "title": "The House by the Lake",
+     "price_incl_tax_gbp": 36.95,
+     "price_excl_tax_gbp": 36.95,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Historical Fiction",
+     "num_reviews": 0,
+     "description_words": 230
+    }
+   },
+   {
+    "record_id": "books:upc:2dbb7ec08cdd7f3c",
+    "url": "https://books.toscrape.com/catalogue/the-glittering-court-the-glittering-court-1_845/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "2dbb7ec08cdd7f3c",
+     "title": "The Glittering Court (The Glittering Court #1)",
+     "price_incl_tax_gbp": 44.28,
+     "price_excl_tax_gbp": 44.28,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Fantasy",
+     "num_reviews": 0,
+     "description_words": 291
+    }
+   },
+   {
+    "record_id": "books:upc:e956d67c9bcc5809",
+    "url": "https://books.toscrape.com/catalogue/the-girl-on-the-train_844/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "e956d67c9bcc5809",
+     "title": "The Girl on the Train",
+     "price_incl_tax_gbp": 55.02,
+     "price_excl_tax_gbp": 55.02,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "Two",
+     "category": "Default",
+     "num_reviews": 0,
+     "description_words": 219
+    }
+   },
+   {
+    "record_id": "books:upc:42d0d7c92b75fc1c",
+    "url": "https://books.toscrape.com/catalogue/the-genius-of-birds_843/index.html",
+    "status": "tetap",
+    "fields": {
+     "upc": "42d0d7c92b75fc1c",
+     "title": "The Genius of Birds",
+     "price_incl_tax_gbp": 17.24,
+     "price_excl_tax_gbp": 17.24,
+     "tax_gbp": 0.0,
+     "availability_count": 15,
+     "in_stock": true,
+     "rating": "One",
+     "category": "Nonfiction",
+     "num_reviews": 0,
+     "description_words": 452
+    }
+   }
+  ]
+ },
+ {
+  "generated_at": "2026-08-28T08:13:27+07:00",
+  "target": "quotes",
+  "snapshot_date": "2026-08-27",
+  "source": {
+   "name": "quotes.toscrape.com",
+   "url": "https://quotes.toscrape.com",
+   "attribution": "Sandbox latihan scraping milik Scraping Hub. Teks kutipan tidak disimpan (D17)."
+  },
+  "counts": {
+   "total": 100,
+   "added_today": 100,
+   "changed_today": 0,
+   "removed_today": 0
+  },
+  "insight": {
+   "model": null,
+   "text": null,
+   "reason": "panen ini dijalankan tanpa ringkasan AI",
+   "generated_at": null,
+   "input_tokens": 0,
+   "output_tokens": 0
+  },
+  "rows": [
+   {
+    "record_id": "quotes:quote_id:3ab46ce6f55e92ff",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "baru",
+    "fields": {
+     "quote_id": "3ab46ce6f55e92ff",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 26,
+     "tags": [
+      "inspirational",
+      "life",
+      "live",
+      "miracle",
+      "miracles"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:7f277a652b674ca9",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "baru",
+    "fields": {
+     "quote_id": "7f277a652b674ca9",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 14,
+     "tags": [
+      "adulthood",
+      "success",
+      "value"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:7e4cd92d2c94649f",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "baru",
+    "fields": {
+     "quote_id": "7e4cd92d2c94649f",
+     "author_name": "André Gide",
+     "author_slug": "Andre-Gide",
+     "author_goodreads_link": "/author/show/7617.Andr_Gide",
+     "quote_word_count": 19,
+     "tags": [
+      "life",
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:06c07dcc23cdac3a",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "baru",
+    "fields": {
+     "quote_id": "06c07dcc23cdac3a",
+     "author_name": "Thomas A. Edison",
+     "author_slug": "Thomas-A-Edison",
+     "author_goodreads_link": "/author/show/3091287.Thomas_A_Edison",
+     "quote_word_count": 12,
+     "tags": [
+      "edison",
+      "failure",
+      "inspirational",
+      "paraphrased"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:7ef174789679ede3",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "baru",
+    "fields": {
+     "quote_id": "7ef174789679ede3",
+     "author_name": "Steve Martin",
+     "author_slug": "Steve-Martin",
+     "author_goodreads_link": "/author/show/7103.Steve_Martin",
+     "quote_word_count": 9,
+     "tags": [
+      "humor",
+      "obvious",
+      "simile"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:505e27877275f2f0",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "baru",
+    "fields": {
+     "quote_id": "505e27877275f2f0",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 15,
+     "tags": [
+      "simplicity",
+      "understand"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:3fc4f7f7f89a2c54",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "baru",
+    "fields": {
+     "quote_id": "3fc4f7f7f89a2c54",
+     "author_name": "Bob Marley",
+     "author_slug": "Bob-Marley",
+     "author_goodreads_link": "/author/show/25241.Bob_Marley",
+     "quote_word_count": 138,
+     "tags": [
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:815f85b6fe9b416b",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "baru",
+    "fields": {
+     "quote_id": "815f85b6fe9b416b",
+     "author_name": "Douglas Adams",
+     "author_slug": "Douglas-Adams",
+     "author_goodreads_link": "/author/show/4.Douglas_Adams",
+     "quote_word_count": 22,
+     "tags": [
+      "life",
+      "navigation"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:1214bc948129a0d3",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "baru",
+    "fields": {
+     "quote_id": "1214bc948129a0d3",
+     "author_name": "Friedrich Nietzsche",
+     "author_slug": "Friedrich-Nietzsche",
+     "author_goodreads_link": "/author/show/1938.Friedrich_Nietzsche",
+     "quote_word_count": 16,
+     "tags": [
+      "friendship",
+      "lack-of-friendship",
+      "lack-of-love",
+      "love",
+      "marriage",
+      "unhappy-marriage"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:0bdf6f1ccf4f8d43",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "baru",
+    "fields": {
+     "quote_id": "0bdf6f1ccf4f8d43",
+     "author_name": "Pablo Neruda",
+     "author_slug": "Pablo-Neruda",
+     "author_goodreads_link": "/author/show/4026.Pablo_Neruda",
+     "quote_word_count": 66,
+     "tags": [
+      "love",
+      "poetry"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:70bfc7c998276705",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "baru",
+    "fields": {
+     "quote_id": "70bfc7c998276705",
+     "author_name": "Ralph Waldo Emerson",
+     "author_slug": "Ralph-Waldo-Emerson",
+     "author_goodreads_link": "/author/show/12080.Ralph_Waldo_Emerson",
+     "quote_word_count": 12,
+     "tags": [
+      "happiness"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:8d6874a87f708f6e",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "baru",
+    "fields": {
+     "quote_id": "8d6874a87f708f6e",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 25,
+     "tags": [
+      "children",
+      "fairy-tales"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:0963c099f11e3521",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "baru",
+    "fields": {
+     "quote_id": "0963c099f11e3521",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 32,
+     "tags": []
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:600f3cfdf6e27d79",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "baru",
+    "fields": {
+     "quote_id": "600f3cfdf6e27d79",
+     "author_name": "Dr. Seuss",
+     "author_slug": "Dr-Seuss",
+     "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+     "quote_word_count": 21,
+     "tags": [
+      "learning",
+      "reading",
+      "seuss"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:42dbcc26ad16dbc4",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "baru",
+    "fields": {
+     "quote_id": "42dbcc26ad16dbc4",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 21,
+     "tags": [
+      "dumbledore"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:582bcc87c51d8040",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "baru",
+    "fields": {
+     "quote_id": "582bcc87c51d8040",
+     "author_name": "Bob Marley",
+     "author_slug": "Bob-Marley",
+     "author_goodreads_link": "/author/show/25241.Bob_Marley",
+     "quote_word_count": 19,
+     "tags": [
+      "friendship"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:7e10db236efd8633",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "baru",
+    "fields": {
+     "quote_id": "7e10db236efd8633",
+     "author_name": "Mother Teresa",
+     "author_slug": "Mother-Teresa",
+     "author_goodreads_link": "/author/show/838305.Mother_Teresa",
+     "quote_word_count": 17,
+     "tags": [
+      "misattributed-to-mother-teresa",
+      "paraphrased"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:8c68f001dceab9c1",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "baru",
+    "fields": {
+     "quote_id": "8c68f001dceab9c1",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 11,
+     "tags": [
+      "death",
+      "inspirational"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:05b7597c2165793e",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "baru",
+    "fields": {
+     "quote_id": "05b7597c2165793e",
+     "author_name": "Charles M. Schulz",
+     "author_slug": "Charles-M-Schulz",
+     "author_goodreads_link": "/author/show/209672.Charles_M_Schulz",
+     "quote_word_count": 14,
+     "tags": [
+      "chocolate",
+      "food",
+      "humor"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:80af52094e8ae74d",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "baru",
+    "fields": {
+     "quote_id": "80af52094e8ae74d",
+     "author_name": "Jorge Luis Borges",
+     "author_slug": "Jorge-Luis-Borges",
+     "author_goodreads_link": "/author/show/500.Jorge_Luis_Borges",
+     "quote_word_count": 12,
+     "tags": [
+      "books",
+      "library"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:0c49c523c6c8fc75",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "baru",
+    "fields": {
+     "quote_id": "0c49c523c6c8fc75",
+     "author_name": "C.S. Lewis",
+     "author_slug": "C-S-Lewis",
+     "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
+     "quote_word_count": 18,
+     "tags": [
+      "books",
+      "inspirational",
+      "reading",
+      "tea"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:202e048736df51bf",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "baru",
+    "fields": {
+     "quote_id": "202e048736df51bf",
+     "author_name": "Marilyn Monroe",
+     "author_slug": "Marilyn-Monroe",
+     "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+     "quote_word_count": 13,
+     "tags": []
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:5b2a8747ee7f1291",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "baru",
+    "fields": {
+     "quote_id": "5b2a8747ee7f1291",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 14,
+     "tags": [
+      "life",
+      "simile"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:226a9c4c7c33807e",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "baru",
+    "fields": {
+     "quote_id": "226a9c4c7c33807e",
+     "author_name": "Marilyn Monroe",
+     "author_slug": "Marilyn-Monroe",
+     "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+     "quote_word_count": 24,
+     "tags": [
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:4f7e3c8a9663cb3f",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "baru",
+    "fields": {
+     "quote_id": "4f7e3c8a9663cb3f",
+     "author_name": "Marilyn Monroe",
+     "author_slug": "Marilyn-Monroe",
+     "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+     "quote_word_count": 32,
+     "tags": [
+      "attributed-no-source"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:8949319e9b676759",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "baru",
+    "fields": {
+     "quote_id": "8949319e9b676759",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 31,
+     "tags": [
+      "music"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:71a2e41a9861048b",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "baru",
+    "fields": {
+     "quote_id": "71a2e41a9861048b",
+     "author_name": "Stephenie Meyer",
+     "author_slug": "Stephenie-Meyer",
+     "author_goodreads_link": "/author/show/941441.Stephenie_Meyer",
+     "quote_word_count": 7,
+     "tags": [
+      "drug",
+      "romance",
+      "simile"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:1df8efc3fcb39088",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "baru",
+    "fields": {
+     "quote_id": "1df8efc3fcb39088",
+     "author_name": "Ernest Hemingway",
+     "author_slug": "Ernest-Hemingway",
+     "author_goodreads_link": "/author/show/1455.Ernest_Hemingway",
+     "quote_word_count": 9,
+     "tags": [
+      "books",
+      "friends",
+      "novelist-quotes"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:614d4702ae253812",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "baru",
+    "fields": {
+     "quote_id": "614d4702ae253812",
+     "author_name": "Helen Keller",
+     "author_slug": "Helen-Keller",
+     "author_goodreads_link": "/author/show/7275.Helen_Keller",
+     "quote_word_count": 31,
+     "tags": [
+      "inspirational"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:54a71e5b8821498a",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "baru",
+    "fields": {
+     "quote_id": "54a71e5b8821498a",
+     "author_name": "Suzanne Collins",
+     "author_slug": "Suzanne-Collins",
+     "author_goodreads_link": "/author/show/153394.Suzanne_Collins",
+     "quote_word_count": 17,
+     "tags": [
+      "humor"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:74afa77067bd270c",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "baru",
+    "fields": {
+     "quote_id": "74afa77067bd270c",
+     "author_name": "Mark Twain",
+     "author_slug": "Mark-Twain",
+     "author_goodreads_link": "/author/show/1244.Mark_Twain",
+     "quote_word_count": 10,
+     "tags": [
+      "education"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:2f6f68135aad9a05",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "baru",
+    "fields": {
+     "quote_id": "2f6f68135aad9a05",
+     "author_name": "Dr. Seuss",
+     "author_slug": "Dr-Seuss",
+     "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+     "quote_word_count": 41,
+     "tags": [
+      "troubles"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:48caabecc4a94526",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "48caabecc4a94526",
+     "author_name": "Alfred Tennyson",
+     "author_slug": "Alfred-Tennyson",
+     "author_goodreads_link": "/author/show/13638502.Alfred_Tennyson",
+     "quote_word_count": 18,
+     "tags": [
+      "friendship",
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:8327e27914ead7ee",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "8327e27914ead7ee",
+     "author_name": "Charles Bukowski",
+     "author_slug": "Charles-Bukowski",
+     "author_goodreads_link": "/author/show/13275.Charles_Bukowski",
+     "quote_word_count": 12,
+     "tags": [
+      "humor"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:7b24f7b38795c6d2",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "7b24f7b38795c6d2",
+     "author_name": "Terry Pratchett",
+     "author_slug": "Terry-Pratchett",
+     "author_goodreads_link": "/author/show/1654.Terry_Pratchett",
+     "quote_word_count": 24,
+     "tags": [
+      "humor",
+      "open-mind",
+      "thinking"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:6019716e4fb6b777",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "6019716e4fb6b777",
+     "author_name": "J.D. Salinger",
+     "author_slug": "J-D-Salinger",
+     "author_goodreads_link": "/author/show/819789.J_D_Salinger",
+     "quote_word_count": 47,
+     "tags": [
+      "authors",
+      "books",
+      "literature",
+      "reading",
+      "writing"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:1cc6b3314d0e9580",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "1cc6b3314d0e9580",
+     "author_name": "George Carlin",
+     "author_slug": "George-Carlin",
+     "author_goodreads_link": "/author/show/22782.George_Carlin",
+     "quote_word_count": 16,
+     "tags": [
+      "humor",
+      "insanity",
+      "lies",
+      "lying",
+      "self-indulgence",
+      "truth"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:18b40677f3d553aa",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "18b40677f3d553aa",
+     "author_name": "John Lennon",
+     "author_slug": "John-Lennon",
+     "author_goodreads_link": "/author/show/19968.John_Lennon",
+     "quote_word_count": 25,
+     "tags": [
+      "beatles",
+      "connection",
+      "dreamers",
+      "dreaming",
+      "dreams",
+      "hope",
+      "inspirational",
+      "peace"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:483d56277b5de6fe",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "483d56277b5de6fe",
+     "author_name": "W.C. Fields",
+     "author_slug": "W-C-Fields",
+     "author_goodreads_link": "/author/show/82951.W_C_Fields",
+     "quote_word_count": 11,
+     "tags": [
+      "humor",
+      "sinister"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:7cc8b506e7b04735",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "7cc8b506e7b04735",
+     "author_name": "Ayn Rand",
+     "author_slug": "Ayn-Rand",
+     "author_goodreads_link": "/author/show/432.Ayn_Rand",
+     "quote_word_count": 16,
+     "tags": []
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:5d07f52943ee4a64",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "baru",
+    "fields": {
+     "quote_id": "5d07f52943ee4a64",
+     "author_name": "Mark Twain",
+     "author_slug": "Mark-Twain",
+     "author_goodreads_link": "/author/show/1244.Mark_Twain",
+     "quote_word_count": 10,
+     "tags": [
+      "books",
+      "classic",
+      "reading"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:023d50ad7e325887",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "baru",
+    "fields": {
+     "quote_id": "023d50ad7e325887",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 12,
+     "tags": [
+      "mistakes"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:58171a6b874518ba",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "baru",
+    "fields": {
+     "quote_id": "58171a6b874518ba",
+     "author_name": "Jane Austen",
+     "author_slug": "Jane-Austen",
+     "author_goodreads_link": "/author/show/1265.Jane_Austen",
+     "quote_word_count": 19,
+     "tags": [
+      "humor",
+      "love",
+      "romantic",
+      "women"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:78c7ec9cdd249754",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "baru",
+    "fields": {
+     "quote_id": "78c7ec9cdd249754",
+     "author_name": "C.S. Lewis",
+     "author_slug": "C-S-Lewis",
+     "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
+     "quote_word_count": 25,
+     "tags": [
+      "god"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:1cdc1b2bdaa60994",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "baru",
+    "fields": {
+     "quote_id": "1cdc1b2bdaa60994",
+     "author_name": "Mark Twain",
+     "author_slug": "Mark-Twain",
+     "author_goodreads_link": "/author/show/1244.Mark_Twain",
+     "quote_word_count": 17,
+     "tags": [
+      "misattributed-mark-twain",
+      "truth"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:0e1b2b07fe4df78d",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "baru",
+    "fields": {
+     "quote_id": "0e1b2b07fe4df78d",
+     "author_name": "C.S. Lewis",
+     "author_slug": "C-S-Lewis",
+     "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
+     "quote_word_count": 26,
+     "tags": [
+      "christianity",
+      "faith",
+      "religion",
+      "sun"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:5f348a4fce123850",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "baru",
+    "fields": {
+     "quote_id": "5f348a4fce123850",
+     "author_name": "J.M. Barrie",
+     "author_slug": "J-M-Barrie",
+     "author_goodreads_link": "/author/show/5255014.J_M_Barrie",
+     "quote_word_count": 8,
+     "tags": [
+      "adventure",
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:0c1dfb764eac9b6c",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "baru",
+    "fields": {
+     "quote_id": "0c1dfb764eac9b6c",
+     "author_name": "Harper Lee",
+     "author_slug": "Harper-Lee",
+     "author_goodreads_link": "/author/show/1825.Harper_Lee",
+     "quote_word_count": 27,
+     "tags": [
+      "better-life-empathy"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:4ac18789bb97bcdf",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "baru",
+    "fields": {
+     "quote_id": "4ac18789bb97bcdf",
+     "author_name": "Madeleine L'Engle",
+     "author_slug": "Madeleine-LEngle",
+     "author_goodreads_link": "/author/show/106.Madeleine_L_Engle",
+     "quote_word_count": 27,
+     "tags": [
+      "books",
+      "children",
+      "difficult",
+      "grown-ups",
+      "write",
+      "writers",
+      "writing"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:3c188e617702dda2",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "baru",
+    "fields": {
+     "quote_id": "3c188e617702dda2",
+     "author_name": "Dr. Seuss",
+     "author_slug": "Dr-Seuss",
+     "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+     "quote_word_count": 8,
+     "tags": [
+      "inspirational"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:d3a0b108aa2c0249",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "d3a0b108aa2c0249",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 21,
+     "tags": [
+      "change",
+      "deep-thoughts",
+      "thinking",
+      "world"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:d2b3e1fbdeaefb80",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "d2b3e1fbdeaefb80",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 16,
+     "tags": [
+      "abilities",
+      "choices"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:9f4ddaf18d213677",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "9f4ddaf18d213677",
+     "author_name": "Jane Austen",
+     "author_slug": "Jane-Austen",
+     "author_goodreads_link": "/author/show/1265.Jane_Austen",
+     "quote_word_count": 19,
+     "tags": [
+      "aliteracy",
+      "books",
+      "classic",
+      "humor"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:e1255fbc18dc1106",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "e1255fbc18dc1106",
+     "author_name": "Marilyn Monroe",
+     "author_slug": "Marilyn-Monroe",
+     "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+     "quote_word_count": 16,
+     "tags": [
+      "be-yourself",
+      "inspirational"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:fd080f3dc33ae804",
+    "url": "https://quotes.toscrape.com/api/quotes?page=1",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "fd080f3dc33ae804",
+     "author_name": "Eleanor Roosevelt",
+     "author_slug": "Eleanor-Roosevelt",
+     "author_goodreads_link": "/author/show/44566.Eleanor_Roosevelt",
+     "quote_word_count": 19,
+     "tags": [
+      "misattributed-eleanor-roosevelt"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:c077d83aaa0287c3",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "c077d83aaa0287c3",
+     "author_name": "Marilyn Monroe",
+     "author_slug": "Marilyn-Monroe",
+     "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+     "quote_word_count": 201,
+     "tags": [
+      "friends",
+      "heartbreak",
+      "inspirational",
+      "life",
+      "love",
+      "sisters"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a4af2c45b091dd9f",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a4af2c45b091dd9f",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 23,
+     "tags": [
+      "courage",
+      "friends"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:e5e59232d0eae875",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "e5e59232d0eae875",
+     "author_name": "Dr. Seuss",
+     "author_slug": "Dr-Seuss",
+     "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+     "quote_word_count": 16,
+     "tags": [
+      "fantasy"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:d016bd6c3200156c",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "d016bd6c3200156c",
+     "author_name": "Elie Wiesel",
+     "author_slug": "Elie-Wiesel",
+     "author_goodreads_link": "/author/show/1049.Elie_Wiesel",
+     "quote_word_count": 37,
+     "tags": [
+      "activism",
+      "apathy",
+      "hate",
+      "indifference",
+      "inspirational",
+      "love",
+      "opposite",
+      "philosophy"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:906071c14a830b3e",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "906071c14a830b3e",
+     "author_name": "Mark Twain",
+     "author_slug": "Mark-Twain",
+     "author_goodreads_link": "/author/show/1244.Mark_Twain",
+     "quote_word_count": 13,
+     "tags": [
+      "books",
+      "contentment",
+      "friends",
+      "friendship",
+      "life"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:ba11a76a00015b73",
+    "url": "https://quotes.toscrape.com/api/quotes?page=2",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "ba11a76a00015b73",
+     "author_name": "Allen Saunders",
+     "author_slug": "Allen-Saunders",
+     "author_goodreads_link": "/author/show/276029.Allen_Saunders",
+     "quote_word_count": 12,
+     "tags": [
+      "fate",
+      "life",
+      "misattributed-john-lennon",
+      "planning",
+      "plans"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:c60202413395296f",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "c60202413395296f",
+     "author_name": "Mother Teresa",
+     "author_slug": "Mother-Teresa",
+     "author_goodreads_link": "/author/show/838305.Mother_Teresa",
+     "quote_word_count": 11,
+     "tags": [
+      "attributed-no-source"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:c5e6cf9d79722790",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "c5e6cf9d79722790",
+     "author_name": "Garrison Keillor",
+     "author_slug": "Garrison-Keillor",
+     "author_goodreads_link": "/author/show/2014.Garrison_Keillor",
+     "quote_word_count": 24,
+     "tags": [
+      "humor",
+      "religion"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:c566273d180762e4",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "c566273d180762e4",
+     "author_name": "Jim Henson",
+     "author_slug": "Jim-Henson",
+     "author_goodreads_link": "/author/show/4427.Jim_Henson",
+     "quote_word_count": 27,
+     "tags": [
+      "humor"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:8e2d02ba758326a8",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "8e2d02ba758326a8",
+     "author_name": "Dr. Seuss",
+     "author_slug": "Dr-Seuss",
+     "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+     "quote_word_count": 19,
+     "tags": [
+      "comedy",
+      "life",
+      "yourself"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:ddae359dcafb09ce",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "ddae359dcafb09ce",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 13,
+     "tags": [
+      "imagination"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:9d2942c633e858df",
+    "url": "https://quotes.toscrape.com/api/quotes?page=3",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "9d2942c633e858df",
+     "author_name": "Bob Marley",
+     "author_slug": "Bob-Marley",
+     "author_goodreads_link": "/author/show/25241.Bob_Marley",
+     "quote_word_count": 13,
+     "tags": [
+      "music"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:c4626eb59dc59ccb",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "c4626eb59dc59ccb",
+     "author_name": "William Nicholson",
+     "author_slug": "William-Nicholson",
+     "author_goodreads_link": "/author/show/46130.William_Nicholson",
+     "quote_word_count": 7,
+     "tags": [
+      "misattributed-to-c-s-lewis",
+      "reading"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:99c86b71452a599b",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "99c86b71452a599b",
+     "author_name": "Albert Einstein",
+     "author_slug": "Albert-Einstein",
+     "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+     "quote_word_count": 9,
+     "tags": [
+      "knowledge",
+      "learning",
+      "understanding",
+      "wisdom"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a28337880d4a8954",
+    "url": "https://quotes.toscrape.com/api/quotes?page=4",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a28337880d4a8954",
+     "author_name": "George Eliot",
+     "author_slug": "George-Eliot",
+     "author_goodreads_link": "/author/show/173.George_Eliot",
+     "quote_word_count": 12,
+     "tags": [
+      "inspirational"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:f82364ed5f921fb4",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "f82364ed5f921fb4",
+     "author_name": "George R.R. Martin",
+     "author_slug": "George-R-R-Martin",
+     "author_goodreads_link": "/author/show/346732.George_R_R_Martin",
+     "quote_word_count": 19,
+     "tags": [
+      "read",
+      "readers",
+      "reading",
+      "reading-books"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:8f44bb4f5b5c5c43",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "8f44bb4f5b5c5c43",
+     "author_name": "Marilyn Monroe",
+     "author_slug": "Marilyn-Monroe",
+     "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+     "quote_word_count": 13,
+     "tags": [
+      "girls",
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:c9a634ffec30362b",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "c9a634ffec30362b",
+     "author_name": "Marilyn Monroe",
+     "author_slug": "Marilyn-Monroe",
+     "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+     "quote_word_count": 17,
+     "tags": [
+      "attributed-no-source"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a67a27aea3544b18",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a67a27aea3544b18",
+     "author_name": "Martin Luther King Jr.",
+     "author_slug": "Martin-Luther-King-Jr",
+     "author_goodreads_link": "/author/show/23924.Martin_Luther_King_Jr_",
+     "quote_word_count": 9,
+     "tags": [
+      "hope",
+      "inspirational"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:d2d532df8edd37e5",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "d2d532df8edd37e5",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 13,
+     "tags": [
+      "dumbledore"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:9d129e7b5e465d44",
+    "url": "https://quotes.toscrape.com/api/quotes?page=5",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "9d129e7b5e465d44",
+     "author_name": "James Baldwin",
+     "author_slug": "James-Baldwin",
+     "author_goodreads_link": "/author/show/10427.James_Baldwin",
+     "quote_word_count": 27,
+     "tags": [
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:bea88c226c912eff",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "bea88c226c912eff",
+     "author_name": "Jane Austen",
+     "author_slug": "Jane-Austen",
+     "author_goodreads_link": "/author/show/1265.Jane_Austen",
+     "quote_word_count": 28,
+     "tags": [
+      "friendship",
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a60544dc3701fbe4",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a60544dc3701fbe4",
+     "author_name": "Eleanor Roosevelt",
+     "author_slug": "Eleanor-Roosevelt",
+     "author_goodreads_link": "/author/show/44566.Eleanor_Roosevelt",
+     "quote_word_count": 8,
+     "tags": [
+      "attributed",
+      "fear",
+      "inspiration"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:e09fae65d896c831",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "e09fae65d896c831",
+     "author_name": "Haruki Murakami",
+     "author_slug": "Haruki-Murakami",
+     "author_goodreads_link": "/author/show/3354.Haruki_Murakami",
+     "quote_word_count": 20,
+     "tags": [
+      "books",
+      "thought"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:f82966dd3f447b5b",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "f82966dd3f447b5b",
+     "author_name": "Alexandre Dumas fils",
+     "author_slug": "Alexandre-Dumas-fils",
+     "author_goodreads_link": "/author/show/3186713.Alexandre_Dumas_fils",
+     "quote_word_count": 11,
+     "tags": [
+      "misattributed-to-einstein"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:8e117b507eb5ba72",
+    "url": "https://quotes.toscrape.com/api/quotes?page=6",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "8e117b507eb5ba72",
+     "author_name": "George Bernard Shaw",
+     "author_slug": "George-Bernard-Shaw",
+     "author_goodreads_link": "/author/show/5217.George_Bernard_Shaw",
+     "quote_word_count": 10,
+     "tags": [
+      "inspirational",
+      "life",
+      "yourself"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:e7f4d612fbca5d53",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "e7f4d612fbca5d53",
+     "author_name": "Charles Bukowski",
+     "author_slug": "Charles-Bukowski",
+     "author_goodreads_link": "/author/show/13275.Charles_Bukowski",
+     "quote_word_count": 44,
+     "tags": [
+      "alcohol"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:9c1c0636b3a2983d",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "9c1c0636b3a2983d",
+     "author_name": "Suzanne Collins",
+     "author_slug": "Suzanne-Collins",
+     "author_goodreads_link": "/author/show/153394.Suzanne_Collins",
+     "quote_word_count": 13,
+     "tags": [
+      "the-hunger-games"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:cc7d7e4b752c865c",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "cc7d7e4b752c865c",
+     "author_name": "C.S. Lewis",
+     "author_slug": "C-S-Lewis",
+     "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
+     "quote_word_count": 92,
+     "tags": [
+      "love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:ef5a321c2b81b709",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "ef5a321c2b81b709",
+     "author_name": "J.R.R. Tolkien",
+     "author_slug": "J-R-R-Tolkien",
+     "author_goodreads_link": "/author/show/656983.J_R_R_Tolkien",
+     "quote_word_count": 7,
+     "tags": [
+      "bilbo",
+      "journey",
+      "lost",
+      "quest",
+      "travel",
+      "wander"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:c911d19db79dcd30",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "c911d19db79dcd30",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 17,
+     "tags": [
+      "live-death-love"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:e35ec15298f0f9bd",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "e35ec15298f0f9bd",
+     "author_name": "Ernest Hemingway",
+     "author_slug": "Ernest-Hemingway",
+     "author_goodreads_link": "/author/show/1455.Ernest_Hemingway",
+     "quote_word_count": 16,
+     "tags": [
+      "good",
+      "writing"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:e34998d56d04f4b5",
+    "url": "https://quotes.toscrape.com/api/quotes?page=7",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "e34998d56d04f4b5",
+     "author_name": "Ralph Waldo Emerson",
+     "author_slug": "Ralph-Waldo-Emerson",
+     "author_goodreads_link": "/author/show/12080.Ralph_Waldo_Emerson",
+     "quote_word_count": 52,
+     "tags": [
+      "life",
+      "regrets"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:ab27d6ca57f1fc06",
+    "url": "https://quotes.toscrape.com/api/quotes?page=8",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "ab27d6ca57f1fc06",
+     "author_name": "Dr. Seuss",
+     "author_slug": "Dr-Seuss",
+     "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+     "quote_word_count": 22,
+     "tags": [
+      "humor",
+      "philosophy"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a04b4a9d0dfd4927",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a04b4a9d0dfd4927",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 46,
+     "tags": [
+      "integrity"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:d9991fa2fd85091b",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "d9991fa2fd85091b",
+     "author_name": "Jane Austen",
+     "author_slug": "Jane-Austen",
+     "author_goodreads_link": "/author/show/1265.Jane_Austen",
+     "quote_word_count": 42,
+     "tags": [
+      "books",
+      "library",
+      "reading"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a399692acc211f23",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a399692acc211f23",
+     "author_name": "Jane Austen",
+     "author_slug": "Jane-Austen",
+     "author_goodreads_link": "/author/show/1265.Jane_Austen",
+     "quote_word_count": 59,
+     "tags": [
+      "elizabeth-bennet",
+      "jane-austen"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:f2e783077f015449",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "f2e783077f015449",
+     "author_name": "C.S. Lewis",
+     "author_slug": "C-S-Lewis",
+     "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
+     "quote_word_count": 13,
+     "tags": [
+      "age",
+      "fairytales",
+      "growing-up"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a6339317fa1c11c2",
+    "url": "https://quotes.toscrape.com/api/quotes?page=9",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a6339317fa1c11c2",
+     "author_name": "Mark Twain",
+     "author_slug": "Mark-Twain",
+     "author_goodreads_link": "/author/show/1244.Mark_Twain",
+     "quote_word_count": 22,
+     "tags": [
+      "death",
+      "life"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:ea50528fae4eb055",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "ea50528fae4eb055",
+     "author_name": "J.K. Rowling",
+     "author_slug": "J-K-Rowling",
+     "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+     "quote_word_count": 19,
+     "tags": [
+      "truth"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a38bd2346befa470",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a38bd2346befa470",
+     "author_name": "Jimi Hendrix",
+     "author_slug": "Jimi-Hendrix",
+     "author_goodreads_link": "/author/show/7268.Jimi_Hendrix",
+     "quote_word_count": 25,
+     "tags": [
+      "death",
+      "life"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:ee710c1a1bf843b0",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "ee710c1a1bf843b0",
+     "author_name": "E.E. Cummings",
+     "author_slug": "E-E-Cummings",
+     "author_goodreads_link": "/author/show/10547.E_E_Cummings",
+     "quote_word_count": 12,
+     "tags": [
+      "courage"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:c2ddda2fb414d625",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "c2ddda2fb414d625",
+     "author_name": "Khaled Hosseini",
+     "author_slug": "Khaled-Hosseini",
+     "author_goodreads_link": "/author/show/569.Khaled_Hosseini",
+     "quote_word_count": 13,
+     "tags": [
+      "life"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:a20d7a1384668848",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "a20d7a1384668848",
+     "author_name": "Mark Twain",
+     "author_slug": "Mark-Twain",
+     "author_goodreads_link": "/author/show/1244.Mark_Twain",
+     "quote_word_count": 12,
+     "tags": [
+      "truth"
+     ]
+    }
+   },
+   {
+    "record_id": "quotes:quote_id:feef63f912dda3d4",
+    "url": "https://quotes.toscrape.com/api/quotes?page=10",
+    "status": "tetap",
+    "fields": {
+     "quote_id": "feef63f912dda3d4",
+     "author_name": "George R.R. Martin",
+     "author_slug": "George-R-R-Martin",
+     "author_goodreads_link": "/author/show/346732.George_R_R_Martin",
+     "quote_word_count": 18,
+     "tags": [
+      "books",
+      "mind"
+     ]
+    }
+   }
+  ]
+ },
+ {
+  "generated_at": "2026-08-28T08:13:27+07:00",
+  "target": "seo",
+  "snapshot_date": "2026-08-27",
+  "source": {
+   "name": "python-httpx.org",
+   "url": "https://www.python-httpx.org",
+   "attribution": "Dokumentasi HTTPX (proyek sumber terbuka). Hanya metadata SEO, bukan isi halaman."
+  },
+  "counts": {
+   "total": 23,
+   "added_today": 23,
+   "changed_today": 0,
+   "removed_today": 0
+  },
+  "insight": {
+   "model": null,
+   "text": null,
+   "reason": "panen ini dijalankan tanpa ringkasan AI",
+   "generated_at": null,
+   "input_tokens": 0,
+   "output_tokens": 0
+  },
+  "rows": [
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/",
+    "url": "https://www.python-httpx.org/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/",
+     "title": "HTTPX",
+     "h1": "HTTPX",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/",
+     "h2_count": 4,
+     "word_count": 416,
+     "link_count": 12,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/api/",
+    "url": "https://www.python-httpx.org/api/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/api/",
+     "title": "Developer Interface - HTTPX",
+     "h1": "Developer Interface",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/api/",
+     "h2_count": 9,
+     "word_count": 2201,
+     "link_count": 13,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/async/",
+    "url": "https://www.python-httpx.org/async/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/async/",
+     "title": "Async Support - HTTPX",
+     "h1": "Async Support",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/async/",
+     "h2_count": 4,
+     "word_count": 737,
+     "link_count": 11,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/code_of_conduct/",
+    "url": "https://www.python-httpx.org/code_of_conduct/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/code_of_conduct/",
+     "title": "Code of Conduct - HTTPX",
+     "h1": "Code of Conduct",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/code_of_conduct/",
+     "h2_count": 4,
+     "word_count": 637,
+     "link_count": 2,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/compatibility/",
+    "url": "https://www.python-httpx.org/compatibility/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/compatibility/",
+     "title": "Requests Compatibility - HTTPX",
+     "h1": "Requests Compatibility Guide",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/compatibility/",
+     "h2_count": 22,
+     "word_count": 1218,
+     "link_count": 14,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/contributing/",
+    "url": "https://www.python-httpx.org/contributing/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/contributing/",
+     "title": "Contributing - HTTPX",
+     "h1": "Contributing",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/contributing/",
+     "h2_count": 7,
+     "word_count": 1028,
+     "link_count": 16,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/environment_variables/",
+    "url": "https://www.python-httpx.org/environment_variables/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/environment_variables/",
+     "title": "Environment Variables - HTTPX",
+     "h1": "Environment Variables",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/environment_variables/",
+     "h2_count": 3,
+     "word_count": 294,
+     "link_count": 5,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/exceptions/",
+    "url": "https://www.python-httpx.org/exceptions/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/exceptions/",
+     "title": "Exceptions - HTTPX",
+     "h1": "Exceptions",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/exceptions/",
+     "h2_count": 2,
+     "word_count": 489,
+     "link_count": 1,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/http2/",
+    "url": "https://www.python-httpx.org/http2/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/http2/",
+     "title": "HTTP/2 Support - HTTPX",
+     "h1": "HTTP/2",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/http2/",
+     "h2_count": 2,
+     "word_count": 373,
+     "link_count": 1,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/logging/",
+    "url": "https://www.python-httpx.org/logging/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/logging/",
+     "title": "Logging - HTTPX",
+     "h1": "Logging",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/logging/",
+     "h2_count": 0,
+     "word_count": 369,
+     "link_count": 0,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/quickstart/",
+    "url": "https://www.python-httpx.org/quickstart/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/quickstart/",
+     "title": "QuickStart - HTTPX",
+     "h1": "QuickStart",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/quickstart/",
+     "h2_count": 17,
+     "word_count": 1742,
+     "link_count": 3,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/third_party_packages/",
+    "url": "https://www.python-httpx.org/third_party_packages/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/third_party_packages/",
+     "title": "Third Party Packages - HTTPX",
+     "h1": "Third Party Packages",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/third_party_packages/",
+     "h2_count": 3,
+     "word_count": 250,
+     "link_count": 33,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/troubleshooting/",
+    "url": "https://www.python-httpx.org/troubleshooting/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/troubleshooting/",
+     "title": "Troubleshooting - HTTPX",
+     "h1": "Troubleshooting",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/troubleshooting/",
+     "h2_count": 1,
+     "word_count": 230,
+     "link_count": 6,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/authentication/",
+    "url": "https://www.python-httpx.org/advanced/authentication/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/authentication/",
+     "title": "Authentication - HTTPX",
+     "h1": "Authentication",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/authentication/",
+     "h2_count": 4,
+     "word_count": 945,
+     "link_count": 2,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/clients/",
+    "url": "https://www.python-httpx.org/advanced/clients/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/clients/",
+     "title": "Clients - HTTPX",
+     "h1": "Clients",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/clients/",
+     "h2_count": 10,
+     "word_count": 1308,
+     "link_count": 14,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/event-hooks/",
+    "url": "https://www.python-httpx.org/advanced/event-hooks/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/event-hooks/",
+     "title": "Event Hooks - HTTPX",
+     "h1": "Event Hooks",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/event-hooks/",
+     "h2_count": 0,
+     "word_count": 301,
+     "link_count": 0,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/extensions/",
+    "url": "https://www.python-httpx.org/advanced/extensions/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/extensions/",
+     "title": "Extensions - HTTPX",
+     "h1": "Extensions",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/extensions/",
+     "h2_count": 2,
+     "word_count": 1066,
+     "link_count": 3,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/proxies/",
+    "url": "https://www.python-httpx.org/advanced/proxies/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/proxies/",
+     "title": "Proxies - HTTPX",
+     "h1": "Proxies",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/proxies/",
+     "h2_count": 4,
+     "word_count": 437,
+     "link_count": 5,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/resource-limits/",
+    "url": "https://www.python-httpx.org/advanced/resource-limits/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/resource-limits/",
+     "title": "Resource Limits - HTTPX",
+     "h1": "Resource Limits",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/resource-limits/",
+     "h2_count": 0,
+     "word_count": 73,
+     "link_count": 0,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/ssl/",
+    "url": "https://www.python-httpx.org/advanced/ssl/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/ssl/",
+     "title": "SSL - HTTPX",
+     "h1": "SSL",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/ssl/",
+     "h2_count": 0,
+     "word_count": 406,
+     "link_count": 8,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/text-encodings/",
+    "url": "https://www.python-httpx.org/advanced/text-encodings/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/text-encodings/",
+     "title": "Text Encodings - HTTPX",
+     "h1": "Text Encodings",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/text-encodings/",
+     "h2_count": 3,
+     "word_count": 495,
+     "link_count": 3,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/timeouts/",
+    "url": "https://www.python-httpx.org/advanced/timeouts/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/timeouts/",
+     "title": "Timeouts - HTTPX",
+     "h1": "Timeouts",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/timeouts/",
+     "h2_count": 3,
+     "word_count": 386,
+     "link_count": 0,
+     "og_title": null
+    }
+   },
+   {
+    "record_id": "seo:url:https://www.python-httpx.org/advanced/transports/",
+    "url": "https://www.python-httpx.org/advanced/transports/",
+    "status": "baru",
+    "fields": {
+     "url": "https://www.python-httpx.org/advanced/transports/",
+     "title": "Transports - HTTPX",
+     "h1": "Transports",
+     "meta_description": "A next-generation HTTP client for Python.",
+     "canonical": "https://www.python-httpx.org/advanced/transports/",
+     "h2_count": 6,
+     "word_count": 1582,
+     "link_count": 8,
+     "og_title": null
+    }
+   }
+  ]
+ }
+]
+</script>
+<script>
+(function () {
+  "use strict";
+  var data = JSON.parse(document.getElementById("dw-data").textContent);
+  if (!data.length) { document.getElementById("count").textContent = "belum ada data"; return; }
+
+  var active = 0, sortKey = null, sortDir = 1, query = "";
+  var tabs = document.getElementById("tabs");
+  var head = document.getElementById("head");
+  var body = document.getElementById("body");
+
+  function text(node, value) { node.textContent = value; }
+  function num(value) { return (value === null || value === undefined) ? "—" : String(value); }
+
+  function columns(payload) {
+    var keys = payload.rows.length ? Object.keys(payload.rows[0].fields) : [];
+    return [{ key: "status", label: "status" }].concat(keys.map(function (k) {
+      return { key: k, label: k.replace(/_/g, " ") };
+    })).concat([{ key: "url", label: "tautan" }]);
+  }
+
+  function cellValue(row, key) {
+    if (key === "status") return row.status;
+    if (key === "url") return row.url;
+    var value = row.fields[key];
+    return Array.isArray(value) ? value.join(", ") : value;
+  }
+
+  function renderTabs() {
+    tabs.innerHTML = "";
+    data.forEach(function (payload, index) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", index === active ? "true" : "false");
+      text(button, payload.source.name);
+      button.addEventListener("click", function () {
+        active = index; sortKey = null; sortDir = 1; renderAll();
+      });
+      tabs.appendChild(button);
+    });
+  }
+
+  function renderSummary(payload) {
+    var link = document.createElement("a");
+    link.href = payload.source.url;
+    link.rel = "noopener noreferrer nofollow";
+    link.target = "_blank";
+    text(link, payload.source.name);
+    var line = document.getElementById("source-line");
+    line.innerHTML = "";
+    line.appendChild(link);
+    line.appendChild(document.createTextNode(" — " + payload.source.attribution));
+
+    var cards = document.getElementById("cards");
+    cards.innerHTML = "";
+    [["total record", payload.counts.total], ["baru hari ini", payload.counts.added_today],
+     ["berubah", payload.counts.changed_today], ["hilang", payload.counts.removed_today]
+    ].forEach(function (pair) {
+      var card = document.createElement("div");
+      card.className = "card";
+      var n = document.createElement("div"); n.className = "n"; text(n, pair[1]);
+      var k = document.createElement("div"); k.className = "k"; text(k, pair[0]);
+      card.appendChild(n); card.appendChild(k); cards.appendChild(card);
+    });
+
+    var insight = payload.insight || {};
+    text(document.getElementById("insight"),
+      insight.text || "Ringkasan AI tidak dibuat untuk panen ini — " +
+      (insight.reason || "dijalankan tanpa LLM") + ". Angka dan tabel di halaman ini tetap dari data asli.");
+    text(document.getElementById("insight-meta"),
+      "Model: " + (insight.model || "tidak dipanggil") +
+      " · token masuk " + num(insight.input_tokens) + ", token keluar " + num(insight.output_tokens) +
+      " · maksimal satu panggilan per situs per hari.");
+
+    text(document.getElementById("stamp"),
+      "Dibuat " + payload.generated_at + " (WIB), dari panen " + payload.snapshot_date);
+  }
+
+  function renderTable(payload) {
+    var cols = columns(payload);
+    head.innerHTML = "";
+    cols.forEach(function (col) {
+      var th = document.createElement("th");
+      th.scope = "col";
+      text(th, col.label + (sortKey === col.key ? (sortDir > 0 ? " ↑" : " ↓") : ""));
+      th.addEventListener("click", function () {
+        if (sortKey === col.key) { sortDir = -sortDir; } else { sortKey = col.key; sortDir = 1; }
+        renderTable(payload);
+      });
+      head.appendChild(th);
+    });
+
+    var rows = payload.rows.filter(function (row) {
+      if (!query) return true;
+      return cols.some(function (col) {
+        var value = cellValue(row, col.key);
+        return value !== null && value !== undefined &&
+               String(value).toLowerCase().indexOf(query) !== -1;
+      });
+    });
+
+    if (sortKey) {
+      rows = rows.slice().sort(function (a, b) {
+        var x = cellValue(a, sortKey), y = cellValue(b, sortKey);
+        if (x === null || x === undefined) return 1;
+        if (y === null || y === undefined) return -1;
+        if (typeof x === "number" && typeof y === "number") return (x - y) * sortDir;
+        return String(x).localeCompare(String(y), "id") * sortDir;
+      });
+    }
+
+    body.innerHTML = "";
+    rows.forEach(function (row) {
+      var tr = document.createElement("tr");
+      cols.forEach(function (col) {
+        var td = document.createElement("td");
+        if (col.key === "status") {
+          var span = document.createElement("span");
+          span.className = "st st-" + row.status;
+          text(span, row.status);
+          td.appendChild(span);
+        } else if (col.key === "url") {
+          var a = document.createElement("a");
+          a.href = row.url; a.rel = "noopener noreferrer nofollow"; a.target = "_blank";
+          text(a, "sumber");
+          td.appendChild(a);
+        } else {
+          var value = cellValue(row, col.key);
+          td.textContent = (value === null || value === undefined || value === "") ? "—" : String(value);
+          if (String(value).length > 40) td.className = "wrap";
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+
+    text(document.getElementById("count"),
+      rows.length + " dari " + payload.rows.length + " baris ditampilkan (maksimal 200 per situs)");
+  }
+
+  function renderAll() {
+    var payload = data[active];
+    renderTabs();
+    renderSummary(payload);
+    renderTable(payload);
+  }
+
+  document.getElementById("q").addEventListener("input", function (event) {
+    query = event.target.value.trim().toLowerCase();
+    renderTable(data[active]);
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>

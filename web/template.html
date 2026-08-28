@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>DriftWatch — pemantauan perubahan situs harian</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfbfa; --panel: #ffffff; --ink: #1b1b1a; --muted: #6a6a68;
+    --line: #e3e2df; --accent: #7a5cff; --baru: #1a7f52; --berubah: #9a6400;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16161a; --panel: #1e1e24; --ink: #eceaf3; --muted: #a0a0ad;
+      --line: #313139; --accent: #a58bff; --baru: #4fd39a; --berubah: #f0b64a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 1.5rem 1rem 3rem; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 62rem; margin: 0 auto; }
+  h1 { font-size: 1.45rem; margin: 0 0 .2rem; letter-spacing: -.01em; }
+  h2 { font-size: .95rem; margin: 0 0 .6rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  a { color: var(--accent); }
+  .sub { color: var(--muted); margin: 0 0 1.2rem; font-size: .93rem; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 1rem; }
+  .ethics { font-size: .87rem; color: var(--muted); margin: .4rem 0 0; }
+  .tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+  .tabs button {
+    font: inherit; font-size: .9rem; padding: .4rem .85rem; cursor: pointer;
+    background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+  }
+  .tabs button[aria-selected="true"] { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .cards { display: grid; gap: .7rem; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); margin-bottom: 1rem; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .8rem .9rem; }
+  .card .n { font-size: 1.6rem; font-weight: 650; letter-spacing: -.02em; }
+  .card .k { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .ai-tag {
+    display: inline-block; font-size: .72rem; letter-spacing: .05em; text-transform: uppercase;
+    border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: .1rem .5rem; margin-bottom: .5rem;
+  }
+  .controls { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .7rem; }
+  .controls input {
+    font: inherit; font-size: .92rem; padding: .45rem .7rem; flex: 1 1 14rem;
+    background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 8px;
+  }
+  .count { font-size: .85rem; color: var(--muted); }
+  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th, td { text-align: left; padding: .5rem .7rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { cursor: pointer; user-select: none; position: sticky; top: 0; background: var(--panel); font-size: .78rem;
+       text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  th:hover { color: var(--accent); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.wrap { white-space: normal; min-width: 16rem; }
+  .st { font-size: .76rem; font-weight: 650; text-transform: uppercase; letter-spacing: .04em; }
+  .st-baru { color: var(--baru); }
+  .st-berubah { color: var(--berubah); }
+  .st-tetap { color: var(--muted); }
+  footer { color: var(--muted); font-size: .85rem; margin-top: 1.4rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>DriftWatch</h1>
+  <p class="sub">Pipeline pemantauan perubahan situs. Setiap hari data dipanen, dibandingkan dengan
+  panen kemarin, lalu perubahannya dilaporkan.</p>
+
+  <section class="panel" id="source-panel">
+    <h2>Sumber data</h2>
+    <p id="source-line"></p>
+    <p class="ethics">Dikumpulkan dengan menghormati <code>robots.txt</code>, 1 permintaan per detik per
+    situs, maksimal 3 permintaan bersamaan, dan User-Agent jujur yang memuat alamat kontak. Halaman ini
+    hanya menampilkan <strong>metadata</strong> beserta tautan ke sumber aslinya, bukan isi karya. Pemilik
+    situs yang keberatan dapat meminta penghapusan lewat alamat kontak pada User-Agent.</p>
+  </section>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="cards" id="cards"></div>
+
+  <section class="panel">
+    <span class="ai-tag">Ringkasan dibuat AI</span>
+    <p id="insight"></p>
+    <p class="ethics" id="insight-meta"></p>
+  </section>
+
+  <div class="controls">
+    <input id="q" type="search" placeholder="Cari di tabel…" aria-label="Cari di tabel">
+    <span class="count" id="count"></span>
+  </div>
+  <div class="scroll"><table><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div>
+
+  <footer>
+    <span id="stamp"></span> · Kode: <code>rayinailham/driftwatch</code> (repositori privat) ·
+    Halaman statis, tanpa pustaka pihak ketiga.
+  </footer>
+</main>
+
+<script id="dw-data" type="application/json">
+[]
+</script>
+<script>
+(function () {
+  "use strict";
+  var data = JSON.parse(document.getElementById("dw-data").textContent);
+  if (!data.length) { document.getElementById("count").textContent = "belum ada data"; return; }
+
+  var active = 0, sortKey = null, sortDir = 1, query = "";
+  var tabs = document.getElementById("tabs");
+  var head = document.getElementById("head");
+  var body = document.getElementById("body");
+
+  function text(node, value) { node.textContent = value; }
+  function num(value) { return (value === null || value === undefined) ? "—" : String(value); }
+
+  function columns(payload) {
+    var keys = payload.rows.length ? Object.keys(payload.rows[0].fields) : [];
+    return [{ key: "status", label: "status" }].concat(keys.map(function (k) {
+      return { key: k, label: k.replace(/_/g, " ") };
+    })).concat([{ key: "url", label: "tautan" }]);
+  }
+
+  function cellValue(row, key) {
+    if (key === "status") return row.status;
+    if (key === "url") return row.url;
+    var value = row.fields[key];
+    return Array.isArray(value) ? value.join(", ") : value;
+  }
+
+  function renderTabs() {
+    tabs.innerHTML = "";
+    data.forEach(function (payload, index) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", index === active ? "true" : "false");
+      text(button, payload.source.name);
+      button.addEventListener("click", function () {
+        active = index; sortKey = null; sortDir = 1; renderAll();
+      });
+      tabs.appendChild(button);
+    });
+  }
+
+  function renderSummary(payload) {
+    var link = document.createElement("a");
+    link.href = payload.source.url;
+    link.rel = "noopener noreferrer nofollow";
+    link.target = "_blank";
+    text(link, payload.source.name);
+    var line = document.getElementById("source-line");
+    line.innerHTML = "";
+    line.appendChild(link);
+    line.appendChild(document.createTextNode(" — " + payload.source.attribution));
+
+    var cards = document.getElementById("cards");
+    cards.innerHTML = "";
+    [["total record", payload.counts.total], ["baru hari ini", payload.counts.added_today],
+     ["berubah", payload.counts.changed_today], ["hilang", payload.counts.removed_today]
+    ].forEach(function (pair) {
+      var card = document.createElement("div");
+      card.className = "card";
+      var n = document.createElement("div"); n.className = "n"; text(n, pair[1]);
+      var k = document.createElement("div"); k.className = "k"; text(k, pair[0]);
+      card.appendChild(n); card.appendChild(k); cards.appendChild(card);
+    });
+
+    var insight = payload.insight || {};
+    text(document.getElementById("insight"),
+      insight.text || "Ringkasan AI tidak dibuat untuk panen ini — " +
+      (insight.reason || "dijalankan tanpa LLM") + ". Angka dan tabel di halaman ini tetap dari data asli.");
+    text(document.getElementById("insight-meta"),
+      "Model: " + (insight.model || "tidak dipanggil") +
+      " · token masuk " + num(insight.input_tokens) + ", token keluar " + num(insight.output_tokens) +
+      " · maksimal satu panggilan per situs per hari.");
+
+    text(document.getElementById("stamp"),
+      "Dibuat " + payload.generated_at + " (WIB), dari panen " + payload.snapshot_date);
+  }
+
+  function renderTable(payload) {
+    var cols = columns(payload);
+    head.innerHTML = "";
+    cols.forEach(function (col) {
+      var th = document.createElement("th");
+      th.scope = "col";
+      text(th, col.label + (sortKey === col.key ? (sortDir > 0 ? " ↑" : " ↓") : ""));
+      th.addEventListener("click", function () {
+        if (sortKey === col.key) { sortDir = -sortDir; } else { sortKey = col.key; sortDir = 1; }
+        renderTable(payload);
+      });
+      head.appendChild(th);
+    });
+
+    var rows = payload.rows.filter(function (row) {
+      if (!query) return true;
+      return cols.some(function (col) {
+        var value = cellValue(row, col.key);
+        return value !== null && value !== undefined &&
+               String(value).toLowerCase().indexOf(query) !== -1;
+      });
+    });
+
+    if (sortKey) {
+      rows = rows.slice().sort(function (a, b) {
+        var x = cellValue(a, sortKey), y = cellValue(b, sortKey);
+        if (x === null || x === undefined) return 1;
+        if (y === null || y === undefined) return -1;
+        if (typeof x === "number" && typeof y === "number") return (x - y) * sortDir;
+        return String(x).localeCompare(String(y), "id") * sortDir;
+      });
+    }
+
+    body.innerHTML = "";
+    rows.forEach(function (row) {
+      var tr = document.createElement("tr");
+      cols.forEach(function (col) {
+        var td = document.createElement("td");
+        if (col.key === "status") {
+          var span = document.createElement("span");
+          span.className = "st st-" + row.status;
+          text(span, row.status);
+          td.appendChild(span);
+        } else if (col.key === "url") {
+          var a = document.createElement("a");
+          a.href = row.url; a.rel = "noopener noreferrer nofollow"; a.target = "_blank";
+          text(a, "sumber");
+          td.appendChild(a);
+        } else {
+          var value = cellValue(row, col.key);
+          td.textContent = (value === null || value === undefined || value === "") ? "—" : String(value);
+          if (String(value).length > 40) td.className = "wrap";
+        }
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+
+    text(document.getElementById("count"),
+      rows.length + " dari " + payload.rows.length + " baris ditampilkan (maksimal 200 per situs)");
+  }
+
+  function renderAll() {
+    var payload = data[active];
+    renderTabs();
+    renderSummary(payload);
+    renderTable(payload);
+  }
+
+  document.getElementById("q").addEventListener("input", function (event) {
+    query = event.target.value.trim().toLowerCase();
+    renderTable(data[active]);
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>

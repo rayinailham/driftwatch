@@ -23,4 +23,10 @@ for TARGET in driftlab books quotes seo; do
   echo "target=$TARGET done"
 done
 
+# (6) publikasi halaman demo. Dijalankan sekali setelah loop, bukan per target,
+# karena satu halaman memuat semua target publik dan pagar biaya D14 membatasi
+# satu panggilan LLM per target per hari. Kegagalan di sini tidak pernah
+# menggagalkan panen data.
+uv run --no-sync python src/publish.py || true
+
 exit "$FAIL"
