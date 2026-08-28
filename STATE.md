@@ -20,7 +20,7 @@
 | P8 Diff & Alarm | ✅ selesai | 10 kode; 11/11 oracle; 12 alarm sah; 0 false positive · `eb46245` |
 | P9 Soak 3 Hari | ⬜ belum | soak_dibuka tetap 2026-08-28: versi ber-`report.py` mulai jalan hari yang sama |
 | P10 Demo + LLM | ✅ selesai | 323 baris; 3 situs; D13/D14/D18 dikunci; 0 kebocoran · `6f7409d` |
-| P11 Laporan Klien | ✅ selesai | 8 `daily.md`; 5 sheet; 0 jargon; notifikasi 4 baris terkirim · `COMMIT` |
+| P11 Laporan Klien | ✅ selesai | 8 `daily.md`; 5 sheet; 0 jargon; 4 notifikasi terkirim · `49c80e1` |
 | P12 Packaging | ⬜ belum | video 60 dtk, `make all`, README publik, audit |
 
 Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
@@ -68,6 +68,7 @@ Robots: target publik HTTP 404; `driftlab` 200 `Allow: /`; default D3 1,0 dtk. P
 | P10: baris terbit · situs · token insight · biaya/hari · kebocoran | ≤200/situs · 3 · N · rendah · 0 | **323 (200+100+23) · 3 · 0 · $0,00000 · 0** |
 | P11: `daily.md` · sheet · jargon · notifikasi critical · kebocoran sampel · test | N · 5 · 0 · ≥1 · 0 · ≥6 | **8 · 5 · 0 · 4 · 0 · 9** |
 | Remediasi: regresi fokus · unit penuh · oracle · hash fixture | lulus · lulus · 11/11 · tetap | **22/22 · 34/34 · 11/11 · `b09a1d…5d3`** |
+| P11 gerbang: compile · unit · recon · oracle · hash fixture | 0 · lulus · 4/4 · 11/11 · tetap | **0 · 43/43 · 4/4 · 11/11 · `b09a1d…5d3`** |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — |
 | **Acceptance project** | 12/12 | **3/12 (A8, A9, A10)** |
 
@@ -96,6 +97,10 @@ ke klien. `daily_run.sh` langkah (6) memanggil `report.py --notify`: gagal → p
 unit systemd gagal, snapshot tetap utuh (`|| true` tanpa pesan sudah hilang seluruhnya).
 Karena `report` masuk orkestrasi harian, `soak_dibuka` tetap **2026-08-28**: versi ini mulai
 berjalan pada hari yang sama, jadi tidak ada bukti soak versi lama yang dipertahankan.
+
+Oracle alarm **wajib** lewat `make oracles` (server segar): `run_oracles.py` langsung pada server
+yang sudah dipakai `--verify` membuat DO-06 gagal `alarms=[]` — server basi, bukan regresi
+detector. Dicatat di `AGENTS.md` §4.
 
 ## Blocker & keputusan terbuka
 - **Blocker: tidak ada.**
