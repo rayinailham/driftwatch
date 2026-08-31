@@ -12,7 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class DailyRunTests(unittest.TestCase):
-    def run_pipeline(self, validate_exit: int = 0, publish_exit: int = 0, report_exit: int = 0):
+    def run_pipeline(
+        self,
+        validate_exit: int = 0,
+        publish_exit: int = 0,
+        report_exit: int = 0,
+        lab_up_exit: int = 0,
+    ):
         temporary = tempfile.TemporaryDirectory()
         root = Path(temporary.name)
         bin_dir = root / "bin"
@@ -45,6 +51,12 @@ class DailyRunTests(unittest.TestCase):
             encoding="utf-8",
         )
         fake_uv.chmod(0o755)
+        lab_up = bin_dir / "lab_up.sh"
+        lab_up.write_text(
+            'printf "lab_up\n" >> "$FAKE_UV_LOG"\nexit "$FAKE_LAB_UP_EXIT"\n', encoding="utf-8"
+        )
+        lab_down = bin_dir / "lab_down.sh"
+        lab_down.write_text('printf "lab_down\n" >> "$FAKE_UV_LOG"\n', encoding="utf-8")
         env = {
             **os.environ,
             "PATH": f"{bin_dir}:{os.environ['PATH']}",
@@ -59,6 +71,9 @@ class DailyRunTests(unittest.TestCase):
             "DRIFTWATCH_WEB_ROOT": str(root / "web"),
             "DRIFTWATCH_TARGETS": "driftlab",
             "DRIFTWATCH_LOCK_FILE": str(root / "driftwatch.lock"),
+            "DRIFTWATCH_LAB_UP": str(lab_up),
+            "DRIFTWATCH_LAB_DOWN": str(lab_down),
+            "FAKE_LAB_UP_EXIT": str(lab_up_exit),
         }
         result = subprocess.run(
             ["bash", "scripts/daily_run.sh"], cwd=ROOT, env=env, text=True, capture_output=True
@@ -118,6 +133,25 @@ class DailyRunTests(unittest.TestCase):
                 encoding="utf-8"
             )
             self.assertIn('"exit_code":1', manifest)
+        finally:
+            temporary.cleanup()
+
+    def test_driftlab_fixture_is_started_before_scraping_and_stopped_after(self) -> None:
+        temporary, _root, result, log = self.run_pipeline()
+        try:
+            self.assertEqual(result.returncode, 0)
+            first_scrape = next(index for index, line in enumerate(log) if "src/scrape.py" in line)
+            self.assertLess(log.index("lab_up"), first_scrape)
+            self.assertEqual(log[-1], "lab_down")
+        finally:
+            temporary.cleanup()
+
+    def test_fixture_failure_fails_the_unit_and_is_named_in_stderr(self) -> None:
+        temporary, _root, result, log = self.run_pipeline(lab_up_exit=1)
+        try:
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("ERROR driftlab: fixture gagal dinyalakan", result.stderr)
+            self.assertNotIn("lab_down", log)
         finally:
             temporary.cleanup()
 

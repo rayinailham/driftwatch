@@ -124,6 +124,55 @@ class AlarmTests(unittest.TestCase):
                 ("quotes", run_date, "RUN_MISSING"),
             )
 
+    def test_detector_names_match_the_locked_alarm_codes(self):
+        self.assertEqual(
+            {detector.__name__.upper() for detector in alarm.DETECTORS}, alarm.ALARM_CODES
+        )
+
+    def test_healed_rerun_closes_the_alarms_of_the_failed_run(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            reports_root = Path(temporary) / "reports"
+            broken = alarm.evaluate(manifest(records=0, exit_code=1), manifest(), diff_data(removed=200))
+            alarm.append_alerts(broken, "driftlab", "2026-08-31", reports_root, notify=False,
+                                scope=alarm.evaluated_codes(manifest(), manifest()))
+            self.assertIn("ZERO_RECORDS", {item.code for item in broken})
+
+            healed = alarm.evaluate(manifest(), manifest(), diff_data())
+            alarm.append_alerts(healed, "driftlab", "2026-08-31", reports_root, notify=False,
+                                scope=alarm.evaluated_codes(manifest(), manifest()))
+
+            rows = [
+                json.loads(line)
+                for line in (reports_root / "alerts.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            self.assertEqual(healed, [])
+            self.assertEqual(len(rows), len(broken))
+            self.assertTrue(all(row["resolved_at"] for row in rows))
+
+    def test_missing_run_check_never_closes_harvest_alarms(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            data_root, reports_root = root / "data", root / "reports"
+            run_date = "2026-08-31"
+            (data_root / "driftlab" / run_date).mkdir(parents=True)
+            (data_root / "driftlab" / run_date / "run.json").write_text("{}\n", encoding="utf-8")
+
+            harvest = alarm.evaluate(manifest(records=0, exit_code=1), manifest(), diff_data(removed=200))
+            alarm.append_alerts(harvest, "driftlab", run_date, reports_root, notify=False)
+            alarm.append_alerts([alarm.run_missing(None, None, {})], "driftlab", run_date,
+                                reports_root, notify=False, scope={"RUN_MISSING"})
+
+            alarm.check_missing_runs(["driftlab"], run_date, data_root, reports_root, notify=False)
+
+            rows = [
+                json.loads(line)
+                for line in (reports_root / "alerts.jsonl").read_text(encoding="utf-8").splitlines()
+            ]
+            closed = {row["code"] for row in rows if row.get("resolved_at")}
+            open_codes = {row["code"] for row in rows if not row.get("resolved_at")}
+            self.assertEqual(closed, {"RUN_MISSING"})
+            self.assertEqual(open_codes, {item.code for item in harvest})
+
 
 if __name__ == "__main__":
     unittest.main()

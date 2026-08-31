@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-28T08:13:27+07:00",
+  "generated_at": "2026-08-31T11:19:05+07:00",
   "target": "quotes",
-  "snapshot_date": "2026-08-27",
+  "snapshot_date": "2026-08-31",
   "source": {
     "name": "quotes.toscrape.com",
     "url": "https://quotes.toscrape.com",
@@ -9,835 +9,19 @@
   },
   "counts": {
     "total": 100,
-    "added_today": 100,
+    "added_today": 0,
     "changed_today": 0,
     "removed_today": 0
   },
   "insight": {
     "model": null,
     "text": null,
-    "reason": "panen ini dijalankan tanpa ringkasan AI",
+    "reason": "kunci API tidak tersedia; jatuh otomatis ke mode tanpa LLM",
     "generated_at": null,
     "input_tokens": 0,
     "output_tokens": 0
   },
   "rows": [
-    {
-      "record_id": "quotes:quote_id:3ab46ce6f55e92ff",
-      "url": "https://quotes.toscrape.com/api/quotes?page=1",
-      "status": "baru",
-      "fields": {
-        "quote_id": "3ab46ce6f55e92ff",
-        "author_name": "Albert Einstein",
-        "author_slug": "Albert-Einstein",
-        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
-        "quote_word_count": 26,
-        "tags": [
-          "inspirational",
-          "life",
-          "live",
-          "miracle",
-          "miracles"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:7f277a652b674ca9",
-      "url": "https://quotes.toscrape.com/api/quotes?page=1",
-      "status": "baru",
-      "fields": {
-        "quote_id": "7f277a652b674ca9",
-        "author_name": "Albert Einstein",
-        "author_slug": "Albert-Einstein",
-        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
-        "quote_word_count": 14,
-        "tags": [
-          "adulthood",
-          "success",
-          "value"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:7e4cd92d2c94649f",
-      "url": "https://quotes.toscrape.com/api/quotes?page=1",
-      "status": "baru",
-      "fields": {
-        "quote_id": "7e4cd92d2c94649f",
-        "author_name": "André Gide",
-        "author_slug": "Andre-Gide",
-        "author_goodreads_link": "/author/show/7617.Andr_Gide",
-        "quote_word_count": 19,
-        "tags": [
-          "life",
-          "love"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:06c07dcc23cdac3a",
-      "url": "https://quotes.toscrape.com/api/quotes?page=1",
-      "status": "baru",
-      "fields": {
-        "quote_id": "06c07dcc23cdac3a",
-        "author_name": "Thomas A. Edison",
-        "author_slug": "Thomas-A-Edison",
-        "author_goodreads_link": "/author/show/3091287.Thomas_A_Edison",
-        "quote_word_count": 12,
-        "tags": [
-          "edison",
-          "failure",
-          "inspirational",
-          "paraphrased"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:7ef174789679ede3",
-      "url": "https://quotes.toscrape.com/api/quotes?page=1",
-      "status": "baru",
-      "fields": {
-        "quote_id": "7ef174789679ede3",
-        "author_name": "Steve Martin",
-        "author_slug": "Steve-Martin",
-        "author_goodreads_link": "/author/show/7103.Steve_Martin",
-        "quote_word_count": 9,
-        "tags": [
-          "humor",
-          "obvious",
-          "simile"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:505e27877275f2f0",
-      "url": "https://quotes.toscrape.com/api/quotes?page=2",
-      "status": "baru",
-      "fields": {
-        "quote_id": "505e27877275f2f0",
-        "author_name": "Albert Einstein",
-        "author_slug": "Albert-Einstein",
-        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
-        "quote_word_count": 15,
-        "tags": [
-          "simplicity",
-          "understand"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:3fc4f7f7f89a2c54",
-      "url": "https://quotes.toscrape.com/api/quotes?page=2",
-      "status": "baru",
-      "fields": {
-        "quote_id": "3fc4f7f7f89a2c54",
-        "author_name": "Bob Marley",
-        "author_slug": "Bob-Marley",
-        "author_goodreads_link": "/author/show/25241.Bob_Marley",
-        "quote_word_count": 138,
-        "tags": [
-          "love"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:815f85b6fe9b416b",
-      "url": "https://quotes.toscrape.com/api/quotes?page=2",
-      "status": "baru",
-      "fields": {
-        "quote_id": "815f85b6fe9b416b",
-        "author_name": "Douglas Adams",
-        "author_slug": "Douglas-Adams",
-        "author_goodreads_link": "/author/show/4.Douglas_Adams",
-        "quote_word_count": 22,
-        "tags": [
-          "life",
-          "navigation"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:1214bc948129a0d3",
-      "url": "https://quotes.toscrape.com/api/quotes?page=2",
-      "status": "baru",
-      "fields": {
-        "quote_id": "1214bc948129a0d3",
-        "author_name": "Friedrich Nietzsche",
-        "author_slug": "Friedrich-Nietzsche",
-        "author_goodreads_link": "/author/show/1938.Friedrich_Nietzsche",
-        "quote_word_count": 16,
-        "tags": [
-          "friendship",
-          "lack-of-friendship",
-          "lack-of-love",
-          "love",
-          "marriage",
-          "unhappy-marriage"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:0bdf6f1ccf4f8d43",
-      "url": "https://quotes.toscrape.com/api/quotes?page=3",
-      "status": "baru",
-      "fields": {
-        "quote_id": "0bdf6f1ccf4f8d43",
-        "author_name": "Pablo Neruda",
-        "author_slug": "Pablo-Neruda",
-        "author_goodreads_link": "/author/show/4026.Pablo_Neruda",
-        "quote_word_count": 66,
-        "tags": [
-          "love",
-          "poetry"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:70bfc7c998276705",
-      "url": "https://quotes.toscrape.com/api/quotes?page=3",
-      "status": "baru",
-      "fields": {
-        "quote_id": "70bfc7c998276705",
-        "author_name": "Ralph Waldo Emerson",
-        "author_slug": "Ralph-Waldo-Emerson",
-        "author_goodreads_link": "/author/show/12080.Ralph_Waldo_Emerson",
-        "quote_word_count": 12,
-        "tags": [
-          "happiness"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:8d6874a87f708f6e",
-      "url": "https://quotes.toscrape.com/api/quotes?page=3",
-      "status": "baru",
-      "fields": {
-        "quote_id": "8d6874a87f708f6e",
-        "author_name": "Albert Einstein",
-        "author_slug": "Albert-Einstein",
-        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
-        "quote_word_count": 25,
-        "tags": [
-          "children",
-          "fairy-tales"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:0963c099f11e3521",
-      "url": "https://quotes.toscrape.com/api/quotes?page=3",
-      "status": "baru",
-      "fields": {
-        "quote_id": "0963c099f11e3521",
-        "author_name": "J.K. Rowling",
-        "author_slug": "J-K-Rowling",
-        "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
-        "quote_word_count": 32,
-        "tags": []
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:600f3cfdf6e27d79",
-      "url": "https://quotes.toscrape.com/api/quotes?page=4",
-      "status": "baru",
-      "fields": {
-        "quote_id": "600f3cfdf6e27d79",
-        "author_name": "Dr. Seuss",
-        "author_slug": "Dr-Seuss",
-        "author_goodreads_link": "/author/show/61105.Dr_Seuss",
-        "quote_word_count": 21,
-        "tags": [
-          "learning",
-          "reading",
-          "seuss"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:42dbcc26ad16dbc4",
-      "url": "https://quotes.toscrape.com/api/quotes?page=4",
-      "status": "baru",
-      "fields": {
-        "quote_id": "42dbcc26ad16dbc4",
-        "author_name": "J.K. Rowling",
-        "author_slug": "J-K-Rowling",
-        "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
-        "quote_word_count": 21,
-        "tags": [
-          "dumbledore"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:582bcc87c51d8040",
-      "url": "https://quotes.toscrape.com/api/quotes?page=4",
-      "status": "baru",
-      "fields": {
-        "quote_id": "582bcc87c51d8040",
-        "author_name": "Bob Marley",
-        "author_slug": "Bob-Marley",
-        "author_goodreads_link": "/author/show/25241.Bob_Marley",
-        "quote_word_count": 19,
-        "tags": [
-          "friendship"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:7e10db236efd8633",
-      "url": "https://quotes.toscrape.com/api/quotes?page=4",
-      "status": "baru",
-      "fields": {
-        "quote_id": "7e10db236efd8633",
-        "author_name": "Mother Teresa",
-        "author_slug": "Mother-Teresa",
-        "author_goodreads_link": "/author/show/838305.Mother_Teresa",
-        "quote_word_count": 17,
-        "tags": [
-          "misattributed-to-mother-teresa",
-          "paraphrased"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:8c68f001dceab9c1",
-      "url": "https://quotes.toscrape.com/api/quotes?page=4",
-      "status": "baru",
-      "fields": {
-        "quote_id": "8c68f001dceab9c1",
-        "author_name": "J.K. Rowling",
-        "author_slug": "J-K-Rowling",
-        "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
-        "quote_word_count": 11,
-        "tags": [
-          "death",
-          "inspirational"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:05b7597c2165793e",
-      "url": "https://quotes.toscrape.com/api/quotes?page=4",
-      "status": "baru",
-      "fields": {
-        "quote_id": "05b7597c2165793e",
-        "author_name": "Charles M. Schulz",
-        "author_slug": "Charles-M-Schulz",
-        "author_goodreads_link": "/author/show/209672.Charles_M_Schulz",
-        "quote_word_count": 14,
-        "tags": [
-          "chocolate",
-          "food",
-          "humor"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:80af52094e8ae74d",
-      "url": "https://quotes.toscrape.com/api/quotes?page=4",
-      "status": "baru",
-      "fields": {
-        "quote_id": "80af52094e8ae74d",
-        "author_name": "Jorge Luis Borges",
-        "author_slug": "Jorge-Luis-Borges",
-        "author_goodreads_link": "/author/show/500.Jorge_Luis_Borges",
-        "quote_word_count": 12,
-        "tags": [
-          "books",
-          "library"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:0c49c523c6c8fc75",
-      "url": "https://quotes.toscrape.com/api/quotes?page=5",
-      "status": "baru",
-      "fields": {
-        "quote_id": "0c49c523c6c8fc75",
-        "author_name": "C.S. Lewis",
-        "author_slug": "C-S-Lewis",
-        "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
-        "quote_word_count": 18,
-        "tags": [
-          "books",
-          "inspirational",
-          "reading",
-          "tea"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:202e048736df51bf",
-      "url": "https://quotes.toscrape.com/api/quotes?page=5",
-      "status": "baru",
-      "fields": {
-        "quote_id": "202e048736df51bf",
-        "author_name": "Marilyn Monroe",
-        "author_slug": "Marilyn-Monroe",
-        "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
-        "quote_word_count": 13,
-        "tags": []
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:5b2a8747ee7f1291",
-      "url": "https://quotes.toscrape.com/api/quotes?page=5",
-      "status": "baru",
-      "fields": {
-        "quote_id": "5b2a8747ee7f1291",
-        "author_name": "Albert Einstein",
-        "author_slug": "Albert-Einstein",
-        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
-        "quote_word_count": 14,
-        "tags": [
-          "life",
-          "simile"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:226a9c4c7c33807e",
-      "url": "https://quotes.toscrape.com/api/quotes?page=5",
-      "status": "baru",
-      "fields": {
-        "quote_id": "226a9c4c7c33807e",
-        "author_name": "Marilyn Monroe",
-        "author_slug": "Marilyn-Monroe",
-        "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
-        "quote_word_count": 24,
-        "tags": [
-          "love"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:4f7e3c8a9663cb3f",
-      "url": "https://quotes.toscrape.com/api/quotes?page=6",
-      "status": "baru",
-      "fields": {
-        "quote_id": "4f7e3c8a9663cb3f",
-        "author_name": "Marilyn Monroe",
-        "author_slug": "Marilyn-Monroe",
-        "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
-        "quote_word_count": 32,
-        "tags": [
-          "attributed-no-source"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:8949319e9b676759",
-      "url": "https://quotes.toscrape.com/api/quotes?page=6",
-      "status": "baru",
-      "fields": {
-        "quote_id": "8949319e9b676759",
-        "author_name": "Albert Einstein",
-        "author_slug": "Albert-Einstein",
-        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
-        "quote_word_count": 31,
-        "tags": [
-          "music"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:71a2e41a9861048b",
-      "url": "https://quotes.toscrape.com/api/quotes?page=6",
-      "status": "baru",
-      "fields": {
-        "quote_id": "71a2e41a9861048b",
-        "author_name": "Stephenie Meyer",
-        "author_slug": "Stephenie-Meyer",
-        "author_goodreads_link": "/author/show/941441.Stephenie_Meyer",
-        "quote_word_count": 7,
-        "tags": [
-          "drug",
-          "romance",
-          "simile"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:1df8efc3fcb39088",
-      "url": "https://quotes.toscrape.com/api/quotes?page=6",
-      "status": "baru",
-      "fields": {
-        "quote_id": "1df8efc3fcb39088",
-        "author_name": "Ernest Hemingway",
-        "author_slug": "Ernest-Hemingway",
-        "author_goodreads_link": "/author/show/1455.Ernest_Hemingway",
-        "quote_word_count": 9,
-        "tags": [
-          "books",
-          "friends",
-          "novelist-quotes"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:614d4702ae253812",
-      "url": "https://quotes.toscrape.com/api/quotes?page=6",
-      "status": "baru",
-      "fields": {
-        "quote_id": "614d4702ae253812",
-        "author_name": "Helen Keller",
-        "author_slug": "Helen-Keller",
-        "author_goodreads_link": "/author/show/7275.Helen_Keller",
-        "quote_word_count": 31,
-        "tags": [
-          "inspirational"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:54a71e5b8821498a",
-      "url": "https://quotes.toscrape.com/api/quotes?page=7",
-      "status": "baru",
-      "fields": {
-        "quote_id": "54a71e5b8821498a",
-        "author_name": "Suzanne Collins",
-        "author_slug": "Suzanne-Collins",
-        "author_goodreads_link": "/author/show/153394.Suzanne_Collins",
-        "quote_word_count": 17,
-        "tags": [
-          "humor"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:74afa77067bd270c",
-      "url": "https://quotes.toscrape.com/api/quotes?page=7",
-      "status": "baru",
-      "fields": {
-        "quote_id": "74afa77067bd270c",
-        "author_name": "Mark Twain",
-        "author_slug": "Mark-Twain",
-        "author_goodreads_link": "/author/show/1244.Mark_Twain",
-        "quote_word_count": 10,
-        "tags": [
-          "education"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:2f6f68135aad9a05",
-      "url": "https://quotes.toscrape.com/api/quotes?page=7",
-      "status": "baru",
-      "fields": {
-        "quote_id": "2f6f68135aad9a05",
-        "author_name": "Dr. Seuss",
-        "author_slug": "Dr-Seuss",
-        "author_goodreads_link": "/author/show/61105.Dr_Seuss",
-        "quote_word_count": 41,
-        "tags": [
-          "troubles"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:48caabecc4a94526",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "48caabecc4a94526",
-        "author_name": "Alfred Tennyson",
-        "author_slug": "Alfred-Tennyson",
-        "author_goodreads_link": "/author/show/13638502.Alfred_Tennyson",
-        "quote_word_count": 18,
-        "tags": [
-          "friendship",
-          "love"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:8327e27914ead7ee",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "8327e27914ead7ee",
-        "author_name": "Charles Bukowski",
-        "author_slug": "Charles-Bukowski",
-        "author_goodreads_link": "/author/show/13275.Charles_Bukowski",
-        "quote_word_count": 12,
-        "tags": [
-          "humor"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:7b24f7b38795c6d2",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "7b24f7b38795c6d2",
-        "author_name": "Terry Pratchett",
-        "author_slug": "Terry-Pratchett",
-        "author_goodreads_link": "/author/show/1654.Terry_Pratchett",
-        "quote_word_count": 24,
-        "tags": [
-          "humor",
-          "open-mind",
-          "thinking"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:6019716e4fb6b777",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "6019716e4fb6b777",
-        "author_name": "J.D. Salinger",
-        "author_slug": "J-D-Salinger",
-        "author_goodreads_link": "/author/show/819789.J_D_Salinger",
-        "quote_word_count": 47,
-        "tags": [
-          "authors",
-          "books",
-          "literature",
-          "reading",
-          "writing"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:1cc6b3314d0e9580",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "1cc6b3314d0e9580",
-        "author_name": "George Carlin",
-        "author_slug": "George-Carlin",
-        "author_goodreads_link": "/author/show/22782.George_Carlin",
-        "quote_word_count": 16,
-        "tags": [
-          "humor",
-          "insanity",
-          "lies",
-          "lying",
-          "self-indulgence",
-          "truth"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:18b40677f3d553aa",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "18b40677f3d553aa",
-        "author_name": "John Lennon",
-        "author_slug": "John-Lennon",
-        "author_goodreads_link": "/author/show/19968.John_Lennon",
-        "quote_word_count": 25,
-        "tags": [
-          "beatles",
-          "connection",
-          "dreamers",
-          "dreaming",
-          "dreams",
-          "hope",
-          "inspirational",
-          "peace"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:483d56277b5de6fe",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "483d56277b5de6fe",
-        "author_name": "W.C. Fields",
-        "author_slug": "W-C-Fields",
-        "author_goodreads_link": "/author/show/82951.W_C_Fields",
-        "quote_word_count": 11,
-        "tags": [
-          "humor",
-          "sinister"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:7cc8b506e7b04735",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "7cc8b506e7b04735",
-        "author_name": "Ayn Rand",
-        "author_slug": "Ayn-Rand",
-        "author_goodreads_link": "/author/show/432.Ayn_Rand",
-        "quote_word_count": 16,
-        "tags": []
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:5d07f52943ee4a64",
-      "url": "https://quotes.toscrape.com/api/quotes?page=8",
-      "status": "baru",
-      "fields": {
-        "quote_id": "5d07f52943ee4a64",
-        "author_name": "Mark Twain",
-        "author_slug": "Mark-Twain",
-        "author_goodreads_link": "/author/show/1244.Mark_Twain",
-        "quote_word_count": 10,
-        "tags": [
-          "books",
-          "classic",
-          "reading"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:023d50ad7e325887",
-      "url": "https://quotes.toscrape.com/api/quotes?page=9",
-      "status": "baru",
-      "fields": {
-        "quote_id": "023d50ad7e325887",
-        "author_name": "Albert Einstein",
-        "author_slug": "Albert-Einstein",
-        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
-        "quote_word_count": 12,
-        "tags": [
-          "mistakes"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:58171a6b874518ba",
-      "url": "https://quotes.toscrape.com/api/quotes?page=9",
-      "status": "baru",
-      "fields": {
-        "quote_id": "58171a6b874518ba",
-        "author_name": "Jane Austen",
-        "author_slug": "Jane-Austen",
-        "author_goodreads_link": "/author/show/1265.Jane_Austen",
-        "quote_word_count": 19,
-        "tags": [
-          "humor",
-          "love",
-          "romantic",
-          "women"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:78c7ec9cdd249754",
-      "url": "https://quotes.toscrape.com/api/quotes?page=9",
-      "status": "baru",
-      "fields": {
-        "quote_id": "78c7ec9cdd249754",
-        "author_name": "C.S. Lewis",
-        "author_slug": "C-S-Lewis",
-        "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
-        "quote_word_count": 25,
-        "tags": [
-          "god"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:1cdc1b2bdaa60994",
-      "url": "https://quotes.toscrape.com/api/quotes?page=9",
-      "status": "baru",
-      "fields": {
-        "quote_id": "1cdc1b2bdaa60994",
-        "author_name": "Mark Twain",
-        "author_slug": "Mark-Twain",
-        "author_goodreads_link": "/author/show/1244.Mark_Twain",
-        "quote_word_count": 17,
-        "tags": [
-          "misattributed-mark-twain",
-          "truth"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:0e1b2b07fe4df78d",
-      "url": "https://quotes.toscrape.com/api/quotes?page=9",
-      "status": "baru",
-      "fields": {
-        "quote_id": "0e1b2b07fe4df78d",
-        "author_name": "C.S. Lewis",
-        "author_slug": "C-S-Lewis",
-        "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
-        "quote_word_count": 26,
-        "tags": [
-          "christianity",
-          "faith",
-          "religion",
-          "sun"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:5f348a4fce123850",
-      "url": "https://quotes.toscrape.com/api/quotes?page=10",
-      "status": "baru",
-      "fields": {
-        "quote_id": "5f348a4fce123850",
-        "author_name": "J.M. Barrie",
-        "author_slug": "J-M-Barrie",
-        "author_goodreads_link": "/author/show/5255014.J_M_Barrie",
-        "quote_word_count": 8,
-        "tags": [
-          "adventure",
-          "love"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:0c1dfb764eac9b6c",
-      "url": "https://quotes.toscrape.com/api/quotes?page=10",
-      "status": "baru",
-      "fields": {
-        "quote_id": "0c1dfb764eac9b6c",
-        "author_name": "Harper Lee",
-        "author_slug": "Harper-Lee",
-        "author_goodreads_link": "/author/show/1825.Harper_Lee",
-        "quote_word_count": 27,
-        "tags": [
-          "better-life-empathy"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:4ac18789bb97bcdf",
-      "url": "https://quotes.toscrape.com/api/quotes?page=10",
-      "status": "baru",
-      "fields": {
-        "quote_id": "4ac18789bb97bcdf",
-        "author_name": "Madeleine L'Engle",
-        "author_slug": "Madeleine-LEngle",
-        "author_goodreads_link": "/author/show/106.Madeleine_L_Engle",
-        "quote_word_count": 27,
-        "tags": [
-          "books",
-          "children",
-          "difficult",
-          "grown-ups",
-          "write",
-          "writers",
-          "writing"
-        ]
-      }
-    },
-    {
-      "record_id": "quotes:quote_id:3c188e617702dda2",
-      "url": "https://quotes.toscrape.com/api/quotes?page=10",
-      "status": "baru",
-      "fields": {
-        "quote_id": "3c188e617702dda2",
-        "author_name": "Dr. Seuss",
-        "author_slug": "Dr-Seuss",
-        "author_goodreads_link": "/author/show/61105.Dr_Seuss",
-        "quote_word_count": 8,
-        "tags": [
-          "inspirational"
-        ]
-      }
-    },
     {
       "record_id": "quotes:quote_id:d3a0b108aa2c0249",
       "url": "https://quotes.toscrape.com/api/quotes?page=1",
@@ -869,6 +53,25 @@
         "tags": [
           "abilities",
           "choices"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:3ab46ce6f55e92ff",
+      "url": "https://quotes.toscrape.com/api/quotes?page=1",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "3ab46ce6f55e92ff",
+        "author_name": "Albert Einstein",
+        "author_slug": "Albert-Einstein",
+        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+        "quote_word_count": 26,
+        "tags": [
+          "inspirational",
+          "life",
+          "live",
+          "miracle",
+          "miracles"
         ]
       }
     },
@@ -907,6 +110,57 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:7f277a652b674ca9",
+      "url": "https://quotes.toscrape.com/api/quotes?page=1",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "7f277a652b674ca9",
+        "author_name": "Albert Einstein",
+        "author_slug": "Albert-Einstein",
+        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+        "quote_word_count": 14,
+        "tags": [
+          "adulthood",
+          "success",
+          "value"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:7e4cd92d2c94649f",
+      "url": "https://quotes.toscrape.com/api/quotes?page=1",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "7e4cd92d2c94649f",
+        "author_name": "André Gide",
+        "author_slug": "Andre-Gide",
+        "author_goodreads_link": "/author/show/7617.Andr_Gide",
+        "quote_word_count": 19,
+        "tags": [
+          "life",
+          "love"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:06c07dcc23cdac3a",
+      "url": "https://quotes.toscrape.com/api/quotes?page=1",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "06c07dcc23cdac3a",
+        "author_name": "Thomas A. Edison",
+        "author_slug": "Thomas-A-Edison",
+        "author_goodreads_link": "/author/show/3091287.Thomas_A_Edison",
+        "quote_word_count": 12,
+        "tags": [
+          "edison",
+          "failure",
+          "inspirational",
+          "paraphrased"
+        ]
+      }
+    },
+    {
       "record_id": "quotes:quote_id:fd080f3dc33ae804",
       "url": "https://quotes.toscrape.com/api/quotes?page=1",
       "status": "tetap",
@@ -918,6 +172,23 @@
         "quote_word_count": 19,
         "tags": [
           "misattributed-eleanor-roosevelt"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:7ef174789679ede3",
+      "url": "https://quotes.toscrape.com/api/quotes?page=1",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "7ef174789679ede3",
+        "author_name": "Steve Martin",
+        "author_slug": "Steve-Martin",
+        "author_goodreads_link": "/author/show/7103.Steve_Martin",
+        "quote_word_count": 9,
+        "tags": [
+          "humor",
+          "obvious",
+          "simile"
         ]
       }
     },
@@ -958,6 +229,37 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:505e27877275f2f0",
+      "url": "https://quotes.toscrape.com/api/quotes?page=2",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "505e27877275f2f0",
+        "author_name": "Albert Einstein",
+        "author_slug": "Albert-Einstein",
+        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+        "quote_word_count": 15,
+        "tags": [
+          "simplicity",
+          "understand"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:3fc4f7f7f89a2c54",
+      "url": "https://quotes.toscrape.com/api/quotes?page=2",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "3fc4f7f7f89a2c54",
+        "author_name": "Bob Marley",
+        "author_slug": "Bob-Marley",
+        "author_goodreads_link": "/author/show/25241.Bob_Marley",
+        "quote_word_count": 138,
+        "tags": [
+          "love"
+        ]
+      }
+    },
+    {
       "record_id": "quotes:quote_id:e5e59232d0eae875",
       "url": "https://quotes.toscrape.com/api/quotes?page=2",
       "status": "tetap",
@@ -969,6 +271,22 @@
         "quote_word_count": 16,
         "tags": [
           "fantasy"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:815f85b6fe9b416b",
+      "url": "https://quotes.toscrape.com/api/quotes?page=2",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "815f85b6fe9b416b",
+        "author_name": "Douglas Adams",
+        "author_slug": "Douglas-Adams",
+        "author_goodreads_link": "/author/show/4.Douglas_Adams",
+        "quote_word_count": 22,
+        "tags": [
+          "life",
+          "navigation"
         ]
       }
     },
@@ -991,6 +309,26 @@
           "love",
           "opposite",
           "philosophy"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:1214bc948129a0d3",
+      "url": "https://quotes.toscrape.com/api/quotes?page=2",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "1214bc948129a0d3",
+        "author_name": "Friedrich Nietzsche",
+        "author_slug": "Friedrich-Nietzsche",
+        "author_goodreads_link": "/author/show/1938.Friedrich_Nietzsche",
+        "quote_word_count": 16,
+        "tags": [
+          "friendship",
+          "lack-of-friendship",
+          "lack-of-love",
+          "love",
+          "marriage",
+          "unhappy-marriage"
         ]
       }
     },
@@ -1029,6 +367,37 @@
           "misattributed-john-lennon",
           "planning",
           "plans"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:0bdf6f1ccf4f8d43",
+      "url": "https://quotes.toscrape.com/api/quotes?page=3",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "0bdf6f1ccf4f8d43",
+        "author_name": "Pablo Neruda",
+        "author_slug": "Pablo-Neruda",
+        "author_goodreads_link": "/author/show/4026.Pablo_Neruda",
+        "quote_word_count": 66,
+        "tags": [
+          "love",
+          "poetry"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:70bfc7c998276705",
+      "url": "https://quotes.toscrape.com/api/quotes?page=3",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "70bfc7c998276705",
+        "author_name": "Ralph Waldo Emerson",
+        "author_slug": "Ralph-Waldo-Emerson",
+        "author_goodreads_link": "/author/show/12080.Ralph_Waldo_Emerson",
+        "quote_word_count": 12,
+        "tags": [
+          "happiness"
         ]
       }
     },
@@ -1096,6 +465,35 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:8d6874a87f708f6e",
+      "url": "https://quotes.toscrape.com/api/quotes?page=3",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "8d6874a87f708f6e",
+        "author_name": "Albert Einstein",
+        "author_slug": "Albert-Einstein",
+        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+        "quote_word_count": 25,
+        "tags": [
+          "children",
+          "fairy-tales"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:0963c099f11e3521",
+      "url": "https://quotes.toscrape.com/api/quotes?page=3",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "0963c099f11e3521",
+        "author_name": "J.K. Rowling",
+        "author_slug": "J-K-Rowling",
+        "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+        "quote_word_count": 32,
+        "tags": []
+      }
+    },
+    {
       "record_id": "quotes:quote_id:ddae359dcafb09ce",
       "url": "https://quotes.toscrape.com/api/quotes?page=3",
       "status": "tetap",
@@ -1122,6 +520,102 @@
         "quote_word_count": 13,
         "tags": [
           "music"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:600f3cfdf6e27d79",
+      "url": "https://quotes.toscrape.com/api/quotes?page=4",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "600f3cfdf6e27d79",
+        "author_name": "Dr. Seuss",
+        "author_slug": "Dr-Seuss",
+        "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+        "quote_word_count": 21,
+        "tags": [
+          "learning",
+          "reading",
+          "seuss"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:42dbcc26ad16dbc4",
+      "url": "https://quotes.toscrape.com/api/quotes?page=4",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "42dbcc26ad16dbc4",
+        "author_name": "J.K. Rowling",
+        "author_slug": "J-K-Rowling",
+        "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+        "quote_word_count": 21,
+        "tags": [
+          "dumbledore"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:582bcc87c51d8040",
+      "url": "https://quotes.toscrape.com/api/quotes?page=4",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "582bcc87c51d8040",
+        "author_name": "Bob Marley",
+        "author_slug": "Bob-Marley",
+        "author_goodreads_link": "/author/show/25241.Bob_Marley",
+        "quote_word_count": 19,
+        "tags": [
+          "friendship"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:7e10db236efd8633",
+      "url": "https://quotes.toscrape.com/api/quotes?page=4",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "7e10db236efd8633",
+        "author_name": "Mother Teresa",
+        "author_slug": "Mother-Teresa",
+        "author_goodreads_link": "/author/show/838305.Mother_Teresa",
+        "quote_word_count": 17,
+        "tags": [
+          "misattributed-to-mother-teresa",
+          "paraphrased"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:8c68f001dceab9c1",
+      "url": "https://quotes.toscrape.com/api/quotes?page=4",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "8c68f001dceab9c1",
+        "author_name": "J.K. Rowling",
+        "author_slug": "J-K-Rowling",
+        "author_goodreads_link": "/author/show/1077326.J_K_Rowling",
+        "quote_word_count": 11,
+        "tags": [
+          "death",
+          "inspirational"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:05b7597c2165793e",
+      "url": "https://quotes.toscrape.com/api/quotes?page=4",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "05b7597c2165793e",
+        "author_name": "Charles M. Schulz",
+        "author_slug": "Charles-M-Schulz",
+        "author_goodreads_link": "/author/show/209672.Charles_M_Schulz",
+        "quote_word_count": 14,
+        "tags": [
+          "chocolate",
+          "food",
+          "humor"
         ]
       }
     },
@@ -1160,6 +654,22 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:80af52094e8ae74d",
+      "url": "https://quotes.toscrape.com/api/quotes?page=4",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "80af52094e8ae74d",
+        "author_name": "Jorge Luis Borges",
+        "author_slug": "Jorge-Luis-Borges",
+        "author_goodreads_link": "/author/show/500.Jorge_Luis_Borges",
+        "quote_word_count": 12,
+        "tags": [
+          "books",
+          "library"
+        ]
+      }
+    },
+    {
       "record_id": "quotes:quote_id:a28337880d4a8954",
       "url": "https://quotes.toscrape.com/api/quotes?page=4",
       "status": "tetap",
@@ -1193,6 +703,37 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:0c49c523c6c8fc75",
+      "url": "https://quotes.toscrape.com/api/quotes?page=5",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "0c49c523c6c8fc75",
+        "author_name": "C.S. Lewis",
+        "author_slug": "C-S-Lewis",
+        "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
+        "quote_word_count": 18,
+        "tags": [
+          "books",
+          "inspirational",
+          "reading",
+          "tea"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:202e048736df51bf",
+      "url": "https://quotes.toscrape.com/api/quotes?page=5",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "202e048736df51bf",
+        "author_name": "Marilyn Monroe",
+        "author_slug": "Marilyn-Monroe",
+        "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+        "quote_word_count": 13,
+        "tags": []
+      }
+    },
+    {
       "record_id": "quotes:quote_id:8f44bb4f5b5c5c43",
       "url": "https://quotes.toscrape.com/api/quotes?page=5",
       "status": "tetap",
@@ -1204,6 +745,37 @@
         "quote_word_count": 13,
         "tags": [
           "girls",
+          "love"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:5b2a8747ee7f1291",
+      "url": "https://quotes.toscrape.com/api/quotes?page=5",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "5b2a8747ee7f1291",
+        "author_name": "Albert Einstein",
+        "author_slug": "Albert-Einstein",
+        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+        "quote_word_count": 14,
+        "tags": [
+          "life",
+          "simile"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:226a9c4c7c33807e",
+      "url": "https://quotes.toscrape.com/api/quotes?page=5",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "226a9c4c7c33807e",
+        "author_name": "Marilyn Monroe",
+        "author_slug": "Marilyn-Monroe",
+        "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+        "quote_word_count": 24,
+        "tags": [
           "love"
         ]
       }
@@ -1303,6 +875,36 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:4f7e3c8a9663cb3f",
+      "url": "https://quotes.toscrape.com/api/quotes?page=6",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "4f7e3c8a9663cb3f",
+        "author_name": "Marilyn Monroe",
+        "author_slug": "Marilyn-Monroe",
+        "author_goodreads_link": "/author/show/82952.Marilyn_Monroe",
+        "quote_word_count": 32,
+        "tags": [
+          "attributed-no-source"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:8949319e9b676759",
+      "url": "https://quotes.toscrape.com/api/quotes?page=6",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "8949319e9b676759",
+        "author_name": "Albert Einstein",
+        "author_slug": "Albert-Einstein",
+        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+        "quote_word_count": 31,
+        "tags": [
+          "music"
+        ]
+      }
+    },
+    {
       "record_id": "quotes:quote_id:e09fae65d896c831",
       "url": "https://quotes.toscrape.com/api/quotes?page=6",
       "status": "tetap",
@@ -1330,6 +932,55 @@
         "quote_word_count": 11,
         "tags": [
           "misattributed-to-einstein"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:71a2e41a9861048b",
+      "url": "https://quotes.toscrape.com/api/quotes?page=6",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "71a2e41a9861048b",
+        "author_name": "Stephenie Meyer",
+        "author_slug": "Stephenie-Meyer",
+        "author_goodreads_link": "/author/show/941441.Stephenie_Meyer",
+        "quote_word_count": 7,
+        "tags": [
+          "drug",
+          "romance",
+          "simile"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:1df8efc3fcb39088",
+      "url": "https://quotes.toscrape.com/api/quotes?page=6",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "1df8efc3fcb39088",
+        "author_name": "Ernest Hemingway",
+        "author_slug": "Ernest-Hemingway",
+        "author_goodreads_link": "/author/show/1455.Ernest_Hemingway",
+        "quote_word_count": 9,
+        "tags": [
+          "books",
+          "friends",
+          "novelist-quotes"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:614d4702ae253812",
+      "url": "https://quotes.toscrape.com/api/quotes?page=6",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "614d4702ae253812",
+        "author_name": "Helen Keller",
+        "author_slug": "Helen-Keller",
+        "author_goodreads_link": "/author/show/7275.Helen_Keller",
+        "quote_word_count": 31,
+        "tags": [
+          "inspirational"
         ]
       }
     },
@@ -1377,6 +1028,21 @@
         "quote_word_count": 13,
         "tags": [
           "the-hunger-games"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:54a71e5b8821498a",
+      "url": "https://quotes.toscrape.com/api/quotes?page=7",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "54a71e5b8821498a",
+        "author_name": "Suzanne Collins",
+        "author_slug": "Suzanne-Collins",
+        "author_goodreads_link": "/author/show/153394.Suzanne_Collins",
+        "quote_word_count": 17,
+        "tags": [
+          "humor"
         ]
       }
     },
@@ -1463,6 +1129,84 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:74afa77067bd270c",
+      "url": "https://quotes.toscrape.com/api/quotes?page=7",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "74afa77067bd270c",
+        "author_name": "Mark Twain",
+        "author_slug": "Mark-Twain",
+        "author_goodreads_link": "/author/show/1244.Mark_Twain",
+        "quote_word_count": 10,
+        "tags": [
+          "education"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:2f6f68135aad9a05",
+      "url": "https://quotes.toscrape.com/api/quotes?page=7",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "2f6f68135aad9a05",
+        "author_name": "Dr. Seuss",
+        "author_slug": "Dr-Seuss",
+        "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+        "quote_word_count": 41,
+        "tags": [
+          "troubles"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:48caabecc4a94526",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "48caabecc4a94526",
+        "author_name": "Alfred Tennyson",
+        "author_slug": "Alfred-Tennyson",
+        "author_goodreads_link": "/author/show/13638502.Alfred_Tennyson",
+        "quote_word_count": 18,
+        "tags": [
+          "friendship",
+          "love"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:8327e27914ead7ee",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "8327e27914ead7ee",
+        "author_name": "Charles Bukowski",
+        "author_slug": "Charles-Bukowski",
+        "author_goodreads_link": "/author/show/13275.Charles_Bukowski",
+        "quote_word_count": 12,
+        "tags": [
+          "humor"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:7b24f7b38795c6d2",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "7b24f7b38795c6d2",
+        "author_name": "Terry Pratchett",
+        "author_slug": "Terry-Pratchett",
+        "author_goodreads_link": "/author/show/1654.Terry_Pratchett",
+        "quote_word_count": 24,
+        "tags": [
+          "humor",
+          "open-mind",
+          "thinking"
+        ]
+      }
+    },
+    {
       "record_id": "quotes:quote_id:ab27d6ca57f1fc06",
       "url": "https://quotes.toscrape.com/api/quotes?page=8",
       "status": "tetap",
@@ -1475,6 +1219,146 @@
         "tags": [
           "humor",
           "philosophy"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:6019716e4fb6b777",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "6019716e4fb6b777",
+        "author_name": "J.D. Salinger",
+        "author_slug": "J-D-Salinger",
+        "author_goodreads_link": "/author/show/819789.J_D_Salinger",
+        "quote_word_count": 47,
+        "tags": [
+          "authors",
+          "books",
+          "literature",
+          "reading",
+          "writing"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:1cc6b3314d0e9580",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "1cc6b3314d0e9580",
+        "author_name": "George Carlin",
+        "author_slug": "George-Carlin",
+        "author_goodreads_link": "/author/show/22782.George_Carlin",
+        "quote_word_count": 16,
+        "tags": [
+          "humor",
+          "insanity",
+          "lies",
+          "lying",
+          "self-indulgence",
+          "truth"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:18b40677f3d553aa",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "18b40677f3d553aa",
+        "author_name": "John Lennon",
+        "author_slug": "John-Lennon",
+        "author_goodreads_link": "/author/show/19968.John_Lennon",
+        "quote_word_count": 25,
+        "tags": [
+          "beatles",
+          "connection",
+          "dreamers",
+          "dreaming",
+          "dreams",
+          "hope",
+          "inspirational",
+          "peace"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:483d56277b5de6fe",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "483d56277b5de6fe",
+        "author_name": "W.C. Fields",
+        "author_slug": "W-C-Fields",
+        "author_goodreads_link": "/author/show/82951.W_C_Fields",
+        "quote_word_count": 11,
+        "tags": [
+          "humor",
+          "sinister"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:7cc8b506e7b04735",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "7cc8b506e7b04735",
+        "author_name": "Ayn Rand",
+        "author_slug": "Ayn-Rand",
+        "author_goodreads_link": "/author/show/432.Ayn_Rand",
+        "quote_word_count": 16,
+        "tags": []
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:5d07f52943ee4a64",
+      "url": "https://quotes.toscrape.com/api/quotes?page=8",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "5d07f52943ee4a64",
+        "author_name": "Mark Twain",
+        "author_slug": "Mark-Twain",
+        "author_goodreads_link": "/author/show/1244.Mark_Twain",
+        "quote_word_count": 10,
+        "tags": [
+          "books",
+          "classic",
+          "reading"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:023d50ad7e325887",
+      "url": "https://quotes.toscrape.com/api/quotes?page=9",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "023d50ad7e325887",
+        "author_name": "Albert Einstein",
+        "author_slug": "Albert-Einstein",
+        "author_goodreads_link": "/author/show/9810.Albert_Einstein",
+        "quote_word_count": 12,
+        "tags": [
+          "mistakes"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:58171a6b874518ba",
+      "url": "https://quotes.toscrape.com/api/quotes?page=9",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "58171a6b874518ba",
+        "author_name": "Jane Austen",
+        "author_slug": "Jane-Austen",
+        "author_goodreads_link": "/author/show/1265.Jane_Austen",
+        "quote_word_count": 19,
+        "tags": [
+          "humor",
+          "love",
+          "romantic",
+          "women"
         ]
       }
     },
@@ -1544,6 +1428,21 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:78c7ec9cdd249754",
+      "url": "https://quotes.toscrape.com/api/quotes?page=9",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "78c7ec9cdd249754",
+        "author_name": "C.S. Lewis",
+        "author_slug": "C-S-Lewis",
+        "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
+        "quote_word_count": 25,
+        "tags": [
+          "god"
+        ]
+      }
+    },
+    {
       "record_id": "quotes:quote_id:a6339317fa1c11c2",
       "url": "https://quotes.toscrape.com/api/quotes?page=9",
       "status": "tetap",
@@ -1556,6 +1455,40 @@
         "tags": [
           "death",
           "life"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:1cdc1b2bdaa60994",
+      "url": "https://quotes.toscrape.com/api/quotes?page=9",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "1cdc1b2bdaa60994",
+        "author_name": "Mark Twain",
+        "author_slug": "Mark-Twain",
+        "author_goodreads_link": "/author/show/1244.Mark_Twain",
+        "quote_word_count": 17,
+        "tags": [
+          "misattributed-mark-twain",
+          "truth"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:0e1b2b07fe4df78d",
+      "url": "https://quotes.toscrape.com/api/quotes?page=9",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "0e1b2b07fe4df78d",
+        "author_name": "C.S. Lewis",
+        "author_slug": "C-S-Lewis",
+        "author_goodreads_link": "/author/show/1069006.C_S_Lewis",
+        "quote_word_count": 26,
+        "tags": [
+          "christianity",
+          "faith",
+          "religion",
+          "sun"
         ]
       }
     },
@@ -1591,6 +1524,22 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:5f348a4fce123850",
+      "url": "https://quotes.toscrape.com/api/quotes?page=10",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "5f348a4fce123850",
+        "author_name": "J.M. Barrie",
+        "author_slug": "J-M-Barrie",
+        "author_goodreads_link": "/author/show/5255014.J_M_Barrie",
+        "quote_word_count": 8,
+        "tags": [
+          "adventure",
+          "love"
+        ]
+      }
+    },
+    {
       "record_id": "quotes:quote_id:ee710c1a1bf843b0",
       "url": "https://quotes.toscrape.com/api/quotes?page=10",
       "status": "tetap",
@@ -1621,6 +1570,42 @@
       }
     },
     {
+      "record_id": "quotes:quote_id:0c1dfb764eac9b6c",
+      "url": "https://quotes.toscrape.com/api/quotes?page=10",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "0c1dfb764eac9b6c",
+        "author_name": "Harper Lee",
+        "author_slug": "Harper-Lee",
+        "author_goodreads_link": "/author/show/1825.Harper_Lee",
+        "quote_word_count": 27,
+        "tags": [
+          "better-life-empathy"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:4ac18789bb97bcdf",
+      "url": "https://quotes.toscrape.com/api/quotes?page=10",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "4ac18789bb97bcdf",
+        "author_name": "Madeleine L'Engle",
+        "author_slug": "Madeleine-LEngle",
+        "author_goodreads_link": "/author/show/106.Madeleine_L_Engle",
+        "quote_word_count": 27,
+        "tags": [
+          "books",
+          "children",
+          "difficult",
+          "grown-ups",
+          "write",
+          "writers",
+          "writing"
+        ]
+      }
+    },
+    {
       "record_id": "quotes:quote_id:a20d7a1384668848",
       "url": "https://quotes.toscrape.com/api/quotes?page=10",
       "status": "tetap",
@@ -1632,6 +1617,21 @@
         "quote_word_count": 12,
         "tags": [
           "truth"
+        ]
+      }
+    },
+    {
+      "record_id": "quotes:quote_id:3c188e617702dda2",
+      "url": "https://quotes.toscrape.com/api/quotes?page=10",
+      "status": "tetap",
+      "fields": {
+        "quote_id": "3c188e617702dda2",
+        "author_name": "Dr. Seuss",
+        "author_slug": "Dr-Seuss",
+        "author_goodreads_link": "/author/show/61105.Dr_Seuss",
+        "quote_word_count": 8,
+        "tags": [
+          "inspirational"
         ]
       }
     },

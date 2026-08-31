@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-28T08:13:27+07:00",
+  "generated_at": "2026-08-31T11:19:05+07:00",
   "target": "books",
-  "snapshot_date": "2026-08-27",
+  "snapshot_date": "2026-08-31",
   "source": {
     "name": "books.toscrape.com",
     "url": "https://books.toscrape.com",
@@ -9,919 +9,19 @@
   },
   "counts": {
     "total": 1000,
-    "added_today": 1000,
+    "added_today": 0,
     "changed_today": 0,
     "removed_today": 0
   },
   "insight": {
     "model": null,
     "text": null,
-    "reason": "panen ini dijalankan tanpa ringkasan AI",
+    "reason": "kunci API tidak tersedia; jatuh otomatis ke mode tanpa LLM",
     "generated_at": null,
     "input_tokens": 0,
     "output_tokens": 0
   },
   "rows": [
-    {
-      "record_id": "books:upc:0312262ecafa5a40",
-      "url": "https://books.toscrape.com/catalogue/starving-hearts-triangular-trade-trilogy-1_990/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0312262ecafa5a40",
-        "title": "Starving Hearts (Triangular Trade Trilogy, #1)",
-        "price_incl_tax_gbp": 13.99,
-        "price_excl_tax_gbp": 13.99,
-        "tax_gbp": 0.0,
-        "availability_count": 19,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 196
-      }
-    },
-    {
-      "record_id": "books:upc:00bfed9e18bb36f3",
-      "url": "https://books.toscrape.com/catalogue/black-dust_976/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "00bfed9e18bb36f3",
-        "title": "Black Dust",
-        "price_incl_tax_gbp": 34.53,
-        "price_excl_tax_gbp": 34.53,
-        "tax_gbp": 0.0,
-        "availability_count": 19,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Romance",
-        "num_reviews": 0,
-        "description_words": 216
-      }
-    },
-    {
-      "record_id": "books:upc:094b269567e1c300",
-      "url": "https://books.toscrape.com/catalogue/maude-1883-1993she-grew-up-with-the-country_964/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "094b269567e1c300",
-        "title": "Maude (1883-1993):She Grew Up with the country",
-        "price_incl_tax_gbp": 18.02,
-        "price_excl_tax_gbp": 18.02,
-        "tax_gbp": 0.0,
-        "availability_count": 18,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 211
-      }
-    },
-    {
-      "record_id": "books:upc:09555be379ad9253",
-      "url": "https://books.toscrape.com/catalogue/tsubasa-world-chronicle-2-tsubasa-world-chronicle-2_949/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "09555be379ad9253",
-        "title": "Tsubasa: WoRLD CHRoNiCLE 2 (Tsubasa WoRLD CHRoNiCLE #2)",
-        "price_incl_tax_gbp": 16.28,
-        "price_excl_tax_gbp": 16.28,
-        "tax_gbp": 0.0,
-        "availability_count": 16,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Sequential Art",
-        "num_reviews": 0,
-        "description_words": 144
-      }
-    },
-    {
-      "record_id": "books:upc:09b6cc87e62c2c58",
-      "url": "https://books.toscrape.com/catalogue/danganronpa-volume-1_889/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "09b6cc87e62c2c58",
-        "title": "Danganronpa Volume 1",
-        "price_incl_tax_gbp": 51.99,
-        "price_excl_tax_gbp": 51.99,
-        "tax_gbp": 0.0,
-        "availability_count": 16,
-        "in_stock": true,
-        "rating": "Four",
-        "category": "Sequential Art",
-        "num_reviews": 0,
-        "description_words": 196
-      }
-    },
-    {
-      "record_id": "books:upc:01d2001ac1e6f8a3",
-      "url": "https://books.toscrape.com/catalogue/a-court-of-thorns-and-roses-a-court-of-thorns-and-roses-1_874/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "01d2001ac1e6f8a3",
-        "title": "A Court of Thorns and Roses (A Court of Thorns and Roses #1)",
-        "price_incl_tax_gbp": 52.37,
-        "price_excl_tax_gbp": 52.37,
-        "tax_gbp": 0.0,
-        "availability_count": 16,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Fantasy",
-        "num_reviews": 0,
-        "description_words": 218
-      }
-    },
-    {
-      "record_id": "books:upc:0651062381f0636a",
-      "url": "https://books.toscrape.com/catalogue/the-regional-office-is-under-attack_858/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0651062381f0636a",
-        "title": "The Regional Office Is Under Attack!",
-        "price_incl_tax_gbp": 51.36,
-        "price_excl_tax_gbp": 51.36,
-        "tax_gbp": 0.0,
-        "availability_count": 15,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Fiction",
-        "num_reviews": 0,
-        "description_words": 213
-      }
-    },
-    {
-      "record_id": "books:upc:08db62f24627e71f",
-      "url": "https://books.toscrape.com/catalogue/the-matchmakers-playbook-wingmen-inc-1_850/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "08db62f24627e71f",
-        "title": "The Matchmaker's Playbook (Wingmen Inc. #1)",
-        "price_incl_tax_gbp": 55.85,
-        "price_excl_tax_gbp": 55.85,
-        "tax_gbp": 0.0,
-        "availability_count": 15,
-        "in_stock": true,
-        "rating": "One",
-        "category": "New Adult",
-        "num_reviews": 0,
-        "description_words": 213
-      }
-    },
-    {
-      "record_id": "books:upc:05f7c6d9a4e582d3",
-      "url": "https://books.toscrape.com/catalogue/ayumis-violin_791/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "05f7c6d9a4e582d3",
-        "title": "Ayumi's Violin",
-        "price_incl_tax_gbp": 15.48,
-        "price_excl_tax_gbp": 15.48,
-        "tax_gbp": 0.0,
-        "availability_count": 15,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 140
-      }
-    },
-    {
-      "record_id": "books:upc:024387ca4cafd5cc",
-      "url": "https://books.toscrape.com/catalogue/you-you-1_784/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "024387ca4cafd5cc",
-        "title": "You (You #1)",
-        "price_incl_tax_gbp": 43.61,
-        "price_excl_tax_gbp": 43.61,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Thriller",
-        "num_reviews": 0,
-        "description_words": 204
-      }
-    },
-    {
-      "record_id": "books:upc:047097293bb4d1c0",
-      "url": "https://books.toscrape.com/catalogue/wonder-woman-earth-one-volume-one-wonder-woman-earth-one-1_783/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "047097293bb4d1c0",
-        "title": "Wonder Woman: Earth One, Volume One (Wonder Woman: Earth One #1)",
-        "price_incl_tax_gbp": 37.34,
-        "price_excl_tax_gbp": 37.34,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "Four",
-        "category": "Sequential Art",
-        "num_reviews": 0,
-        "description_words": 145
-      }
-    },
-    {
-      "record_id": "books:upc:08b2f71d93836313",
-      "url": "https://books.toscrape.com/catalogue/the-wright-brothers_769/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "08b2f71d93836313",
-        "title": "The Wright Brothers",
-        "price_incl_tax_gbp": 56.8,
-        "price_excl_tax_gbp": 56.8,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "Four",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 369
-      }
-    },
-    {
-      "record_id": "books:upc:081305e6df719dff",
-      "url": "https://books.toscrape.com/catalogue/the-testament-of-mary_765/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "081305e6df719dff",
-        "title": "The Testament of Mary",
-        "price_incl_tax_gbp": 52.67,
-        "price_excl_tax_gbp": 52.67,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "Four",
-        "category": "Fiction",
-        "num_reviews": 0,
-        "description_words": 269
-      }
-    },
-    {
-      "record_id": "books:upc:00c4543ec6bd25b4",
-      "url": "https://books.toscrape.com/catalogue/the-songs-of-the-gods_763/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "00c4543ec6bd25b4",
-        "title": "The Songs of the Gods",
-        "price_incl_tax_gbp": 44.48,
-        "price_excl_tax_gbp": 44.48,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 172
-      }
-    },
-    {
-      "record_id": "books:upc:012094e90a4b908d",
-      "url": "https://books.toscrape.com/catalogue/the-rosie-project-don-tillman-1_761/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "012094e90a4b908d",
-        "title": "The Rosie Project (Don Tillman #1)",
-        "price_incl_tax_gbp": 54.04,
-        "price_excl_tax_gbp": 54.04,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 321
-      }
-    },
-    {
-      "record_id": "books:upc:02b74068fa98d8a4",
-      "url": "https://books.toscrape.com/catalogue/old-school-diary-of-a-wimpy-kid-10_723/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "02b74068fa98d8a4",
-        "title": "Old School (Diary of a Wimpy Kid #10)",
-        "price_incl_tax_gbp": 11.83,
-        "price_excl_tax_gbp": 11.83,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Humor",
-        "num_reviews": 0,
-        "description_words": 79
-      }
-    },
-    {
-      "record_id": "books:upc:0b165bd4b9f42fd5",
-      "url": "https://books.toscrape.com/catalogue/hold-your-breath-search-and-rescue-1_700/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0b165bd4b9f42fd5",
-        "title": "Hold Your Breath (Search and Rescue #1)",
-        "price_incl_tax_gbp": 28.82,
-        "price_excl_tax_gbp": 28.82,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Romance",
-        "num_reviews": 0,
-        "description_words": 233
-      }
-    },
-    {
-      "record_id": "books:upc:047dfa57ba0bf638",
-      "url": "https://books.toscrape.com/catalogue/eat-fat-get-thin_688/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "047dfa57ba0bf638",
-        "title": "Eat Fat, Get Thin",
-        "price_incl_tax_gbp": 54.07,
-        "price_excl_tax_gbp": 54.07,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Health",
-        "num_reviews": 0,
-        "description_words": 6
-      }
-    },
-    {
-      "record_id": "books:upc:01a177623cce9596",
-      "url": "https://books.toscrape.com/catalogue/a-brush-of-wings-angels-walking-3_651/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "01a177623cce9596",
-        "title": "A Brush of Wings (Angels Walking #3)",
-        "price_incl_tax_gbp": 55.51,
-        "price_excl_tax_gbp": 55.51,
-        "tax_gbp": 0.0,
-        "availability_count": 14,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Add a comment",
-        "num_reviews": 0,
-        "description_words": 284
-      }
-    },
-    {
-      "record_id": "books:upc:077b635ff2afc578",
-      "url": "https://books.toscrape.com/catalogue/will-you-wont-you-want-me_644/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "077b635ff2afc578",
-        "title": "Will You Won't You Want Me?",
-        "price_incl_tax_gbp": 13.86,
-        "price_excl_tax_gbp": 13.86,
-        "tax_gbp": 0.0,
-        "availability_count": 12,
-        "in_stock": true,
-        "rating": "Three",
-        "category": "Womens Fiction",
-        "num_reviews": 0,
-        "description_words": 198
-      }
-    },
-    {
-      "record_id": "books:upc:05a61a3bd8ca4149",
-      "url": "https://books.toscrape.com/catalogue/playing-with-fire_602/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "05a61a3bd8ca4149",
-        "title": "Playing with Fire",
-        "price_incl_tax_gbp": 13.71,
-        "price_excl_tax_gbp": 13.71,
-        "tax_gbp": 0.0,
-        "availability_count": 11,
-        "in_stock": true,
-        "rating": "Three",
-        "category": "Mystery",
-        "num_reviews": 0,
-        "description_words": 163
-      }
-    },
-    {
-      "record_id": "books:upc:0967effecd292a86",
-      "url": "https://books.toscrape.com/catalogue/underlying-notes_577/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0967effecd292a86",
-        "title": "Underlying Notes",
-        "price_incl_tax_gbp": 11.82,
-        "price_excl_tax_gbp": 11.82,
-        "tax_gbp": 0.0,
-        "availability_count": 9,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 39
-      }
-    },
-    {
-      "record_id": "books:upc:04f6c929888f4f11",
-      "url": "https://books.toscrape.com/catalogue/why-not-me_554/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "04f6c929888f4f11",
-        "title": "Why Not Me?",
-        "price_incl_tax_gbp": 17.76,
-        "price_excl_tax_gbp": 17.76,
-        "tax_gbp": 0.0,
-        "availability_count": 8,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 335
-      }
-    },
-    {
-      "record_id": "books:upc:044534b0b28b4e87",
-      "url": "https://books.toscrape.com/catalogue/living-forward-a-proven-plan-to-stop-drifting-and-get-the-life-you-want_531/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "044534b0b28b4e87",
-        "title": "Living Forward: A Proven Plan to Stop Drifting and Get the Life You Want",
-        "price_incl_tax_gbp": 12.55,
-        "price_excl_tax_gbp": 12.55,
-        "tax_gbp": 0.0,
-        "availability_count": 8,
-        "in_stock": true,
-        "rating": "Three",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 263
-      }
-    },
-    {
-      "record_id": "books:upc:0ab4b35dcffcffd1",
-      "url": "https://books.toscrape.com/catalogue/ill-give-you-the-sun_525/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0ab4b35dcffcffd1",
-        "title": "I'll Give You the Sun",
-        "price_incl_tax_gbp": 56.48,
-        "price_excl_tax_gbp": 56.48,
-        "tax_gbp": 0.0,
-        "availability_count": 8,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 242
-      }
-    },
-    {
-      "record_id": "books:upc:0bfdef63285d3019",
-      "url": "https://books.toscrape.com/catalogue/hystopia-a-novel_523/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0bfdef63285d3019",
-        "title": "Hystopia: A Novel",
-        "price_incl_tax_gbp": 21.96,
-        "price_excl_tax_gbp": 21.96,
-        "tax_gbp": 0.0,
-        "availability_count": 8,
-        "in_stock": true,
-        "rating": "Four",
-        "category": "Fiction",
-        "num_reviews": 0,
-        "description_words": 249
-      }
-    },
-    {
-      "record_id": "books:upc:04e3de7ac35ec5cd",
-      "url": "https://books.toscrape.com/catalogue/between-the-world-and-me_513/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "04e3de7ac35ec5cd",
-        "title": "Between the World and Me",
-        "price_incl_tax_gbp": 56.91,
-        "price_excl_tax_gbp": 56.91,
-        "tax_gbp": 0.0,
-        "availability_count": 8,
-        "in_stock": true,
-        "rating": "Four",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 322
-      }
-    },
-    {
-      "record_id": "books:upc:0345872b14f9e774",
-      "url": "https://books.toscrape.com/catalogue/the-origin-of-species_499/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0345872b14f9e774",
-        "title": "The Origin of Species",
-        "price_incl_tax_gbp": 10.01,
-        "price_excl_tax_gbp": 10.01,
-        "tax_gbp": 0.0,
-        "availability_count": 7,
-        "in_stock": true,
-        "rating": "Four",
-        "category": "Science",
-        "num_reviews": 0,
-        "description_words": 228
-      }
-    },
-    {
-      "record_id": "books:upc:012170e4fc87ace0",
-      "url": "https://books.toscrape.com/catalogue/give-it-back_430/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "012170e4fc87ace0",
-        "title": "Give It Back",
-        "price_incl_tax_gbp": 18.32,
-        "price_excl_tax_gbp": 18.32,
-        "tax_gbp": 0.0,
-        "availability_count": 6,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Thriller",
-        "num_reviews": 0,
-        "description_words": 288
-      }
-    },
-    {
-      "record_id": "books:upc:07e6810fd3236bda",
-      "url": "https://books.toscrape.com/catalogue/last-one-home-new-beginnings-1_383/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "07e6810fd3236bda",
-        "title": "Last One Home (New Beginnings #1)",
-        "price_incl_tax_gbp": 59.98,
-        "price_excl_tax_gbp": 59.98,
-        "tax_gbp": 0.0,
-        "availability_count": 5,
-        "in_stock": true,
-        "rating": "Three",
-        "category": "Fiction",
-        "num_reviews": 0,
-        "description_words": 275
-      }
-    },
-    {
-      "record_id": "books:upc:03cbb67c0f990d87",
-      "url": "https://books.toscrape.com/catalogue/a-game-of-thrones-a-song-of-ice-and-fire-1_358/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "03cbb67c0f990d87",
-        "title": "A Game of Thrones (A Song of Ice and Fire #1)",
-        "price_incl_tax_gbp": 46.42,
-        "price_excl_tax_gbp": 46.42,
-        "tax_gbp": 0.0,
-        "availability_count": 5,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Add a comment",
-        "num_reviews": 0,
-        "description_words": 186
-      }
-    },
-    {
-      "record_id": "books:upc:011674f4a3834b8d",
-      "url": "https://books.toscrape.com/catalogue/the-passion-of-dolssa_351/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "011674f4a3834b8d",
-        "title": "The Passion of Dolssa",
-        "price_incl_tax_gbp": 28.32,
-        "price_excl_tax_gbp": 28.32,
-        "tax_gbp": 0.0,
-        "availability_count": 4,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Historical Fiction",
-        "num_reviews": 0,
-        "description_words": 191
-      }
-    },
-    {
-      "record_id": "books:upc:0812f54c93d726ce",
-      "url": "https://books.toscrape.com/catalogue/can-you-keep-a-secret_315/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0812f54c93d726ce",
-        "title": "Can You Keep a Secret?",
-        "price_incl_tax_gbp": 21.94,
-        "price_excl_tax_gbp": 21.94,
-        "tax_gbp": 0.0,
-        "availability_count": 4,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Womens Fiction",
-        "num_reviews": 0,
-        "description_words": 187
-      }
-    },
-    {
-      "record_id": "books:upc:07bb35158d9dd3d2",
-      "url": "https://books.toscrape.com/catalogue/whered-you-go-bernadette_304/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "07bb35158d9dd3d2",
-        "title": "Where'd You Go, Bernadette",
-        "price_incl_tax_gbp": 18.13,
-        "price_excl_tax_gbp": 18.13,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 183
-      }
-    },
-    {
-      "record_id": "books:upc:06bab964fd536971",
-      "url": "https://books.toscrape.com/catalogue/we-the-people-the-modern-day-figures-who-have-reshaped-and-affirmed-the-founding-fathers-vision-of-america_302/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "06bab964fd536971",
-        "title": "We the People: The Modern-Day Figures Who Have Reshaped and Affirmed the Founding Fathers' Vision of America",
-        "price_incl_tax_gbp": 31.95,
-        "price_excl_tax_gbp": 31.95,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "Three",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 432
-      }
-    },
-    {
-      "record_id": "books:upc:0baf71623648413a",
-      "url": "https://books.toscrape.com/catalogue/the-name-of-god-is-mercy_264/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0baf71623648413a",
-        "title": "The Name of God is Mercy",
-        "price_incl_tax_gbp": 37.25,
-        "price_excl_tax_gbp": 37.25,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 626
-      }
-    },
-    {
-      "record_id": "books:upc:08decd9664e5d56e",
-      "url": "https://books.toscrape.com/catalogue/the-book-of-basketball-the-nba-according-to-the-sports-guy_232/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "08decd9664e5d56e",
-        "title": "The Book of Basketball: The NBA According to The Sports Guy",
-        "price_incl_tax_gbp": 44.84,
-        "price_excl_tax_gbp": 44.84,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Sports and Games",
-        "num_reviews": 0,
-        "description_words": 312
-      }
-    },
-    {
-      "record_id": "books:upc:07806456878931bc",
-      "url": "https://books.toscrape.com/catalogue/seven-days-in-the-art-world_220/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "07806456878931bc",
-        "title": "Seven Days in the Art World",
-        "price_incl_tax_gbp": 52.33,
-        "price_excl_tax_gbp": 52.33,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "Two",
-        "category": "Add a comment",
-        "num_reviews": 0,
-        "description_words": 237
-      }
-    },
-    {
-      "record_id": "books:upc:09a7b0b566ad6225",
-      "url": "https://books.toscrape.com/catalogue/outliers-the-story-of-success_204/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "09a7b0b566ad6225",
-        "title": "Outliers: The Story of Success",
-        "price_incl_tax_gbp": 14.16,
-        "price_excl_tax_gbp": 14.16,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 171
-      }
-    },
-    {
-      "record_id": "books:upc:034829ffdd0a0aea",
-      "url": "https://books.toscrape.com/catalogue/is-everyone-hanging-out-without-me-and-other-concerns_178/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "034829ffdd0a0aea",
-        "title": "Is Everyone Hanging Out Without Me? (And Other Concerns)",
-        "price_incl_tax_gbp": 20.11,
-        "price_excl_tax_gbp": 20.11,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "Three",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 289
-      }
-    },
-    {
-      "record_id": "books:upc:04d858cdeeee0da4",
-      "url": "https://books.toscrape.com/catalogue/dead-wake-the-last-crossing-of-the-lusitania_147/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "04d858cdeeee0da4",
-        "title": "Dead Wake: The Last Crossing of the Lusitania",
-        "price_incl_tax_gbp": 39.24,
-        "price_excl_tax_gbp": 39.24,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Default",
-        "num_reviews": 0,
-        "description_words": 381
-      }
-    },
-    {
-      "record_id": "books:upc:0bbc48294707ba96",
-      "url": "https://books.toscrape.com/catalogue/blink-the-power-of-thinking-without-thinking_132/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0bbc48294707ba96",
-        "title": "Blink: The Power of Thinking Without Thinking",
-        "price_incl_tax_gbp": 21.74,
-        "price_excl_tax_gbp": 21.74,
-        "tax_gbp": 0.0,
-        "availability_count": 3,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 389
-      }
-    },
-    {
-      "record_id": "books:upc:09d26b5f819c6a36",
-      "url": "https://books.toscrape.com/catalogue/y-the-last-man-vol-1-unmanned-y-the-last-man-1_98/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "09d26b5f819c6a36",
-        "title": "Y: The Last Man, Vol. 1: Unmanned (Y: The Last Man #1)",
-        "price_incl_tax_gbp": 18.51,
-        "price_excl_tax_gbp": 18.51,
-        "tax_gbp": 0.0,
-        "availability_count": 1,
-        "in_stock": true,
-        "rating": "Four",
-        "category": "Sequential Art",
-        "num_reviews": 0,
-        "description_words": 172
-      }
-    },
-    {
-      "record_id": "books:upc:0268f149d014b389",
-      "url": "https://books.toscrape.com/catalogue/travels-with-charley-in-search-of-america_90/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0268f149d014b389",
-        "title": "Travels with Charley: In Search of America",
-        "price_incl_tax_gbp": 57.82,
-        "price_excl_tax_gbp": 57.82,
-        "tax_gbp": 0.0,
-        "availability_count": 1,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 314
-      }
-    },
-    {
-      "record_id": "books:upc:04e43893e32f9d29",
-      "url": "https://books.toscrape.com/catalogue/the-light-of-the-fireflies_71/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "04e43893e32f9d29",
-        "title": "The Light of the Fireflies",
-        "price_incl_tax_gbp": 54.43,
-        "price_excl_tax_gbp": 54.43,
-        "tax_gbp": 0.0,
-        "availability_count": 1,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Add a comment",
-        "num_reviews": 0,
-        "description_words": 237
-      }
-    },
-    {
-      "record_id": "books:upc:09659d1639a1f978",
-      "url": "https://books.toscrape.com/catalogue/the-end-of-the-jesus-era-an-investigation-1_64/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "09659d1639a1f978",
-        "title": "The End of the Jesus Era (An Investigation #1)",
-        "price_incl_tax_gbp": 14.4,
-        "price_excl_tax_gbp": 14.4,
-        "tax_gbp": 0.0,
-        "availability_count": 1,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Nonfiction",
-        "num_reviews": 0,
-        "description_words": 132
-      }
-    },
-    {
-      "record_id": "books:upc:06f6a57a6d532844",
-      "url": "https://books.toscrape.com/catalogue/kitchens-of-the-great-midwest_28/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "06f6a57a6d532844",
-        "title": "Kitchens of the Great Midwest",
-        "price_incl_tax_gbp": 57.2,
-        "price_excl_tax_gbp": 57.2,
-        "tax_gbp": 0.0,
-        "availability_count": 1,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Fiction",
-        "num_reviews": 0,
-        "description_words": 376
-      }
-    },
-    {
-      "record_id": "books:upc:0072b94dfa30608e",
-      "url": "https://books.toscrape.com/catalogue/deep-under-walker-security-1_15/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "0072b94dfa30608e",
-        "title": "Deep Under (Walker Security #1)",
-        "price_incl_tax_gbp": 47.09,
-        "price_excl_tax_gbp": 47.09,
-        "tax_gbp": 0.0,
-        "availability_count": 1,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Romance",
-        "num_reviews": 0,
-        "description_words": 192
-      }
-    },
-    {
-      "record_id": "books:upc:099fae4a0705d63b",
-      "url": "https://books.toscrape.com/catalogue/bleach-vol-1-strawberry-and-the-soul-reapers-bleach-1_7/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "099fae4a0705d63b",
-        "title": "Bleach, Vol. 1: Strawberry and the Soul Reapers (Bleach #1)",
-        "price_incl_tax_gbp": 34.65,
-        "price_excl_tax_gbp": 34.65,
-        "tax_gbp": 0.0,
-        "availability_count": 1,
-        "in_stock": true,
-        "rating": "Five",
-        "category": "Sequential Art",
-        "num_reviews": 0,
-        "description_words": 153
-      }
-    },
-    {
-      "record_id": "books:upc:08672cd59171d5e4",
-      "url": "https://books.toscrape.com/catalogue/beyond-good-and-evil_6/index.html",
-      "status": "baru",
-      "fields": {
-        "upc": "08672cd59171d5e4",
-        "title": "Beyond Good and Evil",
-        "price_incl_tax_gbp": 43.38,
-        "price_excl_tax_gbp": 43.38,
-        "tax_gbp": 0.0,
-        "availability_count": 1,
-        "in_stock": true,
-        "rating": "One",
-        "category": "Philosophy",
-        "num_reviews": 0,
-        "description_words": 281
-      }
-    },
     {
       "record_id": "books:upc:a897fe39b1053632",
       "url": "https://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html",
@@ -1100,6 +200,24 @@
         "category": "Poetry",
         "num_reviews": 0,
         "description_words": 464
+      }
+    },
+    {
+      "record_id": "books:upc:0312262ecafa5a40",
+      "url": "https://books.toscrape.com/catalogue/starving-hearts-triangular-trade-trilogy-1_990/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "0312262ecafa5a40",
+        "title": "Starving Hearts (Triangular Trade Trilogy, #1)",
+        "price_incl_tax_gbp": 13.99,
+        "price_excl_tax_gbp": 13.99,
+        "tax_gbp": 0.0,
+        "availability_count": 19,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 196
       }
     },
     {
@@ -1337,6 +455,24 @@
       }
     },
     {
+      "record_id": "books:upc:00bfed9e18bb36f3",
+      "url": "https://books.toscrape.com/catalogue/black-dust_976/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "00bfed9e18bb36f3",
+        "title": "Black Dust",
+        "price_incl_tax_gbp": 34.53,
+        "price_excl_tax_gbp": 34.53,
+        "tax_gbp": 0.0,
+        "availability_count": 19,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Romance",
+        "num_reviews": 0,
+        "description_words": 216
+      }
+    },
+    {
       "record_id": "books:upc:9528d0948525bf5f",
       "url": "https://books.toscrape.com/catalogue/birdsong-a-story-in-pictures_975/index.html",
       "status": "tetap",
@@ -1532,6 +668,24 @@
         "category": "Default",
         "num_reviews": 0,
         "description_words": 48
+      }
+    },
+    {
+      "record_id": "books:upc:094b269567e1c300",
+      "url": "https://books.toscrape.com/catalogue/maude-1883-1993she-grew-up-with-the-country_964/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "094b269567e1c300",
+        "title": "Maude (1883-1993):She Grew Up with the country",
+        "price_incl_tax_gbp": 18.02,
+        "price_excl_tax_gbp": 18.02,
+        "tax_gbp": 0.0,
+        "availability_count": 18,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 211
       }
     },
     {
@@ -1784,6 +938,24 @@
         "category": "History",
         "num_reviews": 0,
         "description_words": 309
+      }
+    },
+    {
+      "record_id": "books:upc:09555be379ad9253",
+      "url": "https://books.toscrape.com/catalogue/tsubasa-world-chronicle-2-tsubasa-world-chronicle-2_949/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "09555be379ad9253",
+        "title": "Tsubasa: WoRLD CHRoNiCLE 2 (Tsubasa WoRLD CHRoNiCLE #2)",
+        "price_incl_tax_gbp": 16.28,
+        "price_excl_tax_gbp": 16.28,
+        "tax_gbp": 0.0,
+        "availability_count": 16,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Sequential Art",
+        "num_reviews": 0,
+        "description_words": 144
       }
     },
     {
@@ -2849,6 +2021,24 @@
       }
     },
     {
+      "record_id": "books:upc:09b6cc87e62c2c58",
+      "url": "https://books.toscrape.com/catalogue/danganronpa-volume-1_889/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "09b6cc87e62c2c58",
+        "title": "Danganronpa Volume 1",
+        "price_incl_tax_gbp": 51.99,
+        "price_excl_tax_gbp": 51.99,
+        "tax_gbp": 0.0,
+        "availability_count": 16,
+        "in_stock": true,
+        "rating": "Four",
+        "category": "Sequential Art",
+        "num_reviews": 0,
+        "description_words": 196
+      }
+    },
+    {
       "record_id": "books:upc:7267864328ae8b9d",
       "url": "https://books.toscrape.com/catalogue/crown-of-midnight-throne-of-glass-2_888/index.html",
       "status": "tetap",
@@ -3098,6 +2288,24 @@
         "category": "Young Adult",
         "num_reviews": 0,
         "description_words": 215
+      }
+    },
+    {
+      "record_id": "books:upc:01d2001ac1e6f8a3",
+      "url": "https://books.toscrape.com/catalogue/a-court-of-thorns-and-roses-a-court-of-thorns-and-roses-1_874/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "01d2001ac1e6f8a3",
+        "title": "A Court of Thorns and Roses (A Court of Thorns and Roses #1)",
+        "price_incl_tax_gbp": 52.37,
+        "price_excl_tax_gbp": 52.37,
+        "tax_gbp": 0.0,
+        "availability_count": 16,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Fantasy",
+        "num_reviews": 0,
+        "description_words": 218
       }
     },
     {
@@ -3371,6 +2579,24 @@
       }
     },
     {
+      "record_id": "books:upc:0651062381f0636a",
+      "url": "https://books.toscrape.com/catalogue/the-regional-office-is-under-attack_858/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "0651062381f0636a",
+        "title": "The Regional Office Is Under Attack!",
+        "price_incl_tax_gbp": 51.36,
+        "price_excl_tax_gbp": 51.36,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Fiction",
+        "num_reviews": 0,
+        "description_words": 213
+      }
+    },
+    {
       "record_id": "books:upc:e98a4efa85070c2f",
       "url": "https://books.toscrape.com/catalogue/the-psychopath-test-a-journey-through-the-madness-industry_857/index.html",
       "status": "tetap",
@@ -3497,6 +2723,24 @@
       }
     },
     {
+      "record_id": "books:upc:08db62f24627e71f",
+      "url": "https://books.toscrape.com/catalogue/the-matchmakers-playbook-wingmen-inc-1_850/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "08db62f24627e71f",
+        "title": "The Matchmaker's Playbook (Wingmen Inc. #1)",
+        "price_incl_tax_gbp": 55.85,
+        "price_excl_tax_gbp": 55.85,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "New Adult",
+        "num_reviews": 0,
+        "description_words": 213
+      }
+    },
+    {
       "record_id": "books:upc:e28e330cbdf01126",
       "url": "https://books.toscrape.com/catalogue/the-love-and-lemons-cookbook-an-apple-to-zucchini-celebration-of-impromptu-cooking_849/index.html",
       "status": "tetap",
@@ -3620,6 +2864,762 @@
         "category": "Nonfiction",
         "num_reviews": 0,
         "description_words": 452
+      }
+    },
+    {
+      "record_id": "books:upc:d6670dfe3e7b42bd",
+      "url": "https://books.toscrape.com/catalogue/the-emerald-mystery_842/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "d6670dfe3e7b42bd",
+        "title": "The Emerald Mystery",
+        "price_incl_tax_gbp": 23.15,
+        "price_excl_tax_gbp": 23.15,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 268
+      }
+    },
+    {
+      "record_id": "books:upc:96a38e7c813d8f1d",
+      "url": "https://books.toscrape.com/catalogue/the-cookies-cups-cookbook-125-sweet-savory-recipes-reminding-you-to-always-eat-dessert-first_841/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "96a38e7c813d8f1d",
+        "title": "The Cookies & Cups Cookbook: 125+ sweet & savory recipes reminding you to Always Eat Dessert First",
+        "price_incl_tax_gbp": 41.25,
+        "price_excl_tax_gbp": 41.25,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Food and Drink",
+        "num_reviews": 0,
+        "description_words": 252
+      }
+    },
+    {
+      "record_id": "books:upc:efc3768127714ec3",
+      "url": "https://books.toscrape.com/catalogue/the-bridge-to-consciousness-im-writing-the-bridge-between-science-and-our-old-and-new-beliefs_840/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "efc3768127714ec3",
+        "title": "The Bridge to Consciousness: I'm Writing the Bridge Between Science and Our Old and New Beliefs.",
+        "price_incl_tax_gbp": 32.0,
+        "price_excl_tax_gbp": 32.0,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Three",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": null
+      }
+    },
+    {
+      "record_id": "books:upc:dd047728de72ad62",
+      "url": "https://books.toscrape.com/catalogue/the-artists-way-a-spiritual-path-to-higher-creativity_839/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "dd047728de72ad62",
+        "title": "The Artist's Way: A Spiritual Path to Higher Creativity",
+        "price_incl_tax_gbp": 38.49,
+        "price_excl_tax_gbp": 38.49,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Nonfiction",
+        "num_reviews": 0,
+        "description_words": 188
+      }
+    },
+    {
+      "record_id": "books:upc:e7469e22b5bfb3e7",
+      "url": "https://books.toscrape.com/catalogue/the-art-of-war_838/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "e7469e22b5bfb3e7",
+        "title": "The Art of War",
+        "price_incl_tax_gbp": 33.34,
+        "price_excl_tax_gbp": 33.34,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 219
+      }
+    },
+    {
+      "record_id": "books:upc:c99761a700ade23f",
+      "url": "https://books.toscrape.com/catalogue/the-argonauts_837/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "c99761a700ade23f",
+        "title": "The Argonauts",
+        "price_incl_tax_gbp": 10.93,
+        "price_excl_tax_gbp": 10.93,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Autobiography",
+        "num_reviews": 0,
+        "description_words": 221
+      }
+    },
+    {
+      "record_id": "books:upc:56e4f9eab2e8e674",
+      "url": "https://books.toscrape.com/catalogue/the-10-entrepreneur-live-your-startup-dream-without-quitting-your-day-job_836/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "56e4f9eab2e8e674",
+        "title": "The 10% Entrepreneur: Live Your Startup Dream Without Quitting Your Day Job",
+        "price_incl_tax_gbp": 27.55,
+        "price_excl_tax_gbp": 27.55,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Three",
+        "category": "Business",
+        "num_reviews": 0,
+        "description_words": 391
+      }
+    },
+    {
+      "record_id": "books:upc:203b7f94b7d6115f",
+      "url": "https://books.toscrape.com/catalogue/suddenly-in-love-lake-haven-1_835/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "203b7f94b7d6115f",
+        "title": "Suddenly in Love (Lake Haven #1)",
+        "price_incl_tax_gbp": 55.99,
+        "price_excl_tax_gbp": 55.99,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Romance",
+        "num_reviews": 0,
+        "description_words": 224
+      }
+    },
+    {
+      "record_id": "books:upc:ca71e72655bece85",
+      "url": "https://books.toscrape.com/catalogue/something-more-than-this_834/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "ca71e72655bece85",
+        "title": "Something More Than This",
+        "price_incl_tax_gbp": 16.24,
+        "price_excl_tax_gbp": 16.24,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Four",
+        "category": "Romance",
+        "num_reviews": 0,
+        "description_words": 203
+      }
+    },
+    {
+      "record_id": "books:upc:2a70769cdc6eb8b8",
+      "url": "https://books.toscrape.com/catalogue/soft-apocalypse_833/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "2a70769cdc6eb8b8",
+        "title": "Soft Apocalypse",
+        "price_incl_tax_gbp": 26.12,
+        "price_excl_tax_gbp": 26.12,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Science Fiction",
+        "num_reviews": 0,
+        "description_words": 264
+      }
+    },
+    {
+      "record_id": "books:upc:1b33663ad7b95fd8",
+      "url": "https://books.toscrape.com/catalogue/so-youve-been-publicly-shamed_832/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "1b33663ad7b95fd8",
+        "title": "So You've Been Publicly Shamed",
+        "price_incl_tax_gbp": 12.23,
+        "price_excl_tax_gbp": 12.23,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Nonfiction",
+        "num_reviews": 0,
+        "description_words": 249
+      }
+    },
+    {
+      "record_id": "books:upc:0e0dcc3339602b28",
+      "url": "https://books.toscrape.com/catalogue/shoe-dog-a-memoir-by-the-creator-of-nike_831/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "0e0dcc3339602b28",
+        "title": "Shoe Dog: A Memoir by the Creator of NIKE",
+        "price_incl_tax_gbp": 23.99,
+        "price_excl_tax_gbp": 23.99,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Business",
+        "num_reviews": 0,
+        "description_words": 327
+      }
+    },
+    {
+      "record_id": "books:upc:0c27e6c3744fc14b",
+      "url": "https://books.toscrape.com/catalogue/shobu-samurai-project-aryoku-3_830/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "0c27e6c3744fc14b",
+        "title": "Shobu Samurai, Project Aryoku (#3)",
+        "price_incl_tax_gbp": 29.06,
+        "price_excl_tax_gbp": 29.06,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Three",
+        "category": "Add a comment",
+        "num_reviews": 0,
+        "description_words": 213
+      }
+    },
+    {
+      "record_id": "books:upc:ad04ad9fc179fc5d",
+      "url": "https://books.toscrape.com/catalogue/secrets-and-lace-fatal-hearts-1_829/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "ad04ad9fc179fc5d",
+        "title": "Secrets and Lace (Fatal Hearts #1)",
+        "price_incl_tax_gbp": 20.27,
+        "price_excl_tax_gbp": 20.27,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 286
+      }
+    },
+    {
+      "record_id": "books:upc:1c929cfd16b71907",
+      "url": "https://books.toscrape.com/catalogue/scarlett-epstein-hates-it-here_828/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "1c929cfd16b71907",
+        "title": "Scarlett Epstein Hates It Here",
+        "price_incl_tax_gbp": 43.55,
+        "price_excl_tax_gbp": 43.55,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Young Adult",
+        "num_reviews": 0,
+        "description_words": 179
+      }
+    },
+    {
+      "record_id": "books:upc:e656e280bc8edd56",
+      "url": "https://books.toscrape.com/catalogue/romero-and-juliet-a-tragic-tale-of-love-and-zombies_827/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "e656e280bc8edd56",
+        "title": "Romero and Juliet: A Tragic Tale of Love and Zombies",
+        "price_incl_tax_gbp": 36.94,
+        "price_excl_tax_gbp": 36.94,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 220
+      }
+    },
+    {
+      "record_id": "books:upc:b53db2271c9624f7",
+      "url": "https://books.toscrape.com/catalogue/redeeming-love_826/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "b53db2271c9624f7",
+        "title": "Redeeming Love",
+        "price_incl_tax_gbp": 20.47,
+        "price_excl_tax_gbp": 20.47,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Christian Fiction",
+        "num_reviews": 0,
+        "description_words": 236
+      }
+    },
+    {
+      "record_id": "books:upc:d9c643fa1fc57bdb",
+      "url": "https://books.toscrape.com/catalogue/poses-for-artists-volume-1-dynamic-and-sitting-poses-an-essential-reference-for-figure-drawing-and-the-human-form_825/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "d9c643fa1fc57bdb",
+        "title": "Poses for Artists Volume 1 - Dynamic and Sitting Poses: An Essential Reference for Figure Drawing and the Human Form",
+        "price_incl_tax_gbp": 41.06,
+        "price_excl_tax_gbp": 41.06,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 62
+      }
+    },
+    {
+      "record_id": "books:upc:31001a1210623bd4",
+      "url": "https://books.toscrape.com/catalogue/poems-that-make-grown-women-cry_824/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "31001a1210623bd4",
+        "title": "Poems That Make Grown Women Cry",
+        "price_incl_tax_gbp": 14.19,
+        "price_excl_tax_gbp": 14.19,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Four",
+        "category": "Poetry",
+        "num_reviews": 0,
+        "description_words": 201
+      }
+    },
+    {
+      "record_id": "books:upc:50b8f80311b31ede",
+      "url": "https://books.toscrape.com/catalogue/nightingale-sing_823/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "50b8f80311b31ede",
+        "title": "Nightingale, Sing",
+        "price_incl_tax_gbp": 38.28,
+        "price_excl_tax_gbp": 38.28,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Young Adult",
+        "num_reviews": 0,
+        "description_words": 139
+      }
+    },
+    {
+      "record_id": "books:upc:cfeb1e1e0e695b58",
+      "url": "https://books.toscrape.com/catalogue/night-sky-with-exit-wounds_822/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "cfeb1e1e0e695b58",
+        "title": "Night Sky with Exit Wounds",
+        "price_incl_tax_gbp": 41.05,
+        "price_excl_tax_gbp": 41.05,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Poetry",
+        "num_reviews": 0,
+        "description_words": 168
+      }
+    },
+    {
+      "record_id": "books:upc:a40723994f715420",
+      "url": "https://books.toscrape.com/catalogue/mrs-houdini_821/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "a40723994f715420",
+        "title": "Mrs. Houdini",
+        "price_incl_tax_gbp": 30.25,
+        "price_excl_tax_gbp": 30.25,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Historical Fiction",
+        "num_reviews": 0,
+        "description_words": 274
+      }
+    },
+    {
+      "record_id": "books:upc:caf4fe9311f1dc59",
+      "url": "https://books.toscrape.com/catalogue/modern-romance_820/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "caf4fe9311f1dc59",
+        "title": "Modern Romance",
+        "price_incl_tax_gbp": 28.26,
+        "price_excl_tax_gbp": 28.26,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Add a comment",
+        "num_reviews": 0,
+        "description_words": 478
+      }
+    },
+    {
+      "record_id": "books:upc:af96613fdd793a3c",
+      "url": "https://books.toscrape.com/catalogue/miss-peregrines-home-for-peculiar-children-miss-peregrines-peculiar-children-1_819/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "af96613fdd793a3c",
+        "title": "Miss Peregrine’s Home for Peculiar Children (Miss Peregrine’s Peculiar Children #1)",
+        "price_incl_tax_gbp": 10.76,
+        "price_excl_tax_gbp": 10.76,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 169
+      }
+    },
+    {
+      "record_id": "books:upc:d69dd8dac66f9f84",
+      "url": "https://books.toscrape.com/catalogue/louisa-the-extraordinary-life-of-mrs-adams_818/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "d69dd8dac66f9f84",
+        "title": "Louisa: The Extraordinary Life of Mrs. Adams",
+        "price_incl_tax_gbp": 16.85,
+        "price_excl_tax_gbp": 16.85,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Biography",
+        "num_reviews": 0,
+        "description_words": 325
+      }
+    },
+    {
+      "record_id": "books:upc:4aa03792b50f0b22",
+      "url": "https://books.toscrape.com/catalogue/little-red_817/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "4aa03792b50f0b22",
+        "title": "Little Red",
+        "price_incl_tax_gbp": 13.47,
+        "price_excl_tax_gbp": 13.47,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Three",
+        "category": "Childrens",
+        "num_reviews": 0,
+        "description_words": 145
+      }
+    },
+    {
+      "record_id": "books:upc:ba54932df84e8cea",
+      "url": "https://books.toscrape.com/catalogue/library-of-souls-miss-peregrines-peculiar-children-3_816/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "ba54932df84e8cea",
+        "title": "Library of Souls (Miss Peregrine’s Peculiar Children #3)",
+        "price_incl_tax_gbp": 48.56,
+        "price_excl_tax_gbp": 48.56,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Young Adult",
+        "num_reviews": 0,
+        "description_words": 213
+      }
+    },
+    {
+      "record_id": "books:upc:c1afd71fc86bf682",
+      "url": "https://books.toscrape.com/catalogue/large-print-heart-of-the-pride_815/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "c1afd71fc86bf682",
+        "title": "Large Print Heart of the Pride",
+        "price_incl_tax_gbp": 19.15,
+        "price_excl_tax_gbp": 19.15,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 224
+      }
+    },
+    {
+      "record_id": "books:upc:fd8585283fc7d2d7",
+      "url": "https://books.toscrape.com/catalogue/i-had-a-nice-time-and-other-lies-how-to-find-love-sht-like-that_814/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "fd8585283fc7d2d7",
+        "title": "I Had a Nice Time And Other Lies...: How to find love & sh*t like that",
+        "price_incl_tax_gbp": 57.36,
+        "price_excl_tax_gbp": 57.36,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Four",
+        "category": "Womens Fiction",
+        "num_reviews": 0,
+        "description_words": 287
+      }
+    },
+    {
+      "record_id": "books:upc:4ce91d31c1e57c33",
+      "url": "https://books.toscrape.com/catalogue/hollow-city-miss-peregrines-peculiar-children-2_813/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "4ce91d31c1e57c33",
+        "title": "Hollow City (Miss Peregrine’s Peculiar Children #2)",
+        "price_incl_tax_gbp": 42.98,
+        "price_excl_tax_gbp": 42.98,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Fantasy",
+        "num_reviews": 0,
+        "description_words": 170
+      }
+    },
+    {
+      "record_id": "books:upc:d163dd6c352fbcd2",
+      "url": "https://books.toscrape.com/catalogue/grumbles_812/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "d163dd6c352fbcd2",
+        "title": "Grumbles",
+        "price_incl_tax_gbp": 22.16,
+        "price_excl_tax_gbp": 22.16,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Two",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 38
+      }
+    },
+    {
+      "record_id": "books:upc:ce60436f52c5ee68",
+      "url": "https://books.toscrape.com/catalogue/full-moon-over-noahs-ark-an-odyssey-to-mount-ararat-and-beyond_811/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "ce60436f52c5ee68",
+        "title": "Full Moon over Noah’s Ark: An Odyssey to Mount Ararat and Beyond",
+        "price_incl_tax_gbp": 49.43,
+        "price_excl_tax_gbp": 49.43,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Four",
+        "category": "Travel",
+        "num_reviews": 0,
+        "description_words": 284
+      }
+    },
+    {
+      "record_id": "books:upc:116a2fdc9a45bab0",
+      "url": "https://books.toscrape.com/catalogue/frostbite-vampire-academy-2_810/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "116a2fdc9a45bab0",
+        "title": "Frostbite (Vampire Academy #2)",
+        "price_incl_tax_gbp": 29.99,
+        "price_excl_tax_gbp": 29.99,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Young Adult",
+        "num_reviews": 0,
+        "description_words": 273
+      }
+    },
+    {
+      "record_id": "books:upc:8585760646e3aa2a",
+      "url": "https://books.toscrape.com/catalogue/follow-you-home_809/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "8585760646e3aa2a",
+        "title": "Follow You Home",
+        "price_incl_tax_gbp": 21.36,
+        "price_excl_tax_gbp": 21.36,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Horror",
+        "num_reviews": 0,
+        "description_words": 186
+      }
+    },
+    {
+      "record_id": "books:upc:2f88b08bf0a0e367",
+      "url": "https://books.toscrape.com/catalogue/first-steps-for-new-christians-print-edition_808/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "2f88b08bf0a0e367",
+        "title": "First Steps for New Christians (Print Edition)",
+        "price_incl_tax_gbp": 29.0,
+        "price_excl_tax_gbp": 29.0,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "One",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 379
+      }
+    },
+    {
+      "record_id": "books:upc:edb3097e71330040",
+      "url": "https://books.toscrape.com/catalogue/finders-keepers-bill-hodges-trilogy-2_807/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "edb3097e71330040",
+        "title": "Finders Keepers (Bill Hodges Trilogy #2)",
+        "price_incl_tax_gbp": 53.53,
+        "price_excl_tax_gbp": 53.53,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Fiction",
+        "num_reviews": 0,
+        "description_words": 283
+      }
+    },
+    {
+      "record_id": "books:upc:65d034adf80834b7",
+      "url": "https://books.toscrape.com/catalogue/fables-vol-1-legends-in-exile-fables-1_806/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "65d034adf80834b7",
+        "title": "Fables, Vol. 1: Legends in Exile (Fables #1)",
+        "price_incl_tax_gbp": 41.62,
+        "price_excl_tax_gbp": 41.62,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Four",
+        "category": "Sequential Art",
+        "num_reviews": 0,
+        "description_words": 166
+      }
+    },
+    {
+      "record_id": "books:upc:29c0025455f8c585",
+      "url": "https://books.toscrape.com/catalogue/eureka-trivia-60_805/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "29c0025455f8c585",
+        "title": "Eureka Trivia 6.0",
+        "price_incl_tax_gbp": 54.59,
+        "price_excl_tax_gbp": 54.59,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Four",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 267
+      }
+    },
+    {
+      "record_id": "books:upc:6ffb36aaeff1c81e",
+      "url": "https://books.toscrape.com/catalogue/drive-the-surprising-truth-about-what-motivates-us_804/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "6ffb36aaeff1c81e",
+        "title": "Drive: The Surprising Truth About What Motivates Us",
+        "price_incl_tax_gbp": 34.95,
+        "price_excl_tax_gbp": 34.95,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Four",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 280
+      }
+    },
+    {
+      "record_id": "books:upc:f6d967cdadc6fbd9",
+      "url": "https://books.toscrape.com/catalogue/done-rubbed-out-reightman-bailey-1_803/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "f6d967cdadc6fbd9",
+        "title": "Done Rubbed Out (Reightman & Bailey #1)",
+        "price_incl_tax_gbp": 37.72,
+        "price_excl_tax_gbp": 37.72,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Five",
+        "category": "Default",
+        "num_reviews": 0,
+        "description_words": 265
+      }
+    },
+    {
+      "record_id": "books:upc:3a11bb962ff45b78",
+      "url": "https://books.toscrape.com/catalogue/doing-it-over-most-likely-to-1_802/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "3a11bb962ff45b78",
+        "title": "Doing It Over (Most Likely To #1)",
+        "price_incl_tax_gbp": 35.61,
+        "price_excl_tax_gbp": 35.61,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Three",
+        "category": "Romance",
+        "num_reviews": 0,
+        "description_words": 219
+      }
+    },
+    {
+      "record_id": "books:upc:46c1530d7546ea6d",
+      "url": "https://books.toscrape.com/catalogue/deliciously-ella-every-day-quick-and-easy-recipes-for-gluten-free-snacks-packed-lunches-and-simple-meals_801/index.html",
+      "status": "tetap",
+      "fields": {
+        "upc": "46c1530d7546ea6d",
+        "title": "Deliciously Ella Every Day: Quick and Easy Recipes for Gluten-Free Snacks, Packed Lunches, and Simple Meals",
+        "price_incl_tax_gbp": 42.16,
+        "price_excl_tax_gbp": 42.16,
+        "tax_gbp": 0.0,
+        "availability_count": 15,
+        "in_stock": true,
+        "rating": "Three",
+        "category": "Food and Drink",
+        "num_reviews": 0,
+        "description_words": 285
       }
     }
   ]

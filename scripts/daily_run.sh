@@ -28,6 +28,31 @@ for TARGET in $TARGETS; do
     --data-root "$DATA_ROOT" --reports-root "$REPORTS_ROOT" || FAIL=1
 done
 
+# (0) fixture DriftLab. Target `driftlab` menembak http://127.0.0.1:8100; server itu tidak
+# pernah hidup sendiri saat unit dipicu timer, jadi tanpa langkah ini panen driftlab selalu
+# 0 record dan unit selalu gagal. `lab_up.sh` idempoten (pid file), `lab_down.sh` hanya
+# membunuh PID miliknya sendiri — run harian tidak meninggalkan server menyala.
+LAB_UP=${DRIFTWATCH_LAB_UP:-scripts/lab_up.sh}
+LAB_DOWN=${DRIFTWATCH_LAB_DOWN:-scripts/lab_down.sh}
+LAB_STARTED=0
+
+lab_teardown() {
+  if [[ $LAB_STARTED -eq 1 ]]; then
+    LAB_STARTED=0
+    bash "$LAB_DOWN" || echo "ERROR driftlab: fixture gagal dimatikan" >&2
+  fi
+}
+
+if [[ " $TARGETS " == *" driftlab "* ]]; then
+  trap lab_teardown EXIT
+  if bash "$LAB_UP"; then
+    LAB_STARTED=1
+  else
+    echo "ERROR driftlab: fixture gagal dinyalakan; panen driftlab akan gagal" >&2
+    FAIL=1
+  fi
+fi
+
 for TARGET in $TARGETS; do
   echo "target=$TARGET start"
   SCRAPE_OK=1

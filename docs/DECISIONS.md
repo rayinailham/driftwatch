@@ -317,10 +317,42 @@ dan notifikasi. Pemeriksaan berulang tetap mengembalikan status kritis agar syst
 gagal, tanpa menambah baris `RUN_MISSING` identik. Tanggal target selalu diberikan eksplisit
 ke detector; test tidak bergantung jam nyata.
 
+## D24 — Fixture DriftLab dinyalakan pipeline, dan alarm yang sembuh ditutup
+
+Dikunci 2026-08-31 saat menutup dua cacat yang saling menyamarkan.
+
+**(a) Fixture.** Target `driftlab` menembak `http://127.0.0.1:8100`, tetapi `scripts/daily_run.sh`
+tidak pernah menyalakan server itu. Saat unit dipicu timer (bukan sesi manual yang kebetulan
+sudah menjalankan `lab_up.sh`), panen `driftlab` selalu 0 record dan unit selalu `exit 1` —
+tiga hari berturut (29, 30, 31 Agustus 2026). Perbaikan: langkah (0) memanggil `lab_up.sh`
+sebelum loop target dan `lab_down.sh` lewat `trap EXIT`, hanya bila `driftlab` ada di
+`$TARGETS`. Keduanya bisa ditimpa (`DRIFTWATCH_LAB_UP`/`DRIFTWATCH_LAB_DOWN`) supaya uji shell
+tidak butuh server sungguhan. Run harian tidak meninggalkan fixture menyala.
+
+**(b) Alarm yang sembuh.** `alerts.jsonl` tetap append-only (D23), tetapi run ulang yang
+berhasil sekarang menandai baris lamanya `resolved_at` alih-alih membiarkannya. Tanpa ini,
+`daily.md` hasil run yang sudah sembuh masih mengutip alarm run gagal — tabel angkanya
+menunjukkan "200 data, kelengkapan 100%" sementara ringkasannya berkata "tidak ada data yang
+berhasil dikumpulkan hari ini". Baris tidak pernah dihapus, hanya diberi stempel, supaya jejak
+kegagalan tetap bisa diaudit; `report.py` mengabaikan baris ber-`resolved_at`.
+
+Penutupan itu **berlingkup**: `append_alerts(scope=…)` hanya boleh menutup kode yang benar-benar
+diuji run tersebut (`evaluated_codes()`). Pemeriksaan sempit `--check-missing` berlingkup
+`{"RUN_MISSING"}` saja — tanpa pagar itu, watchdog H+1 akan diam-diam menutup temuan panen
+yang masih sah. Dua test regresi mengunci keduanya, ditambah satu test yang mengunci bahwa
+nama detector = kode alarmnya.
+
+## D20 — Repo publik: izin diberikan, eksekusi menunggu gerbang P12
+
+Izin user diberikan **2026-08-31**. Flip ke publik **belum dijalankan** karena gerbangnya
+sendiri belum ada: `make audit` (A12) dan uji salinan bersih `make all` (A11) baru lahir di
+P12. Urutannya tidak boleh dibalik — repo dibuka publik hanya setelah audit menyatakan
+0 kebocoran dan riwayat commit disapu bersih dari kredensial serta artefak runtime.
+
 ---
 
 ## 🔓 Terbuka — wajib dikunci
 
 | Kode | Pertanyaan | Dikunci di |
 |---|---|---|
-| 🔓 D20 | Repo dijadikan publik? | P12, **butuh izin user terpisah** |
+| ✅ D20 | Repo dijadikan publik? | **Izin diberikan 2026-08-31**; eksekusi menunggu gerbang audit P12 |

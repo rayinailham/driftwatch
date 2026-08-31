@@ -129,7 +129,13 @@ def load_alerts(reports_root: Path) -> list[dict[str, Any]]:
 
 
 def alerts_for(alerts: Sequence[dict[str, Any]], target: str, run_date: str) -> list[dict[str, Any]]:
-    return [a for a in alerts if a.get("target") == target and a.get("date") == run_date]
+    """Alarm yang masih berlaku. Baris ber-`resolved_at` sudah ditutup run berikutnya —
+    mengutipnya membuat laporan klien membantah tabel angkanya sendiri."""
+    return [
+        a
+        for a in alerts
+        if a.get("target") == target and a.get("date") == run_date and not a.get("resolved_at")
+    ]
 
 
 def status_of(alerts: Sequence[dict[str, Any]]) -> str:

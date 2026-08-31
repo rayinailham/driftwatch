@@ -215,16 +215,28 @@ DETECTORS: tuple[Callable[[dict | None, dict | None, dict], Alarm | None], ...] 
 )
 
 
-def evaluate(run_today: dict | None, run_baseline: dict | None, diff: dict) -> list[Alarm]:
+COMPARISON_DETECTORS = (record_count_drop, field_completeness_drop, duration_anomaly, churn_spike)
+
+
+def evaluated_detectors(
+    run_today: dict | None, run_baseline: dict | None
+) -> tuple[Callable[[dict | None, dict | None, dict], Alarm | None], ...]:
+    """Detector yang benar-benar dijalankan untuk sepasang run ini."""
     if run_today is None:
-        missing = run_missing(run_today, run_baseline, diff)
-        return [missing] if missing is not None else []
+        return (run_missing,)
     if run_baseline is None:
-        comparison_detectors = {record_count_drop, field_completeness_drop, duration_anomaly, churn_spike}
-    else:
-        comparison_detectors = set()
-    return [alarm for detector in DETECTORS
-            if detector not in comparison_detectors
+        skipped = set(COMPARISON_DETECTORS)
+        return tuple(detector for detector in DETECTORS if detector not in skipped)
+    return DETECTORS
+
+
+def evaluated_codes(run_today: dict | None, run_baseline: dict | None) -> set[str]:
+    """Kode yang boleh ditutup run ini. Kode yang tidak diuji tidak boleh ikut ditutup."""
+    return {detector.__name__.upper() for detector in evaluated_detectors(run_today, run_baseline)}
+
+
+def evaluate(run_today: dict | None, run_baseline: dict | None, diff: dict) -> list[Alarm]:
+    return [alarm for detector in evaluated_detectors(run_today, run_baseline)
             for alarm in [detector(run_today, run_baseline, diff)] if alarm is not None]
 
 
@@ -238,19 +250,50 @@ def append_alerts(
     run_date: str,
     reports_root: Path,
     notify: bool,
+    scope: set[str] | None = None,
 ) -> list[Alarm]:
-    """Append only alarms not already recorded for the same target, date, and code."""
+    """Catat alarm baru, dan tutup alarm lama yang sudah tidak berbunyi lagi.
+
+    `scope` adalah kode yang benar-benar diuji run ini. Hanya kode di dalam `scope`
+    yang boleh ditutup — tanpa itu, pemeriksaan sempit (mis. RUN_MISSING) akan diam-diam
+    menutup temuan panen yang masih sah. Baris yang ditutup diberi `resolved_at`, tidak
+    dihapus, supaya jejak alarm gagal tetap bisa diaudit.
+    """
+    scope = set(ALARM_CODES) if scope is None else scope
     alerts_path = reports_root / "alerts.jsonl"
     alerts_path.parent.mkdir(parents=True, exist_ok=True)
     alerts_path.touch(exist_ok=True)
-    existing: set[tuple[str, str, str]] = set()
+    rows: list[dict] = []
     with alerts_path.open(encoding="utf-8") as source:
         for line in source:
             if line.strip():
-                payload = json.loads(line)
-                existing.add((payload.get("target"), payload.get("date"), payload.get("code")))
+                rows.append(json.loads(line))
 
     raised_at = datetime.now(JAKARTA).isoformat(timespec="seconds")
+    firing = {alarm.code for alarm in alarms}
+    resolved = 0
+    for row in rows:
+        if (
+            row.get("target") == target
+            and row.get("date") == run_date
+            and row.get("code") in scope
+            and row.get("code") not in firing
+            and not row.get("resolved_at")
+        ):
+            row["resolved_at"] = raised_at
+            resolved += 1
+    if resolved:
+        tmp = alerts_path.with_suffix(".jsonl.tmp")
+        with tmp.open("w", encoding="utf-8") as output:
+            for row in rows:
+                output.write(json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n")
+        tmp.replace(alerts_path)
+
+    existing: set[tuple[str, str, str]] = {
+        (row.get("target"), row.get("date"), row.get("code"))
+        for row in rows
+        if not row.get("resolved_at")
+    }
     new_alarms = [alarm for alarm in alarms if (target, run_date, alarm.code) not in existing]
     if new_alarms:
         with alerts_path.open("a", encoding="utf-8") as output:
@@ -276,6 +319,8 @@ def check_missing_runs(
     results: dict[str, list[Alarm]] = {}
     for target in targets:
         if (data_root / target / run_date / "run.json").is_file():
+            # Run-nya sudah ada sekarang: tutup RUN_MISSING lama, jangan sentuh kode lain.
+            append_alerts([], target, run_date, reports_root, notify, scope={"RUN_MISSING"})
             results[target] = []
             continue
         missing = run_missing(None, None, {})
@@ -294,7 +339,8 @@ def run_alarms(target: str, run_date: str, data_root: Path, reports_root: Path, 
     alarms = evaluate(run_today, run_baseline, diff)
     diff["alarms"] = [alarm.code for alarm in alarms]
     diff_path.write_text(json.dumps(diff, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    append_alerts(alarms, target, run_date, reports_root, notify)
+    append_alerts(alarms, target, run_date, reports_root, notify,
+                  scope=evaluated_codes(run_today, run_baseline))
     return alarms
 
 

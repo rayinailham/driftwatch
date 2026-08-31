@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-28T08:13:27+07:00",
+  "generated_at": "2026-08-31T11:19:05+07:00",
   "target": "seo",
-  "snapshot_date": "2026-08-27",
+  "snapshot_date": "2026-08-31",
   "source": {
     "name": "python-httpx.org",
     "url": "https://www.python-httpx.org",
@@ -9,14 +9,14 @@
   },
   "counts": {
     "total": 23,
-    "added_today": 23,
+    "added_today": 0,
     "changed_today": 0,
     "removed_today": 0
   },
   "insight": {
     "model": null,
     "text": null,
-    "reason": "panen ini dijalankan tanpa ringkasan AI",
+    "reason": "kunci API tidak tersedia; jatuh otomatis ke mode tanpa LLM",
     "generated_at": null,
     "input_tokens": 0,
     "output_tokens": 0
@@ -25,7 +25,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/",
       "url": "https://www.python-httpx.org/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/",
         "title": "HTTPX",
@@ -41,7 +41,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/api/",
       "url": "https://www.python-httpx.org/api/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/api/",
         "title": "Developer Interface - HTTPX",
@@ -57,7 +57,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/async/",
       "url": "https://www.python-httpx.org/async/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/async/",
         "title": "Async Support - HTTPX",
@@ -73,7 +73,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/code_of_conduct/",
       "url": "https://www.python-httpx.org/code_of_conduct/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/code_of_conduct/",
         "title": "Code of Conduct - HTTPX",
@@ -89,7 +89,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/compatibility/",
       "url": "https://www.python-httpx.org/compatibility/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/compatibility/",
         "title": "Requests Compatibility - HTTPX",
@@ -105,7 +105,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/contributing/",
       "url": "https://www.python-httpx.org/contributing/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/contributing/",
         "title": "Contributing - HTTPX",
@@ -121,7 +121,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/environment_variables/",
       "url": "https://www.python-httpx.org/environment_variables/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/environment_variables/",
         "title": "Environment Variables - HTTPX",
@@ -137,7 +137,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/exceptions/",
       "url": "https://www.python-httpx.org/exceptions/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/exceptions/",
         "title": "Exceptions - HTTPX",
@@ -153,7 +153,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/http2/",
       "url": "https://www.python-httpx.org/http2/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/http2/",
         "title": "HTTP/2 Support - HTTPX",
@@ -169,7 +169,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/logging/",
       "url": "https://www.python-httpx.org/logging/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/logging/",
         "title": "Logging - HTTPX",
@@ -185,7 +185,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/quickstart/",
       "url": "https://www.python-httpx.org/quickstart/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/quickstart/",
         "title": "QuickStart - HTTPX",
@@ -201,7 +201,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/third_party_packages/",
       "url": "https://www.python-httpx.org/third_party_packages/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/third_party_packages/",
         "title": "Third Party Packages - HTTPX",
@@ -217,7 +217,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/troubleshooting/",
       "url": "https://www.python-httpx.org/troubleshooting/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/troubleshooting/",
         "title": "Troubleshooting - HTTPX",
@@ -233,7 +233,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/authentication/",
       "url": "https://www.python-httpx.org/advanced/authentication/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/authentication/",
         "title": "Authentication - HTTPX",
@@ -249,7 +249,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/clients/",
       "url": "https://www.python-httpx.org/advanced/clients/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/clients/",
         "title": "Clients - HTTPX",
@@ -265,7 +265,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/event-hooks/",
       "url": "https://www.python-httpx.org/advanced/event-hooks/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/event-hooks/",
         "title": "Event Hooks - HTTPX",
@@ -281,7 +281,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/extensions/",
       "url": "https://www.python-httpx.org/advanced/extensions/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/extensions/",
         "title": "Extensions - HTTPX",
@@ -297,7 +297,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/proxies/",
       "url": "https://www.python-httpx.org/advanced/proxies/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/proxies/",
         "title": "Proxies - HTTPX",
@@ -313,7 +313,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/resource-limits/",
       "url": "https://www.python-httpx.org/advanced/resource-limits/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/resource-limits/",
         "title": "Resource Limits - HTTPX",
@@ -329,7 +329,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/ssl/",
       "url": "https://www.python-httpx.org/advanced/ssl/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/ssl/",
         "title": "SSL - HTTPX",
@@ -345,7 +345,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/text-encodings/",
       "url": "https://www.python-httpx.org/advanced/text-encodings/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/text-encodings/",
         "title": "Text Encodings - HTTPX",
@@ -361,7 +361,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/timeouts/",
       "url": "https://www.python-httpx.org/advanced/timeouts/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/timeouts/",
         "title": "Timeouts - HTTPX",
@@ -377,7 +377,7 @@
     {
       "record_id": "seo:url:https://www.python-httpx.org/advanced/transports/",
       "url": "https://www.python-httpx.org/advanced/transports/",
-      "status": "baru",
+      "status": "tetap",
       "fields": {
         "url": "https://www.python-httpx.org/advanced/transports/",
         "title": "Transports - HTTPX",
