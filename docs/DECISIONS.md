@@ -342,12 +342,26 @@ diuji run tersebut (`evaluated_codes()`). Pemeriksaan sempit `--check-missing` b
 yang masih sah. Dua test regresi mengunci keduanya, ditambah satu test yang mengunci bahwa
 nama detector = kode alarmnya.
 
-## D20 — Repo publik: izin diberikan, eksekusi menunggu gerbang P12
+## D20 — Repo publik: DIJALANKAN 2026-09-04, setelah gerbangnya lulus
 
-Izin user diberikan **2026-08-31**. Flip ke publik **belum dijalankan** karena gerbangnya
-sendiri belum ada: `make audit` (A12) dan uji salinan bersih `make all` (A11) baru lahir di
-P12. Urutannya tidak boleh dibalik — repo dibuka publik hanya setelah audit menyatakan
-0 kebocoran dan riwayat commit disapu bersih dari kredensial serta artefak runtime.
+Izin user diberikan **2026-08-31**, eksekusinya ditahan sampai gerbangnya ada. Gerbang itu
+lahir di P12 dan lulus **2026-09-04**:
+
+- **A12** `make audit` → `KELAS RAHASIA : 0 kebocoran`, exit 0, di repo utama (91 berkas,
+  mode `git ls-files`) **dan** salinan bersih (92 berkas, mode walk pohon kerja). Riwayat
+  commit ikut dipindai: 52.847 baris diff, 0 kecocokan untuk 7 pola kunci.
+- **A11** `LAB_PORT=8101 make all` di `/tmp/driftwatch-clean` → exit 0 dalam 1.086 detik,
+  1.323 record, 0 pemanggilan `docker`; `make oracles` 11/11; `make test` 48/48.
+
+User ditanya **sekali lagi** setelah keduanya hijau, sesuai urutan yang dikunci entri ini,
+dan menjawab **"balik jadi publik sekarang"**. Flip dijalankan dengan akun personal
+`rayinailham` (`gh auth status` → `Logged in to github.com account rayinailham`).
+
+**Konsekuensi yang diterima sadar, dan sudah disampaikan sebelum user memutuskan:**
+`DRIFTWATCH_UA` memuat alamat email pribadi di 12 berkas ter-track. Itu **kelas IDENTITAS**,
+bukan RAHASIA, dan D3 justru **mewajibkannya** (User-Agent jujur berisi kontak) — tetapi
+sejak repo publik alamat itu bisa dipanen bot. Mengubahnya berarti mengubah D3, bukan
+menambal repo.
 
 ---
 
@@ -355,4 +369,4 @@ P12. Urutannya tidak boleh dibalik — repo dibuka publik hanya setelah audit me
 
 | Kode | Pertanyaan | Dikunci di |
 |---|---|---|
-| ✅ D20 | Repo dijadikan publik? | **Izin diberikan 2026-08-31**; eksekusi menunggu gerbang audit P12 |
+| ✅ D20 | Repo dijadikan publik? | **Ya — dijalankan 2026-09-04** setelah A11+A12 lulus dan user ditanya ulang. Tidak ada keputusan yang masih terbuka. |

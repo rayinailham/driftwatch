@@ -12,6 +12,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from contracts import CONTRACTS
+from env import load_env
 
 JAKARTA = ZoneInfo("Asia/Jakarta")
 
@@ -52,19 +53,6 @@ INSIGHT_SYSTEM = (
     "Jawab dua hal: apa yang berubah hari ini, dan mana yang layak dilihat manusia. "
     "Kalau tidak ada yang berubah, katakan itu apa adanya tanpa mengarang temuan."
 )
-
-
-def load_env(root: Path) -> None:
-    """Read KEY=VALUE lines from .env without clobbering real environment vars."""
-    env_path = root / ".env"
-    if not env_path.exists():
-        return
-    for line in env_path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip())
 
 
 def latest_date(directory: Path) -> str | None:

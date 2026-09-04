@@ -1,0 +1,82 @@
+@startuml
+' Sumber diagram v2_architecture.png. Dirender lewat service PlantUML infra :20080 (D21/D22-B):
+'   curl -s -X POST --data-binary @assets/v2_architecture.puml \
+'        -o assets/v2_architecture.png http://127.0.0.1:20080/png
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 13
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam ArrowColor #37474F
+skinparam rectangle {
+  BorderColor #546E7A
+  BackgroundColor #ECEFF1
+  FontColor #263238
+}
+skinparam note {
+  BackgroundColor #FFF8E1
+  BorderColor #FFB300
+}
+
+title DriftWatch — dari situs mentah sampai laporan klien
+
+package "SEKALI DI AWAL — fase pembangunan" #F5F5F5 {
+  rectangle "situs target" as SRC
+  rectangle "recon\nrobots.txt · sitemap · HTML mentah\nnetwork tab (MCP chrome-devtools)" as RECON
+  rectangle "recon/<target>.json\nrecommended_engine + engine_rationale" as RJ #E3F2FD
+  rectangle "pemilihan lapis engine\nLapis 4 httpx+json  <- target akhir\nLapis 3 httpx+selectolax\nLapis 2 Playwright (tak terpakai)\nLapis 1 MCP browser (recon saja)" as TIER #E8F5E9
+}
+
+package "SETIAP HARI 09:00 WIB — otomatis, tanpa manusia" #F5F5F5 {
+  rectangle "systemd timer\nOnCalendar 09:00 Asia/Jakarta\nRandomizedDelaySec=300 · Persistent=true" as TIMER #FFF3E0
+  rectangle "scripts/daily_run.sh\nflock · trap EXIT" as RUNNER
+  rectangle "(0) fixture DriftLab\nhttp.server stdlib :8100\nTANPA Docker" as LAB #EDE7F6
+  rectangle "(1) src/scrape.py --resume\nrate limit · retry · checkpoint SQLite · dedupe" as SCRAPE
+  rectangle "(2) src/validate.py\nkontrak 31 field · missing_reason wajib" as VALID
+  rectangle "(3) src/export.py\nJSONL -> CSV utf-8-sig" as EXPORT
+  rectangle "(4) src/diff.py\nhari ini vs baseline sukses terakhir\ncontent_hash tanpa field volatil" as DIFF
+  rectangle "(5) src/alarm.py\n10 kode alarm enum tertutup (D4/D5)" as ALARM #FFEBEE
+  rectangle "(6) src/report.py\ndigest manusia, 0 jargon" as REPORT
+  rectangle "(7) src/publish.py\nhalaman demo, metadata saja (D13)" as PUBLISH
+}
+
+package "KELUARAN" #F5F5F5 {
+  rectangle "data/<target>/<tanggal>/\nrecords.jsonl · records.csv · run.json" as DATA #E0F2F1
+  rectangle "reports/<target>/<tanggal>/\ndiff.json · daily.md" as REPS #E0F2F1
+  rectangle "reports/alerts.jsonl\nappend-only + resolved_at (D24)" as ALERTS #FFEBEE
+  rectangle "web/index.html\nmandiri, file:// tanpa server (D18)" as WEB #E0F2F1
+  rectangle "REPORT.xlsx\n5 sheet, openpyxl (mingguan)" as XLSX #E0F2F1
+}
+
+rectangle "watchdog H+1 10:00 WIB\nRUN_MISSING kalau timer mati total (D23)" as WATCH #FFF3E0
+
+SRC --> RECON
+RECON --> RJ
+RJ --> TIER
+TIER ..> SCRAPE : engine terpilih
+
+TIMER --> RUNNER
+RUNNER --> LAB
+LAB --> SCRAPE
+SCRAPE --> VALID
+VALID --> EXPORT
+EXPORT --> DIFF
+DIFF --> ALARM
+ALARM --> REPORT
+REPORT --> PUBLISH
+
+SCRAPE --> DATA
+DIFF --> REPS
+ALARM --> ALERTS
+REPORT --> REPS
+REPORT --> XLSX
+PUBLISH --> WEB
+
+WATCH --> ALARM
+
+note bottom of LAB
+  Nol dependensi Docker di jalur harian.
+  Semua runtime: Python + stdlib + httpx/selectolax/openpyxl (D8/D21).
+end note
+
+@enduml

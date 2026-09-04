@@ -17,6 +17,7 @@ import typer
 from tenacity import AsyncRetrying, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from contracts import CONTRACTS
+from env import apply_lab_port, load_env
 from engines.http_html import detail_links, parse_detail, parse_seo
 from engines.http_json import parse_quotes
 from store import Store
@@ -294,7 +295,12 @@ def main(
         datetime.strptime(run_date, "%Y-%m-%d")
     except ValueError as error:
         raise typer.BadParameter("date harus YYYY-MM-DD") from error
-    recon = json.loads((Path(__file__).parents[1] / "recon" / f"{target}.json").read_text())
+    root = Path(__file__).parents[1]
+    load_env(root)
+    recon = json.loads((root / "recon" / f"{target}.json").read_text())
+    # Fixture lokal boleh pindah port lewat LAB_PORT (D8: salinan bersih A11 memakai 8101).
+    # Target publik tidak pernah disentuh — `apply_lab_port` hanya menulis ulang URL loopback.
+    recon = apply_lab_port(recon)
     local = urlparse(recon["base_url"]).hostname in {"127.0.0.1", "localhost"}
     default_delay = recon["robots"]["crawl_delay"] or (0.0 if local else 1.0)
     effective_delay = delay if delay is not None else default_delay

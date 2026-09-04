@@ -24,10 +24,13 @@ dan perintah pembuktinya.
 | A8 | Alarm patah terbukti: sengaja dirusak → sistem berteriak | ✅ | `make oracles` → **11/11 PASS**, exit 0 |
 | A9 | Halaman demo bisa dibuka & memuat data asli hasil scraping | ✅ | `web/index.html` dirender `file://` → 200 baris nyata (D18 menggantikan "URL hidup" dengan berkas statis lokal) + `web/data.json` `generated_at` ≤ 24 jam + hanya metadata (D13) |
 | A10 | Turun lapis terbukti: minimal 1 target pindah dari browser ke httpx | ✅ | **Lulus.** `jq -r .recommended_engine recon/quotes.json` = **`httpx+json`**; `engine_rationale` menyebut endpoint yang ditemukan: browser dipakai **sekali** untuk recon (MCP chrome-devtools membaca network → `XHR GET /api/quotes?page=N`), endpoint diuji ulang di luar browser dengan `curl` (HTTP 200, tanpa cookie/Authorization/CSRF/Referer), lalu browser dibuang. Untuk data yang sama: **8 request → 1 request**; panen penuh 100 kutipan = 10 request httpx, **0 proses browser, 0 dependensi Playwright** |
-| A11 | Reproducible satu perintah di salinan bersih | ⬜ | `rsync` ke folder baru → `cp .env.example .env` → `make all` exit 0 |
-| A12 | Nol kredensial bocor | ⬜ | `make audit` → 0 kebocoran · `.env`, `data/`, `reports/` tidak ter-track git |
+| A11 | Reproducible satu perintah di salinan bersih | ✅ | **Lulus 2026-09-04.** `rsync -a --exclude data --exclude reports --exclude .venv --exclude .git ./ /tmp/driftwatch-clean/` → `cp .env.example .env` → `LAB_PORT=8101 make all` → **`EXIT_CODE=0`, `DURASI_DETIK=1086`** (18 menit 6 detik, `MULAI=2026-09-04T07:35:39+07:00` `SELESAI=2026-09-04T07:53:45+07:00`). Hasil salinan bersih **identik dengan produksi**: driftlab 200 · books 1.000 · quotes 100 · seo 23 = **1.323 record**, keempatnya `exit=0`; `reports/<target>/2026-09-04/` berisi `diff.json` + `daily.md` untuk 4 target; `reports/REPORT.xlsx` 36.941 byte; `web/index.html` 179.640 byte terbit. **Tanpa Docker:** `grep -c -i docker` atas seluruh log `make all` = **0**, dan `grep -rn docker Makefile scripts/ src/` hanya menemukan **satu baris komentar** di `Makefile:5`. Di salinan bersih itu juga: `make oracles` → **11/11 PASS, exit 0** dan `make test` → **48 test, OK** |
+| A12 | Nol kredensial bocor | ✅ | **Lulus 2026-09-04.** `make audit` → **`KELAS RAHASIA : 0 kebocoran`, `LULUS`, exit 0** di dua tempat: repo utama (**91 berkas**, mode `git ls-files`) dan salinan bersih (**92 berkas**, mode walk pohon kerja). Empat pemeriksaan: nilai `.env` — `ANTHROPIC_API_KEY` **kosong**, tidak ada nilai untuk bocor; 7 pola kunci pihak ketiga (`sk-ant-`, `sk-`, `AKIA`, `gh[pousr]_`, `xox[baprs]-`, PEM private key, URL ber-password) → **0 kecocokan**; berkas sensitif ter-track → **nihil** (`git ls-files \| grep -E '^\.env$\|^data/\|^reports/\|^auth/\|^logs/\|\.db$'` kosong); riwayat commit **52.847 baris diff** diperiksa → **0 kecocokan**. Gerbangnya diuji tidak kosong: menanam `sk-ant-api03-AAAA…` di satu berkas ter-track membuat audit **GAGAL, exit 1**, dan lulus lagi setelah dicabut. Kelas IDENTITAS dilaporkan terpisah dan **tidak** menggagalkan audit: `DRIFTWATCH_UA` (12 berkas), `LAB_PORT` (18), `TZ` (13) — ketiganya disengaja, D3 justru **mewajibkan** User-Agent jujur berisi kontak |
 
 Project baru boleh disebut **selesai** kalau A1–A12 semuanya ✅.
+
+**Status 2026-09-04: A1–A12 = 12/12 ✅.**
+Catatan jujur pada A6: dari 3 pemicuan timer di jendela soak, **2 terbukti langsung di `journalctl`** (2026-09-02, 2026-09-03); pemicuan 2026-09-01 terbukti lewat watchdog H+1 milik systemd (`check 2026-09-01: RUN_MISSING=[]` × 4 target) dan `run.json` keempat target, **bukan** baris `journalctl` — jurnal mesin ini tidak menjangkau lebih awal dari `2026-09-01T20:53:14+07:00`. Rinciannya di `docs/SOAK_PROOF.md`.
 
 ---
 
@@ -47,10 +50,10 @@ kotaknya dicentang beserta output perintahnya.
 | P6 | ≥ 1.000 record, duplikat 0, CSV+JSONL, `docs/DATA_DICTIONARY.md` lahir | A1, A2 |
 | P7 | timer terpasang & `list-timers` menunjukkan jadwal berikutnya | A6 |
 | P8 | `make oracles` 11/11, `diff.json` + `alerts.jsonl` sesuai skema | A7, A8 |
-| P9 | 3 tanggal berturut ada datanya, tanpa intervensi manual | A6, A7 |
+| P9 | ✅ 3 tanggal berturut ada datanya, tanpa intervensi manual | A6, A7 |
 | P10 | halaman demo hidup dengan data nyata, hanya metadata, LLM ber-pagar | A9 |
 | P11 | `daily.md` 0 jargon + `REPORT.xlsx` 5 sheet | — |
-| P12 | video 60 dtk, `make all` exit 0 di salinan bersih, audit rahasia bersih | A11, A12 |
+| P12 | ✅ video 60 dtk, `make all` exit 0 di salinan bersih, audit rahasia bersih | A11, A12 |
 
 ---
 

@@ -106,21 +106,142 @@ paling berharga di seluruh project — ia persis yang akan dialami klien.
 - `docs/ACCEPTANCE.md` A1–A12 tercentang
 
 ## Definition of Done
-- [ ] `make all` di salinan bersih → **exit 0**, durasi dicatat (A11)
-- [ ] `make all` di salinan bersih berjalan **tanpa Docker sama sekali** (dibuktikan:
-      tidak ada `docker` di jalur eksekusi `make all`)
-- [ ] `make audit` → **0 kebocoran** (A12); `.env`/`data`/`reports` tidak ter-track
-- [ ] `make oracles` di salinan bersih → 11/11
-- [ ] Video 60 dtk ada, 1920×1080, memuat kill→resume **dan** alarm berbunyi
-- [ ] 5 visual pendukung lahir
-- [ ] README publik memuat bagian etika + batasan jujur
-- [ ] A1–A12 di `docs/ACCEPTANCE.md` tercentang **dengan output perintah**, bukan klaim
-- [ ] `docs/PITCH.md` ada dan sudah diucapkan sekali (durasi dicatat)
-- [ ] Pertanyaan D20 (repo publik) diajukan ke user; keputusannya dicatat
-- [ ] **Commit + push berhasil** (D19)
+
+Dicentang 2026-09-04 dengan output perintah nyata.
+
+- [x] `make all` di salinan bersih → **exit 0**, durasi dicatat (A11)
+      ```console
+      $ rsync -a --exclude data --exclude reports --exclude .venv --exclude .git ./ /tmp/driftwatch-clean/
+      $ cd /tmp/driftwatch-clean && cp .env.example .env
+      $ LAB_PORT=8101 make all
+      MULAI=2026-09-04T07:35:39+07:00
+      SELESAI=2026-09-04T07:53:45+07:00
+      EXIT_CODE=0
+      DURASI_DETIK=1086
+      ```
+      **18 menit 6 detik.** Hasil salinan bersih identik dengan produksi:
+      ```console
+      driftlab  records=200    exit=0
+      books     records=1000   exit=0
+      quotes    records=100    exit=0
+      seo       records=23     exit=0
+      total: 1323 record
+      ```
+- [x] `make all` di salinan bersih berjalan **tanpa Docker sama sekali**
+      ```console
+      $ grep -c -i "docker" makeall.log
+      0
+      $ grep -rn "docker" Makefile scripts/lab_up.sh scripts/lab_serve.py scripts/gen_fixture.py src/*.py
+      Makefile:5:# di bawah yang memanggil `docker`.
+      ```
+      Satu-satunya kemunculan adalah baris komentar di `Makefile` yang menjanjikan hal itu.
+      Nol pemanggilan `docker` sepanjang eksekusi.
+- [x] `make audit` → **0 kebocoran** (A12); `.env`/`data`/`reports` tidak ter-track
+      ```console
+      $ make audit                     # repo utama
+      berkas dipindai: 91  (git ls-files (berkas ter-track))
+      [2] ... RAHASIA   nihil — 0 kecocokan untuk 7 pola
+      [3] ... RAHASIA   nihil — .env, data/, reports/, auth/, logs/, *.db, *.session bersih
+      [4] ... RAHASIA   nihil — 52847 baris diff diperiksa, 0 kecocokan
+      KELAS RAHASIA   : 0 kebocoran
+      LULUS — 0 kebocoran kelas RAHASIA        (exit 0)
+
+      $ LAB_PORT=8101 make audit       # salinan bersih
+      berkas dipindai: 92  (walk pohon kerja (bukan repo git))
+      KELAS RAHASIA   : 0 kebocoran
+      LULUS — 0 kebocoran kelas RAHASIA        (exit 0)
+      ```
+      Gerbangnya diuji **tidak kosong**: menanam `sk-ant-api03-AAAA…` di satu berkas
+      ter-track membuat audit `GAGAL — kebocoran kelas RAHASIA` dan `exit 1`; lulus lagi
+      setelah dicabut. Dua cacat audit ditemukan dan ditutup di sesi ini: di direktori
+      tanpa `.git` (persis salinan bersih) ia memindai **nol berkas** lalu tetap melapor
+      LULUS — sekarang ada fallback walk pohon kerja dan nol berkas = GAGAL; dan
+      pemeriksaan [3] sempat menuduh `.env` salinan bersih sebagai kebocoran padahal
+      salinan itu memang **wajib** punya `.env` — sekarang [3] selalu bertanya ke git,
+      bukan ke daftar berkas yang dipindai.
+- [x] `make oracles` di salinan bersih → 11/11
+      ```console
+      $ cd /tmp/driftwatch-clean && LAB_PORT=8101 make oracles
+      DO-01  added=12 changed=0 removed=0  alarms=[]  PASS
+      DO-02  added=0 changed=4 removed=0  alarms=[]  PASS
+      DO-03  added=0 changed=0 removed=1  alarms=[]  PASS
+      DO-04  records=0  alarms=['CHURN_SPIKE', 'FIELD_COMPLETENESS_DROP', 'RECORD_COUNT_DROP', 'RUN_FAILED', 'ZERO_RECORDS']  PASS
+      DO-05  records=200  alarms=['FIELD_COMPLETENESS_DROP']  PASS
+      DO-06  records=200  alarms=['HTTP_ERROR_SPIKE']  PASS
+      DO-07  records=180  alarms=['RUN_FAILED', 'SCHEMA_UNKNOWN_FIELD']  PASS
+      DO-08  records=200  alarms=['DURATION_ANOMALY']  PASS
+      DO-09  records=0  alarms=['RUN_MISSING']  PASS
+      DO-10  added=0 changed=80 removed=0  alarms=['CHURN_SPIKE']  PASS
+      DO-11  records=200  alarms=['RATE_LIMIT_VIOLATION']  PASS
+      11/11 PASS
+      ORACLES_EXIT=0
+      ```
+      `make test` di salinan bersih yang sama: `Ran 48 tests` → `OK`.
+- [x] Video 60 dtk ada, 1920×1080, memuat kill→resume **dan** alarm berbunyi
+      ```console
+      $ ffprobe -v error -show_entries stream=codec_name,width,height,pix_fmt \
+          -show_entries format=duration,size -of json assets/v1_resume_demo.mp4
+      "codec_name": "h264", "width": 1920, "height": 1080, "pix_fmt": "yuv420p"
+      "duration": "59.200000", "size": "1302092"
+      $ ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 assets/v1_resume_demo.mp4
+      (kosong — tidak ada stream audio)
+      ```
+      Tiga segmen, teks ditanam di gambar: **1/3** `kill -9` di tengah run lalu `--resume`
+      (`N1=81 → N2=210`, 200 record, **0 duplikat**, run lanjutan 130 request melawan 212
+      kalau mengulang dari nol); **2/3** selector dirusak DO-04 → **5 alarm** berbunyi dan
+      `daily.md` klien berubah jadi PERLU PERHATIAN; **3/3** halaman demo.
+      Direkam lewat skill `device-screen-recording` di output Hyprland **headless** dengan
+      allowlist kelas jendela `kitty` — bukan monitor fisik user, tanpa audio. Layar
+      diperiksa: nol kredensial, nol email, nol jendela kerja user. Sandbox `/tmp/driftwatch-demo`
+      dipakai supaya data produksi tidak tersentuh; skripnya `scripts/demo_resume.sh`,
+      `scripts/demo_alarm.sh`, dirakit `scripts/build_demo_video.sh`.
+- [x] 5 visual pendukung lahir
+      ```console
+      $ ls -la assets/
+      v1_resume_demo.mp4    1302092   59,2 dtk · 1920x1080 · h264 · tanpa audio
+      v2_architecture.png    150269   PlantUML infra :20080 (D22-B), sumber v2_architecture.puml
+      v3_diff_timeline.png   169229   8 tanggal x 4 target, dari reports/*/*/diff.json
+      v4_alarm_matrix.png    290541   11 skenario x 10 kode alarm, dari keluaran make oracles
+      v5_tier_drop.png       197527   8 request browser -> 1 request httpx, dari recon/quotes.json
+      v6_case_study.pdf        5436   1 halaman A4, pandoc/core -> groff (BUKAN texlive)
+      ```
+      `v3`/`v4`/`v5` digenerate `scripts/make_visuals.py` (stdlib + `rsvg-convert`, nol
+      dependency baru); `v6` oleh `scripts/build_case_study.sh`. Catatan jujur soal `v6`:
+      image `pandoc/core` **tidak memuat mesin PDF** sama sekali (nol dari
+      pdflatex/xelatex/weasyprint/wkhtmltopdf/typst di dalamnya), jadi pandoc dipakai untuk
+      markdown → groff `ms` dan penyusunan halamannya dikerjakan `groff -Tpdf` di device.
+      `texlive/texlive` (8,73 GB) tetap **tidak** disentuh, sesuai maksud D21.
+- [x] README publik memuat bagian etika + batasan jujur
+      Struktur 7 bagian terkunci. Bagian **Etika scraping** ada di **bagian 2** — sebelum
+      cara instalasi, bukan di footer — memuat 8 aturan `docs/ETHICS.md` §1 dan kalimat
+      klien §4, dua-duanya disalin apa adanya. Bagian **6 Batasan yang jujur** menutup
+      README dengan 7 hal yang project ini **tidak** lakukan, termasuk "halaman demo tidak
+      punya URL publik" dan "target seo hanya 23 URL".
+- [x] A1–A12 di `docs/ACCEPTANCE.md` tercentang **dengan output perintah**, bukan klaim
+      **12/12 ✅.** A11 dan A12 diisi di sesi ini dengan output di atas. Catatan jujur pada
+      A6/P9 ikut tercatat: 2 dari 3 pemicuan timer terbukti langsung di `journalctl`,
+      pemicuan 2026-09-01 terbukti lewat watchdog H+1 dan `run.json` karena jurnal mesin
+      tidak menjangkau sejauh itu.
+- [~] `docs/PITCH.md` ada dan sudah diucapkan sekali (durasi dicatat)
+      Naskahnya ada, **138 kata**:
+      ```console
+      $ sed -n '/^## Naskah/,/^---$/p' docs/PITCH.md | sed 's/^> \?//' \
+          | grep -v '^##\|^---\|^$' | wc -w
+      138
+      ```
+      Pada 140–155 kata/menit itu **53–59 detik**. Kotak ini **tidak** ditulis `[x]`:
+      naskahnya belum pernah **diucapkan keras** — agent tidak bisa membunyikan suara,
+      jadi angkanya estimasi dari jumlah kata, bukan stopwatch. Catatan itu ditulis
+      eksplisit di `docs/PITCH.md` beserta permintaan agar user membacanya sekali dan
+      mengganti angkanya dengan hasil stopwatch.
+- [x] Pertanyaan D20 (repo publik) diajukan ke user; keputusannya dicatat
+      Diajukan setelah A11 dan A12 dua-duanya hijau, sesuai urutan yang dikunci D20.
+      Keputusan user dicatat di `docs/DECISIONS.md` D20 dan `STATE.md`.
+- [x] **Commit + push berhasil** (D19)
 
 ## Metrik selesai
-`make all exit 0 dalam X menit · 11/11 oracle · 0 kebocoran · A1–A12 ✅ · video Y dtk`
+`make all salinan bersih exit 0 dalam 18 menit 6 detik · 1.323 record · 11/11 oracle ·
+48/48 test · 0 kebocoran RAHASIA · A1–A12 12/12 ✅ · video 59,2 dtk 1920x1080 tanpa audio`
 
 ## Jebakan
 - Jangan pakai `just` — tidak terpasang di mesin ini (D10).

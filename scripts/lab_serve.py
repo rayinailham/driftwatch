@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import sys
 import threading
 import time
 from functools import partial
@@ -14,6 +15,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SITE_DIR = ROOT / "fixtures" / "site"
 SCENARIO_FILE = ROOT / "fixtures" / ".scenario"
+
+sys.path.insert(0, str(ROOT / "src"))
+from env import lab_port, load_env  # noqa: E402
 
 
 def bucket(path: str) -> int:
@@ -53,8 +57,10 @@ class DriftLabHandler(SimpleHTTPRequestHandler):
 def main() -> None:
     if not SITE_DIR.is_dir():
         raise SystemExit("fixture missing; run scripts/gen_fixture.py first")
-    server = ThreadingHTTPServer(("127.0.0.1", 8100), partial(DriftLabHandler, directory=str(SITE_DIR)))
-    print("DriftLab listening on http://127.0.0.1:8100", flush=True)
+    load_env(ROOT)
+    port = lab_port()
+    server = ThreadingHTTPServer(("127.0.0.1", port), partial(DriftLabHandler, directory=str(SITE_DIR)))
+    print(f"DriftLab listening on http://127.0.0.1:{port}", flush=True)
     server.serve_forever()
 
 

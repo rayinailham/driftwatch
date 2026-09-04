@@ -2,98 +2,95 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-09-04 · **Status:** 🟨 JALAN — 12/13 fase · **Fase aktif:** P12 — Packaging
-**Fase berikutnya:** **P12 — Packaging** (fase terakhir) · **soak_dibuka:** **2026-08-31** → **P9 DITUTUP 2026-09-04**
-(jendela sah 2026-09-01 … 2026-09-03 dipanen penuh; bukti di `docs/SOAK_PROOF.md`.)
+**Diperbarui:** 2026-09-04 · **Status:** ✅ **PROJECT COMPLETE** — 13/13 fase · acceptance **12/12**
+**Fase aktif:** — · **Sisa pekerjaan berkode:** tidak ada.
 
 ## Status fase
 
 | Fase | Status | Catatan |
 |---|---|---|
-| P0 Bootstrap | ✅ selesai | `env-check.md`, 10 tool, `uv sync` 0 error · `02469f0` |
-| P1 Target & Etika | ✅ selesai | 4 target; HTTPX 7/7; fixture 200; oracle 2/11 · `0f69f5f` |
-| P2 Recon | ✅ selesai | 4 recon sah 4/4; quotes → `httpx+json` (8→1 request) · `2d1f585` |
-| P3 Kontrak Data | ✅ selesai | 4 kontrak; 31 field (27 required); 12/12 sampel; 11/11 test · `9e81409` |
-| P4 Mesin Scraper | ✅ selesai | 6/6 komponen; cicip 3/3 valid; gap publik min 1.000 ms · `eadb3b2` |
-| P5 Validasi & Resume | ✅ selesai | 3/3 manual; resume 12→1.000; 17/17 test · `e551205` |
-| P6 Panen Penuh | ✅ selesai | 4 target; 1.323 record; required 100%; 18/18 test · `e6ad2f3` |
-| P7 Penjadwalan | ✅ selesai | timer aktif; NEXT 2026-08-28 09:04:10 WIB; unit sukses · `c9978ec` |
-| P8 Diff & Alarm | ✅ selesai | 10 kode; 11/11 oracle; 12 alarm sah; 0 false positive · `eb46245` |
-| P9 Soak 3 Hari | ✅ selesai | 3 tanggal berturut 09-01…09-03 · 12/12 run `exit 0` · 1.323 rec/hari · 0 alarm · 0 intervensi · `docs/SOAK_PROOF.md` |
-| P10 Demo + LLM | ✅ selesai | 323 baris; 3 situs; D13/D14/D18 dikunci; 0 kebocoran · `6f7409d` |
-| P11 Laporan Klien | ✅ selesai | 8 `daily.md`; 5 sheet; 0 jargon; 4 notifikasi terkirim · `49c80e1` |
-| P12 Packaging | ⬜ belum | video 60 dtk, `make all`, README publik, audit |
+| P0 Bootstrap | ✅ | `env-check.md`, 10 tool, `uv sync` 0 error · `02469f0` |
+| P1 Target & Etika | ✅ | 4 target; HTTPX 7/7; fixture 200; oracle 2/11 · `0f69f5f` |
+| P2 Recon | ✅ | 4 recon sah 4/4; quotes → `httpx+json` (8→1 request) · `2d1f585` |
+| P3 Kontrak Data | ✅ | 4 kontrak; 31 field (27 required); 12/12 sampel · `9e81409` |
+| P4 Mesin Scraper | ✅ | 6/6 komponen; cicip 3/3 valid; gap publik min 1.000 ms · `eadb3b2` |
+| P5 Validasi & Resume | ✅ | 3/3 manual; resume 12→1.000; 17/17 test · `e551205` |
+| P6 Panen Penuh | ✅ | 4 target; 1.323 record; required 100% · `e6ad2f3` |
+| P7 Penjadwalan | ✅ | timer aktif; unit sukses · `c9978ec` |
+| P8 Diff & Alarm | ✅ | 10 kode; 11/11 oracle; 0 false positive · `eb46245` |
+| P9 Soak 3 Hari | ✅ | 09-01…09-03 berturut; 12/12 run exit 0; 0 alarm; 0 intervensi · `c769cd8` |
+| P10 Demo + LLM | ✅ | 323 baris; 3 situs; D13/D14/D18 dikunci · `6f7409d` |
+| P11 Laporan Klien | ✅ | 8 `daily.md`; 5 sheet; 0 jargon · `49c80e1` |
+| P12 Packaging | ✅ | `make all` salinan bersih exit 0 · v1–v6 lahir · README publik · audit 0 |
 
-Legenda: ⬜ belum · 🟨 jalan · ✅ selesai · 🟥 blocked
-## Fakta mesin — DIVERIFIKASI P0, bukan warisan
-- `systemctl --user` ada (`systemd 261`), TZ `Asia/Jakarta` → D9, bukan cron.
-- Venv 3.13.13 ≠ sistem 3.14.6 → produksi wajib `uv run`; test `unittest`; orkestrasi GNU Make.
-- Docker tanpa sudo; `driftlab` port **8100**, salinan bersih **8101** (D8).
-
-### 🚨 `9router.service` — JANGAN PERNAH DISENTUH (D22-A · AGENTS.md §0)
-systemd **user**, port **20128**, proxy AI lokal. Dilarang stop/restart/kill/disable/mask/edit/pakai port. Satu
-direktori dengan `driftwatch.timer` → unit selalu eksplisit, tanpa wildcard. Cek pasca-P7 → `active`.
-
-## Fakta terverifikasi tentang target — DIKONFIRMASI P2
-
-| Target | Engine | Baseline P6 | Kunci | Pagination / batas |
-|---|---|---:|---|---|
-| `books` | `httpx+selectolax` | **1.000** | `upc` | `page-{n}.html` 1..50, berhenti saat `li.next a` hilang |
-| `quotes` | **`httpx+json`** | **100** | `quote_id` | `/api/quotes?page=N`, berhenti saat `has_next == false` (page 10) |
-| `seo` | `httpx+selectolax` | **23** | `url` | 23 URL dari `sitemap.xml` |
-| `driftlab` | `httpx+selectolax` | **200** | `item_id` | `page-{n}.html` 1..10 + 200 halaman detail |
-
-**Playwright TIDAK dipasang.** Nol target `js_required`; deliverable bebas dependency browser.
-Robots: target publik HTTP 404; `driftlab` 200 `Allow: /`; default D3 1,0 dtk. P2: 0 HTTP 429.
-`driftlab` = fixture lokal `:8100`, dinyalakan `daily_run.sh` langkah (0) — **bukan** server yang hidup sendiri (D24).
-Demo (D18): `web/index.html` mandiri, payload ditanam, `file://` tanpa server; 3 situs publik saja
-(`driftlab` tidak terbit). Insight **`claude-haiku-4-5`** — $1/$5 per 1 juta token (D14).
-
-## Metrik
+## Metrik final
 
 | Metrik | Target | Aktual |
 |---|---|---|
-| P0–P5 (ringkas) | — | **10 tool · 0 error `uv sync` · 4 target · recon 4/4 · 31 field (27 req) · 12/12 sampel · resume 12→1.000 · gap 1.000 ms** |
-| P6 panen · P7 timer · P8 alarm | — | **1.323 record · 0 dup · required 100% · timer aktif 4/4 target · 11/11 oracle · 10 kode · 12 alarm sah · 0 false positive** |
-| P9 soak · P10 terbit · P11 laporan | — | **3 tanggal berturut · 12/12 run exit 0 · 0 alarm · 0 intervensi · 323 baris / 3 situs · $0,00000/hari · 8 `daily.md` · 5 sheet · 0 jargon · 4 notifikasi** |
-| Gerbang sesi 2026-08-31 | lulus | **48/48 test · oracle 11/11 · recon 4/4 · hash fixture `b09a1d…5d3` tetap** |
-| `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — (lahir di P12) |
-| **Acceptance project** | 12/12 | **10/12 ✅** — sisa **A11 & A12**, dua-duanya menunggu P12 |
+| Dataset harian | ≥ 1.000, dup 0 | **1.323 record/hari** · books 1.000 · driftlab 200 · quotes 100 · seo 23 · **0 duplikat** |
+| Kelengkapan field `required` | ≥ 98% | **100,0%** di keempat target (27 field required dari 31) |
+| Tahan diputus | lanjut, tak mengulang | `kill -9` → `--resume`: **12 → 1.000**, 0 duplikat (`docs/RESUME_PROOF.md`) |
+| Kesopanan request | ≥ 900 ms | jeda minimum teramati **1.000–1.001 ms** di 3 target publik |
+| Jalan sendiri | 3 hari berturut | **3 tanggal berturut · 12/12 run exit 0 · 0 alarm · 0 intervensi** (`docs/SOAK_PROOF.md`) |
+| Alarm terbukti patah | 11/11 | **11/11 PASS, 0 false positive** (`make oracles`, exit 0) |
+| Unit test | lulus | **48/48 OK** (`make test`), di repo utama dan salinan bersih |
+| `make all` salinan bersih | exit 0 | **exit 0 dalam 1.086 dtk = 18 mnt 6 dtk**, 1.323 record, **0 pemanggilan `docker`** |
+| Kebocoran rahasia | 0 | **0 kelas RAHASIA** (`make audit` exit 0, repo utama 91 berkas + salinan bersih 92) |
+| Video demo | 60 dtk | **59,2 dtk · 1920×1080 · h264 · tanpa audio** (`assets/v1_resume_demo.mp4`) |
+| Biaya LLM | terukur | **$0,00/hari** — `ANTHROPIC_API_KEY` kosong, jatuh ke mode tanpa LLM |
+| **Acceptance project** | 12/12 | **12/12 ✅** |
 
-## Artefak yang sudah lahir
+## Artefak final
 
-**Perencanaan:** `AGENTS.md`, `PLAN.md`, `KICKSTART.md`, `README.md`, `docs/` (8), `phases/` (13).
-**Repo (D19):** `git@rayin-personal:rayinailham/driftwatch.git` — privat, personal, `main` → `origin/main`.
+**Repo:** `git@rayin-personal:rayinailham/driftwatch.git` — akun personal `rayinailham`.
 **Kode (`src/`):** `contracts`, `validate`, `scrape`, `store`, `engines/{http_html,http_json}`,
-`export`, `diff`, `alarm`, `publish`, `report` + 5 modul test (48 test).
-**Skrip:** `daily_run.sh` (7 langkah + langkah (0) fixture), `lab_{up,down}.sh`, `lab_serve.py`,
-`gen_fixture.py`, `drift_lab.py`, `run_oracles.py`, `validate_recon.py`, `prune.sh`, `mark_run_failed.py`.
-**Deploy:** `deploy/driftwatch.{service,timer}` + `driftwatch-watchdog.{service,timer}` (D23); `Makefile`
-(`oracles`/`report`/`weekly`/`prune`) — **belum ada `all`/`audit`** (P12).
-**Data & terbitan:** `recon/*.json` 4/4 sah · `data/`+`reports/` 5 tanggal × 4 target (gitignored) ·
-`web/index.html` mandiri (D18) · `assets/sample_{daily.md,REPORT.xlsx}`.
-**Dokumen:** `docs/` 12 berkas (TARGETS, SCHEMA, DATA_DICTIONARY, MANUAL_VERIFY, RESUME_PROOF,
-DRIFT_ORACLES, PIPELINE, ETHICS, CLIENT_REPORT, DECISIONS D1–D24, ACCEPTANCE, TOOLS, **SOAK_PROOF**).
+`export`, `diff`, `alarm`, `publish`, `report`, **`env`** (baru P12: `.env` + `LAB_PORT`) + 5 modul test.
+**Skrip:** `daily_run.sh`, `lab_{up,down}.sh`, `lab_serve.py`, `gen_fixture.py`, `drift_lab.py`,
+`run_oracles.py`, `validate_recon.py`, `prune.sh`, `mark_run_failed.py`, `check_missing.sh`,
+**`secret_audit.py`**, **`make_visuals.py`**, **`build_case_study.sh`**, **`build_demo_video.sh`**,
+**`demo_resume.sh`**, **`demo_alarm.sh`** (enam terakhir lahir di P12, semuanya waktu-bangun).
+**Makefile:** `setup lab-up lab-down oracles harvest diff report weekly publish test audit prune all help`
+— `MAKEFLAGS := -j16` + `.NOTPARALLEL:` dipertahankan.
+**Aset:** `v1_resume_demo.mp4`, `v2_architecture.png` (+`.puml`), `v3_diff_timeline.png`,
+`v4_alarm_matrix.png`, `v5_tier_drop.png`, `v6_case_study.pdf` (+`.md`), 2 contoh laporan.
+**Dokumen:** `README.md` publik 7 bagian · `docs/` 15 berkas termasuk **`SOAK_PROOF.md`** dan **`PITCH.md`**.
+
+## Fakta mesin yang masih berlaku
+
+- `driftlab` port **8100**; salinan bersih **8101**; sandbox video **8102**. `LAB_PORT` sekarang
+  benar-benar dibaca (`src/env.py`) — sebelum P12 ia ada di `.env` tapi tidak pernah dipakai.
+- Venv 3.13.13 ≠ sistem 3.14.6 → produksi wajib `uv run`; orkestrasi GNU Make (D10, `just` tidak ada).
+- Nol Docker di jalur runtime. Docker hanya dipakai waktu-bangun: PlantUML `:20080` dan `pandoc/core`.
+
+### 🚨 `9router.service` — JANGAN PERNAH DISENTUH (D22-A · AGENTS.md §0)
+systemd **user**, port **20128**, proxy AI lokal. Sesi ini tidak menyentuhnya sama sekali.
+
+## Yang tersisa untuk user (bukan pekerjaan berkode)
+
+1. **`docs/PITCH.md` belum pernah diucapkan keras.** Panjangnya 138 kata → estimasi 53–59 detik
+   dari jumlah kata, **bukan stopwatch**. Baca sekali, ganti angkanya. Ini satu-satunya kotak
+   DoD P12 yang ditandai `[~]`, bukan `[x]`.
+2. **Batas bukti P9 yang dinyatakan terbuka.** 2 dari 3 pemicuan timer terbukti langsung di
+   `journalctl`; pemicuan 2026-09-01 terbukti lewat watchdog H+1 + `run.json` karena jurnal
+   mesin ini tidak menjangkau lebih awal dari `2026-09-01T20:53:14`. Kalau bukti `journalctl`
+   penuh dibutuhkan, biarkan timer jalan 3 hari lagi lalu panen ulang — pipeline-nya tidak
+   perlu diubah apa pun.
+3. **Email pribadi ada di repo publik.** `DRIFTWATCH_UA` memuat `mailto:` alamat Anda di
+   12 berkas ter-track. Itu **diwajibkan D3** (User-Agent jujur berisi kontak) dan bukan
+   kebocoran rahasia, tapi sejak repo publik alamat itu bisa dipanen bot spam. Kalau
+   mengganggu, ganti ke alias kontak lalu `make audit` lagi.
+4. **`ANTHROPIC_API_KEY` kosong** → insight LLM 0 token, $0. Isi kunci lalu
+   `uv run --no-sync python src/publish.py` kalau ingin blok ringkasan AI terisi (≈ $0,005/hari).
+5. Timer harian dan watchdog **masih menyala**. Matikan dengan
+   `systemctl --user disable --now driftwatch.timer driftwatch-watchdog.timer` kalau tidak
+   ingin panen berlanjut. **Sebut unitnya eksplisit, jangan pernah wildcard** (D22-A).
 
 ## Jebakan yang sudah dibayar (jangan diulang)
 
-- Validator jargon mengecualikan nilai yang dikutip apa adanya dari sumber — halaman HTTPX
-  memang berjudul "Exceptions". Notifikasi hanya `critical`; `next_action` tidak pernah ke klien.
-- Oracle alarm **wajib** lewat `make oracles` (server segar). `run_oracles.py` langsung pada
-  server bekas `--verify` membuat DO-06 gagal `alarms=[]` — server basi, bukan regresi detector.
-- Setiap perubahan `daily_run.sh` me-reset `soak_dibuka`: bukti soak versi lama tidak dipakai.
-
-## Sesi 2026-08-31 — dua cacat ditutup (D24, teks lengkap di `docs/DECISIONS.md`)
-
-1. **`driftlab` mati diam-diam 29–31 Agu** — `daily_run.sh` tidak menyalakan fixture `:8100`.
-   Fix: langkah (0) `lab_up.sh` + `trap EXIT lab_down.sh`. Sesudah: **200 record · exit 0 · alarms=[]**.
-2. **Laporan membantah dirinya sendiri** — alert append-only masih dikutip setelah run sembuh.
-   Fix: `resolved_at` berlingkup `evaluated_codes()`; `report.py` mengabaikan baris tertutup.
-
-## Blocker & keputusan terbuka
-- **Blocker: tidak ada.** P9 ditutup 2026-09-04; sisa hanya P12.
-- ⚠️ Jurnal mesin ini hanya menjangkau sejak `2026-09-01 20:53` → pemicuan 09-01 terbukti lewat
-  watchdog H+1 + `run.json`, bukan baris `journalctl`. Dinyatakan terbuka di `docs/SOAK_PROOF.md`.
-- ✅ **D20** repo publik: **izin user sudah diberikan 2026-08-31**, tetapi flip **ditunda** —
-  gerbangnya (`make audit` A12 + salinan bersih A11) baru lahir di P12. Jangan dibalik urutannya.
-- `ANTHROPIC_API_KEY` **kosong** → insight P10 = 0 token, $0. Isi kunci lalu `uv run --no-sync python src/publish.py` (≈ $0,005/hari).
+- Oracle alarm wajib lewat `make oracles` (server segar); `run_oracles.py` pada server bekas
+  `--verify` membuat DO-06 gagal `alarms=[]` — server basi, bukan regresi detector.
+- `kill -9 $!` pada `uv run …` hanya membunuh pembungkusnya; anak `python` lolos dan run
+  selesai normal padahal terlihat "dibunuh". Panggil `.venv/bin/python` langsung.
+- Audit yang memindai nol berkas akan selalu melapor LULUS. Gerbang wajib diuji dengan
+  kunci palsu yang ditanam, bukan diasumsikan bekerja.
+- Setiap perubahan `daily_run.sh` me-reset `soak_dibuka`. P12 sengaja tidak menyentuhnya.
