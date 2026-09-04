@@ -42,6 +42,16 @@ mana yang sedang aktif.
 - Pelanggaran delay yang terdeteksi sendiri memicu alarm `RATE_LIMIT_VIOLATION` (D5).
   Pipeline ini mengawasi kesopanannya sendiri.
 
+**Alamat kontak di repo publik — ditinjau ulang 2026-09-04, sengaja dipertahankan.**
+Setelah repo dibuka publik (D20), audit kelas IDENTITAS menunjukkan alamat email pada
+User-Agent muncul di 12 berkas ter-track. User ditanya dan memilih **membiarkannya**.
+Alasannya menyatu dengan alasan D3 itu sendiri: alamat yang bisa dihubungi pemilik situs
+adalah **fitur** aturan ini, bukan efek sampingnya — bagian ETIKA di `README.md` kehilangan
+maknanya kalau kontaknya tidak nyata. Dicatat juga apa adanya bahwa mengganti nilainya
+sekarang hanya menghentikan paparan ke depan: alamat itu tetap ada di seluruh riwayat
+commit dan di clone mana pun yang sudah diambil orang. Menghapusnya total menuntut rewrite
+history + force-push, dan itu **tidak** dilakukan.
+
 ## D4 — Enum kode alarm tertutup (10 nilai)
 
 `ZERO_RECORDS`, `RECORD_COUNT_DROP`, `FIELD_COMPLETENESS_DROP`, `SCHEMA_UNKNOWN_FIELD`,

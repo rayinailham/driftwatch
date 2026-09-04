@@ -3,25 +3,15 @@
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
 **Diperbarui:** 2026-09-04 · **Status:** ✅ **PROJECT COMPLETE** — 13/13 fase · acceptance **12/12**
-**Fase aktif:** — · **Sisa pekerjaan berkode:** tidak ada.
+**Fase aktif:** — · **Sisa pekerjaan berkode:** tidak ada · **Jejak resource mesin:** nol (timer dimatikan).
 
-## Status fase
+## Status fase — 13/13 ✅
 
-| Fase | Status | Catatan |
-|---|---|---|
-| P0 Bootstrap | ✅ | `env-check.md`, 10 tool, `uv sync` 0 error · `02469f0` |
-| P1 Target & Etika | ✅ | 4 target; HTTPX 7/7; fixture 200; oracle 2/11 · `0f69f5f` |
-| P2 Recon | ✅ | 4 recon sah 4/4; quotes → `httpx+json` (8→1 request) · `2d1f585` |
-| P3 Kontrak Data | ✅ | 4 kontrak; 31 field (27 required); 12/12 sampel · `9e81409` |
-| P4 Mesin Scraper | ✅ | 6/6 komponen; cicip 3/3 valid; gap publik min 1.000 ms · `eadb3b2` |
-| P5 Validasi & Resume | ✅ | 3/3 manual; resume 12→1.000; 17/17 test · `e551205` |
-| P6 Panen Penuh | ✅ | 4 target; 1.323 record; required 100% · `e6ad2f3` |
-| P7 Penjadwalan | ✅ | timer aktif; unit sukses · `c9978ec` |
-| P8 Diff & Alarm | ✅ | 10 kode; 11/11 oracle; 0 false positive · `eb46245` |
-| P9 Soak 3 Hari | ✅ | 09-01…09-03 berturut; 12/12 run exit 0; 0 alarm; 0 intervensi · `c769cd8` |
-| P10 Demo + LLM | ✅ | 323 baris; 3 situs; D13/D14/D18 dikunci · `6f7409d` |
-| P11 Laporan Klien | ✅ | 8 `daily.md`; 5 sheet; 0 jargon · `49c80e1` |
-| P12 Packaging | ✅ | `make all` salinan bersih exit 0 · v1–v6 lahir · README publik · audit 0 |
+Satu fase = satu commit, tiap commit membawa metriknya (D19). `git log --oneline` adalah
+riwayat lengkapnya. Tiga commit terakhir sesi ini:
+`c769cd8` P09 soak · `20f7f60` P12 packaging · `711a69a` D20 repo publik.
+Sebelumnya: `02469f0` P0 · `0f69f5f` P1 · `2d1f585` P2 · `9e81409` P3 · `eadb3b2` P4 ·
+`e551205` P5 · `e6ad2f3` P6 · `c9978ec` P7 · `eb46245` P8 · `6f7409d` P10 · `49c80e1` P11.
 
 ## Metrik final
 
@@ -42,48 +32,63 @@
 
 ## Artefak final
 
-**Repo:** <https://github.com/rayinailham/driftwatch> — akun personal `rayinailham`, **PUBLIK sejak 2026-09-04** (D20).
-**Kode (`src/`):** `contracts`, `validate`, `scrape`, `store`, `engines/{http_html,http_json}`,
-`export`, `diff`, `alarm`, `publish`, `report`, **`env`** (baru P12: `.env` + `LAB_PORT`) + 5 modul test.
-**Skrip:** `daily_run.sh`, `lab_{up,down}.sh`, `lab_serve.py`, `gen_fixture.py`, `drift_lab.py`,
-`run_oracles.py`, `validate_recon.py`, `prune.sh`, `mark_run_failed.py`, `check_missing.sh`,
-**`secret_audit.py`**, **`make_visuals.py`**, **`build_case_study.sh`**, **`build_demo_video.sh`**,
-**`demo_resume.sh`**, **`demo_alarm.sh`** (enam terakhir lahir di P12, semuanya waktu-bangun).
-**Makefile:** `setup lab-up lab-down oracles harvest diff report weekly publish test audit prune all help`
-— `MAKEFLAGS := -j16` + `.NOTPARALLEL:` dipertahankan.
-**Aset:** `v1_resume_demo.mp4`, `v2_architecture.png` (+`.puml`), `v3_diff_timeline.png`,
-`v4_alarm_matrix.png`, `v5_tier_drop.png`, `v6_case_study.pdf` (+`.md`), 2 contoh laporan.
-**Dokumen:** `README.md` publik 7 bagian · `docs/` 15 berkas termasuk **`SOAK_PROOF.md`** dan **`PITCH.md`**.
+**Repo:** <https://github.com/rayinailham/driftwatch> — akun personal `rayinailham`,
+**PUBLIK sejak 2026-09-04** (D20).
+**Kode:** `src/` 11 modul + 5 modul test (48 test); `env.py` baru di P12 (`.env` + `LAB_PORT`).
+**Skrip:** 16 berkas; enam lahir di P12 (`secret_audit`, `make_visuals`, `build_case_study`,
+`build_demo_video`, `demo_resume`, `demo_alarm`) dan semuanya **waktu-bangun**, bukan runtime.
+**Makefile:** `setup lab-up lab-down oracles harvest diff report weekly publish test audit
+prune all help` — `MAKEFLAGS := -j16` + `.NOTPARALLEL:` dipertahankan.
+**Aset:** `v1_resume_demo.mp4` · `v2_architecture.png` · `v3_diff_timeline.png` ·
+`v4_alarm_matrix.png` · `v5_tier_drop.png` · `v6_case_study.pdf` · 2 contoh laporan.
+**Dokumen:** `README.md` publik 7 bagian · `docs/` 15 berkas, termasuk `SOAK_PROOF.md` dan `PITCH.md`.
 
 ## Fakta mesin yang masih berlaku
 
-- `driftlab` port **8100**; salinan bersih **8101**; sandbox video **8102**. `LAB_PORT` sekarang
-  benar-benar dibaca (`src/env.py`) — sebelum P12 ia ada di `.env` tapi tidak pernah dipakai.
+- `driftlab` **8100**, salinan bersih **8101**, sandbox video **8102**. `LAB_PORT` sekarang
+  benar-benar dibaca (`src/env.py`); sebelum P12 ia ada di `.env` tapi tak pernah dipakai.
 - Venv 3.13.13 ≠ sistem 3.14.6 → produksi wajib `uv run`; orkestrasi GNU Make (D10, `just` tidak ada).
-- Nol Docker di jalur runtime. Docker hanya dipakai waktu-bangun: PlantUML `:20080` dan `pandoc/core`.
+- Nol Docker di jalur runtime; Docker hanya waktu-bangun (PlantUML `:20080`, `pandoc/core`).
 
 ### 🚨 `9router.service` — JANGAN PERNAH DISENTUH (D22-A · AGENTS.md §0)
 systemd **user**, port **20128**, proxy AI lokal. Sesi ini tidak menyentuhnya sama sekali.
 
-## Yang tersisa untuk user (bukan pekerjaan berkode)
+## Jejak resource: NOL (dibereskan 2026-09-04)
 
-1. **`docs/PITCH.md` belum pernah diucapkan keras.** Panjangnya 138 kata → estimasi 53–59 detik
-   dari jumlah kata, **bukan stopwatch**. Baca sekali, ganti angkanya. Ini satu-satunya kotak
-   DoD P12 yang ditandai `[~]`, bukan `[x]`.
-2. **Batas bukti P9 yang dinyatakan terbuka.** 2 dari 3 pemicuan timer terbukti langsung di
-   `journalctl`; pemicuan 2026-09-01 terbukti lewat watchdog H+1 + `run.json` karena jurnal
-   mesin ini tidak menjangkau lebih awal dari `2026-09-01T20:53:14`. Kalau bukti `journalctl`
-   penuh dibutuhkan, biarkan timer jalan 3 hari lagi lalu panen ulang — pipeline-nya tidak
-   perlu diubah apa pun.
-3. **Email pribadi ada di repo publik** (repo sudah publik sejak 2026-09-04). `DRIFTWATCH_UA` memuat `mailto:` alamat Anda di
-   12 berkas ter-track. Itu **diwajibkan D3** (User-Agent jujur berisi kontak) dan bukan
-   kebocoran rahasia, tapi sejak repo publik alamat itu bisa dipanen bot spam. Kalau
-   mengganggu, ganti ke alias kontak lalu `make audit` lagi.
-4. **`ANTHROPIC_API_KEY` kosong** → insight LLM 0 token, $0. Isi kunci lalu
-   `uv run --no-sync python src/publish.py` kalau ingin blok ringkasan AI terisi (≈ $0,005/hari).
-5. Timer harian dan watchdog **masih menyala**. Matikan dengan
-   `systemctl --user disable --now driftwatch.timer driftwatch-watchdog.timer` kalau tidak
-   ingin panen berlanjut. **Sebut unitnya eksplisit, jangan pernah wildcard** (D22-A).
+Project selesai dan **berhenti memakai resource mesin**:
+
+| Tindakan | Hasil |
+|---|---|
+| `systemctl --user disable --now driftwatch.timer` · idem `driftwatch-watchdog.timer` | dua-duanya `disabled` + `inactive`; `list-timers \| grep driftwatch` **nihil** |
+| `rm -rf /tmp/driftwatch-clean /tmp/driftwatch-demo` | **105 MB** dibebaskan |
+| `docker stop plantuml-server` | kembali `Exited`, seperti sebelum sesi ini |
+| port 8100 · 8101 · 8102 · 8103 · 20080 | semuanya **mati** |
+| **`9router.service` (:20128)** | **`active` — tidak disentuh sama sekali** (D22-A) |
+
+Unit `driftwatch{,-watchdog}.{service,timer}` tetap terpasang di `~/.config/systemd/user/`;
+menyalakannya lagi cukup `systemctl --user enable --now driftwatch.timer
+driftwatch-watchdog.timer` — sebut eksplisit, jangan pernah wildcard (D22-A).
+`data/` 16 MB + `reports/` 396 KB tetap sebagai basis bukti (gitignored, tidak tumbuh lagi).
+
+## Yang tersisa untuk user
+
+**Satu, dan itu bukan pekerjaan mesin:** `docs/PITCH.md` belum pernah **diucapkan keras**.
+138 kata → 53–59 detik itu **estimasi dari jumlah kata, bukan stopwatch**; agent tidak bisa
+membunyikan suara. Baca sekali, ganti angkanya. Ini satu-satunya kotak DoD P12 bertanda
+`[~]`, bukan `[x]`.
+
+### Dua hal yang sudah ditutup sebagai keputusan sadar, bukan utang
+
+- **Batas bukti P9.** 2 dari 3 pemicuan timer terbukti langsung di `journalctl`; pemicuan
+  2026-09-01 terbukti lewat watchdog H+1 + `run.json` karena jurnal mesin tidak menjangkau
+  lebih awal dari `2026-09-01T20:53:14`. Menutupnya menuntut timer jalan 3 hari lagi —
+  ditukar dengan jejak resource nol, dan catatannya sudah tertulis apa adanya di
+  `docs/SOAK_PROOF.md` serta `docs/ACCEPTANCE.md`. **Tidak dikejar.**
+- **Alamat email di repo publik.** Ditanyakan 2026-09-04, user memilih membiarkannya:
+  kontak yang bisa dihubungi adalah *fitur* D3, bukan kebocoran. Rinciannya di D3.
+  Tidak ada rewrite history, tidak ada force-push.
+- `ANTHROPIC_API_KEY` kosong → insight LLM 0 token, **$0**. Isi kunci lalu
+  `uv run --no-sync python src/publish.py` kalau blok ringkasan AI ingin terisi (≈ $0,005/hari).
 
 ## Jebakan yang sudah dibayar (jangan diulang)
 
