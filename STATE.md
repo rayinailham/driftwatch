@@ -2,9 +2,9 @@
 
 > Ditulis ulang di akhir tiap sesi. Satu-satunya memori antar sesi. Jaga < 100 baris.
 
-**Diperbarui:** 2026-08-31 · **Status:** 🟨 JALAN — 11/13 fase · **Fase aktif:** — (P11 selesai)
-**Fase berikutnya:** **P9 — Soak 3 Hari** (jam dinding; P12 menunggu P9) · **soak_dibuka:** **2026-08-31**
-(soak di-reset — `daily_run.sh` berubah hari ini, D24. Panen sah pertama 2026-09-01; P9 paling cepat tutup **2026-09-03**.)
+**Diperbarui:** 2026-09-04 · **Status:** 🟨 JALAN — 12/13 fase · **Fase aktif:** P12 — Packaging
+**Fase berikutnya:** **P12 — Packaging** (fase terakhir) · **soak_dibuka:** **2026-08-31** → **P9 DITUTUP 2026-09-04**
+(jendela sah 2026-09-01 … 2026-09-03 dipanen penuh; bukti di `docs/SOAK_PROOF.md`.)
 
 ## Status fase
 
@@ -19,7 +19,7 @@
 | P6 Panen Penuh | ✅ selesai | 4 target; 1.323 record; required 100%; 18/18 test · `e6ad2f3` |
 | P7 Penjadwalan | ✅ selesai | timer aktif; NEXT 2026-08-28 09:04:10 WIB; unit sukses · `c9978ec` |
 | P8 Diff & Alarm | ✅ selesai | 10 kode; 11/11 oracle; 12 alarm sah; 0 false positive · `eb46245` |
-| P9 Soak 3 Hari | ⬜ belum | **soak di-reset ke 2026-08-31** (D24). 29–31 Agu tidak sah: `driftlab` 0 record 3 hari, unit `exit 1` |
+| P9 Soak 3 Hari | ✅ selesai | 3 tanggal berturut 09-01…09-03 · 12/12 run `exit 0` · 1.323 rec/hari · 0 alarm · 0 intervensi · `docs/SOAK_PROOF.md` |
 | P10 Demo + LLM | ✅ selesai | 323 baris; 3 situs; D13/D14/D18 dikunci; 0 kebocoran · `6f7409d` |
 | P11 Laporan Klien | ✅ selesai | 8 `daily.md`; 5 sheet; 0 jargon; 4 notifikasi terkirim · `49c80e1` |
 | P12 Packaging | ⬜ belum | video 60 dtk, `make all`, README publik, audit |
@@ -55,7 +55,7 @@ Demo (D18): `web/index.html` mandiri, payload ditanam, `file://` tanpa server; 3
 |---|---|---|
 | P0–P5 (ringkas) | — | **10 tool · 0 error `uv sync` · 4 target · recon 4/4 · 31 field (27 req) · 12/12 sampel · resume 12→1.000 · gap 1.000 ms** |
 | P6 panen · P7 timer · P8 alarm | — | **1.323 record · 0 dup · required 100% · timer aktif 4/4 target · 11/11 oracle · 10 kode · 12 alarm sah · 0 false positive** |
-| P10 terbit · P11 laporan | — | **323 baris / 3 situs · $0,00000/hari · 8 `daily.md` · 5 sheet · 0 jargon · 4 notifikasi · 0 kebocoran sampel** |
+| P9 soak · P10 terbit · P11 laporan | — | **3 tanggal berturut · 12/12 run exit 0 · 0 alarm · 0 intervensi · 323 baris / 3 situs · $0,00000/hari · 8 `daily.md` · 5 sheet · 0 jargon · 4 notifikasi** |
 | Gerbang sesi 2026-08-31 | lulus | **48/48 test · oracle 11/11 · recon 4/4 · hash fixture `b09a1d…5d3` tetap** |
 | `make all` salinan bersih · kebocoran rahasia | exit 0 · 0 | — (lahir di P12) |
 | **Acceptance project** | 12/12 | **10/12 ✅** — sisa **A11 & A12**, dua-duanya menunggu P12 |
@@ -73,7 +73,7 @@ Demo (D18): `web/index.html` mandiri, payload ditanam, `file://` tanpa server; 3
 **Data & terbitan:** `recon/*.json` 4/4 sah · `data/`+`reports/` 5 tanggal × 4 target (gitignored) ·
 `web/index.html` mandiri (D18) · `assets/sample_{daily.md,REPORT.xlsx}`.
 **Dokumen:** `docs/` 12 berkas (TARGETS, SCHEMA, DATA_DICTIONARY, MANUAL_VERIFY, RESUME_PROOF,
-DRIFT_ORACLES, PIPELINE, ETHICS, CLIENT_REPORT, DECISIONS D1–D24, ACCEPTANCE, TOOLS).
+DRIFT_ORACLES, PIPELINE, ETHICS, CLIENT_REPORT, DECISIONS D1–D24, ACCEPTANCE, TOOLS, **SOAK_PROOF**).
 
 ## Jebakan yang sudah dibayar (jangan diulang)
 
@@ -83,17 +83,17 @@ DRIFT_ORACLES, PIPELINE, ETHICS, CLIENT_REPORT, DECISIONS D1–D24, ACCEPTANCE, 
   server bekas `--verify` membuat DO-06 gagal `alarms=[]` — server basi, bukan regresi detector.
 - Setiap perubahan `daily_run.sh` me-reset `soak_dibuka`: bukti soak versi lama tidak dipakai.
 
-## Sesi 2026-08-31 — dua cacat ditutup (D24)
+## Sesi 2026-08-31 — dua cacat ditutup (D24, teks lengkap di `docs/DECISIONS.md`)
 
-1. **`driftlab` mati diam-diam sejak 29 Agu.** `daily_run.sh` tidak pernah menyalakan fixture
-   `:8100` → dipicu timer: 0 record, 11 error, 33 retry, unit gagal, 3 hari tanpa ada yang lihat.
+1. **`driftlab` mati diam-diam 29–31 Agu** — `daily_run.sh` tidak menyalakan fixture `:8100`.
    Fix: langkah (0) `lab_up.sh` + `trap EXIT lab_down.sh`. Sesudah: **200 record · exit 0 · alarms=[]**.
-2. **Laporan membantah dirinya sendiri.** Alert append-only → run yang sudah sembuh masih
-   mengutip alarm run gagal. Fix: `resolved_at` berlingkup `evaluated_codes()`; `report.py`
-   mengabaikan baris tertutup. `daily.md` 31 Agu kini **SEHAT ✅**, 6 alarm 09:03 tertutup (tidak dihapus).
+2. **Laporan membantah dirinya sendiri** — alert append-only masih dikutip setelah run sembuh.
+   Fix: `resolved_at` berlingkup `evaluated_codes()`; `report.py` mengabaikan baris tertutup.
 
 ## Blocker & keputusan terbuka
-- **Blocker: tidak ada.** Sisa P9 murni jam dinding (3 hari), sisa P12 murni pekerjaan fase.
+- **Blocker: tidak ada.** P9 ditutup 2026-09-04; sisa hanya P12.
+- ⚠️ Jurnal mesin ini hanya menjangkau sejak `2026-09-01 20:53` → pemicuan 09-01 terbukti lewat
+  watchdog H+1 + `run.json`, bukan baris `journalctl`. Dinyatakan terbuka di `docs/SOAK_PROOF.md`.
 - ✅ **D20** repo publik: **izin user sudah diberikan 2026-08-31**, tetapi flip **ditunda** —
   gerbangnya (`make audit` A12 + salinan bersih A11) baru lahir di P12. Jangan dibalik urutannya.
 - `ANTHROPIC_API_KEY` **kosong** → insight P10 = 0 token, $0. Isi kunci lalu `uv run --no-sync python src/publish.py` (≈ $0,005/hari).
