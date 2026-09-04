@@ -355,7 +355,16 @@ lahir di P12 dan lulus **2026-09-04**:
 
 User ditanya **sekali lagi** setelah keduanya hijau, sesuai urutan yang dikunci entri ini,
 dan menjawab **"balik jadi publik sekarang"**. Flip dijalankan dengan akun personal
-`rayinailham` (`gh auth status` → `Logged in to github.com account rayinailham`).
+`rayinailham` (`gh auth status` → `Logged in to github.com account rayinailham`), **sesudah**
+commit P12 di-push supaya repo tidak pernah publik dalam keadaan setengah jadi:
+
+```console
+$ gh repo view rayinailham/driftwatch --json visibility        # sebelum
+PRIVATE
+$ gh repo edit rayinailham/driftwatch --visibility public --accept-visibility-change-consequences
+$ gh repo view rayinailham/driftwatch --json visibility,url    # sesudah
+PUBLIC  https://github.com/rayinailham/driftwatch
+```
 
 **Konsekuensi yang diterima sadar, dan sudah disampaikan sebelum user memutuskan:**
 `DRIFTWATCH_UA` memuat alamat email pribadi di 12 berkas ter-track. Itu **kelas IDENTITAS**,

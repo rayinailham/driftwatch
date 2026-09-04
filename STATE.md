@@ -42,7 +42,7 @@
 
 ## Artefak final
 
-**Repo:** `git@rayin-personal:rayinailham/driftwatch.git` — akun personal `rayinailham`.
+**Repo:** <https://github.com/rayinailham/driftwatch> — akun personal `rayinailham`, **PUBLIK sejak 2026-09-04** (D20).
 **Kode (`src/`):** `contracts`, `validate`, `scrape`, `store`, `engines/{http_html,http_json}`,
 `export`, `diff`, `alarm`, `publish`, `report`, **`env`** (baru P12: `.env` + `LAB_PORT`) + 5 modul test.
 **Skrip:** `daily_run.sh`, `lab_{up,down}.sh`, `lab_serve.py`, `gen_fixture.py`, `drift_lab.py`,
@@ -75,7 +75,7 @@ systemd **user**, port **20128**, proxy AI lokal. Sesi ini tidak menyentuhnya sa
    mesin ini tidak menjangkau lebih awal dari `2026-09-01T20:53:14`. Kalau bukti `journalctl`
    penuh dibutuhkan, biarkan timer jalan 3 hari lagi lalu panen ulang — pipeline-nya tidak
    perlu diubah apa pun.
-3. **Email pribadi ada di repo publik.** `DRIFTWATCH_UA` memuat `mailto:` alamat Anda di
+3. **Email pribadi ada di repo publik** (repo sudah publik sejak 2026-09-04). `DRIFTWATCH_UA` memuat `mailto:` alamat Anda di
    12 berkas ter-track. Itu **diwajibkan D3** (User-Agent jujur berisi kontak) dan bukan
    kebocoran rahasia, tapi sejak repo publik alamat itu bisa dipanen bot spam. Kalau
    mengganggu, ganti ke alias kontak lalu `make audit` lagi.
